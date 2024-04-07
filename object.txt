@@ -1,0 +1,94 @@
+shops: {
+	shopId: string,
+	userId: string,
+	name: string,
+	address: string,
+	users: [
+		{
+			userId: string,
+			role: string. Ex: ['admin', 'mod']
+		}
+	]
+}
+
+users: {
+	userId: string,
+	email: string,
+	username: string,
+	address: string,
+	name: string,
+}
+
+categories: {
+	categoryId: string,
+	categoryName: string,
+	productNumber: number,
+	shopId: string,
+}
+
+product: {
+	productId: string,
+	categoryId: string,
+	shopId: string,
+	price: float,
+	quantity: number,
+	productThumbnail: string,
+	productImages: [
+		link: string,
+	],
+	rating: float. Ex: In Range(1 - 5)
+	attributes:[
+		{
+			attributeId: string,
+			attributeName: string,
+			attributeType: string. Ex: ['variant', 'fixed'],
+			attributeVariant: [
+				{
+					variantId: string,
+					variantName: string,
+					variantPrice: float,
+				}
+			]
+		}
+	],
+	discountId: string
+}
+
+discounts: {
+	discountId: string,
+	discountName: string,
+	discountScope: string. Ex: ['global', 'shop'],
+	shopId: string,
+	createdAt: Date,
+	expiredAt: Date
+}
+
+orders: {
+	orderId: string,
+	userId: string,
+	products: [
+		{
+			productId: string,
+			quantity: number,
+		}
+	],
+	discounts: [
+		{
+			discountId
+		}
+	]
+	price: float,
+	status: string. Ex: ['paid', 'unpaid', 'shipping'],
+	shipOrg: string,
+	createAt: Date,
+	paymentDate: Date,
+}
+
+carts: {
+	products: [
+		{
+			productId: string,
+			quantity: number,
+		}
+	],
+}
