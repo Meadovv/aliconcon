@@ -9,9 +9,13 @@ class OtherUtils {
 
     static getFields = ({ fields, object }) => {
         const pickedObject = _.pick(object, fields);
-        if(!_.isEqual(object, pickedObject)) {
-            throw new BAD_REQUEST_ERROR('Object contains extra fields');
+        const extraFields = _.difference(_.keys(object), fields);
+        const missingFields = _.difference(fields, _.keys(object));
+
+        if (extraFields.length > 0 || missingFields.length > 0) {
+            throw new BAD_REQUEST_ERROR('Object contains extra fields or missing fields!');
         }
+
         return pickedObject;
     }
 }

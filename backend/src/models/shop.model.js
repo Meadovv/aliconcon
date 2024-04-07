@@ -5,54 +5,51 @@ const { model, Schema } = require('mongoose');
 const DOCUMENT_NAME = 'aliconcon_shops';
 const COLLECTION_NAME = 'shops';
 
-
-const UserSchema = new Schema({
-    userId: {
-        type: String,
-        required: true
-    },
+const userSchema = new Schema({
     email: {
         type: String,
+        trim: true,
+        required: true
+    },
+    password: {
+        type: String,
+        trim: true,
         required: true
     },
     role: {
-        type: String,
-        enum: ['admin', 'staff'],
-        default: 'staff'
+        type: Number,
+        required: true
     }
-
 })
+
 
 const shopSchema = new Schema({
     name:{
         type:String,
         trim: true,
-        maxLength: 150
+        required: true
     },
     email:{
         type:String,
-        unique:true,
-        trim: true
+        trim: true,
+        required: true
     },
     phone: {
         type: String,
         trim: true,
+        required: true
     },
     address: {
         type: String,
         trim: true,
+        required: true
     },
-    status: {
-        type: String,
-        enum: ['active', 'inactive'],
-        default: 'inactive'
-    },
-    verified: {
+    active: {
         type: Boolean,
-        default: false
+        default: true
     },
     users: {
-        type: [UserSchema],
+        type: [userSchema],
         default: []
     }
 }, {

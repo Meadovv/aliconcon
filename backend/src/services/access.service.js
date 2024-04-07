@@ -13,37 +13,33 @@ const {
 
 class AccessService {
 
-    static userRegister = async ({ name, email, password }) => {
+    static userRegister = async ({ name, email, password, address, phone }) => {
         // Check if the email is already registered
 
-        const user = await UserService.findByEmail(email);
-        if (user) {
-            throw new BAD_REQUEST_ERROR('Shop already registered!');
+        const foundUser = await UserService.findByEmail(email);
+        if (foundUser) {
+            throw new BAD_REQUEST_ERROR('User already registered!');
         }
 
         const passwordHash = await Utils.AuthUtils.createHashPassword(password);
         const newUser = await UserService.createUser({
-            name, email, password: passwordHash
+            name, email, password: passwordHash, address, phone
         })
 
         if (newUser) {
             const key = Utils.AuthUtils.createKey(64);
-            const keyStore = await KeyTokenService.createKeyToken({
+            await KeyTokenService.createKeyToken({
                 userId: newUser._id,
                 key: key
             });
-
-            if (!keyStore) {
-                throw new BAD_REQUEST_ERROR('Error while storing keys!');
-            }
-
+            
             const token = await Utils.AuthUtils.createToken({
-                payload: { userId: newUser._id, email: newUser.email },
+                payload: { userId: newUser._id },
                 key: key
             });
 
             return {
-                shop: Utils.OtherUtils.getInfoData({
+                user: Utils.OtherUtils.getInfoData({
                     fields: ['_id', 'name', 'email'],
                     object: newUser
                 }),
@@ -61,21 +57,22 @@ class AccessService {
             throw new BAD_REQUEST_ERROR('User not registered!');
         }
 
+        if(!foundUser.active) {
+            throw new BAD_REQUEST_ERROR('Account is banned!');
+        }
+
         const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundUser.password);
         if(!passwordMatch) {
             throw new UNAUTHENTICATED_ERROR('Authentication failed!');
         }
 
         const key = Utils.AuthUtils.createKey(64);
-        const keyStore = await KeyTokenService.createKeyToken({
+        await KeyTokenService.createKeyToken({
             userId: foundUser._id,
             key: key
         });
-        if (!keyStore) {
-            throw new BAD_REQUEST_ERROR('Error while storing keys!');
-        }
         const token = await Utils.AuthUtils.createToken({
-            payload: { userId: foundUser._id, email: foundUser.email },
+            payload: { userId: foundUser._id },
             key: key
         });
 
@@ -89,141 +86,97 @@ class AccessService {
     }
 
     static getUser = async (userId) => {
-        const user = await UserService.findById(userId);
+        const foundUser = await UserService.findById(userId);
+        if(!foundUser) {
+            throw new BAD_REQUEST_ERROR('User not found!');
+        }
+
         return Utils.OtherUtils.getInfoData({
-            fields: ['_id', 'name', 'email'],
-            object: user
-        })
+            fields: ['_id', 'name', 'email', 'phone', 'address'],
+            object: foundUser
+        });
     }
 
-    static shopLogin = async ({ shopEmail, userEmail, password  }) => {
-        // Check if the email is already registered
-        const foundShop = await ShopService.findByEmail(shopEmail);
+    static shopLogin = async ({ shop_email, user_email, password  }) => {
+        const foundShop = await ShopService.findByEmail(shop_email);
         if(!foundShop) {
             throw new BAD_REQUEST_ERROR('Shop not registered!');
         }
-        
-        // Check if user is in shop account list
-        const userInList = foundShop.users.find(user => user.email === userEmail);
-        if(!userInList) {
-            throw new BAD_REQUEST_ERROR('User not in shop account list!');
-        }
-
-        const foundUser = await UserService.findByEmail(userEmail);
+        const foundUser = foundShop.users.find(user => user.email === user_email);
         if(!foundUser) {
-            throw new BAD_REQUEST_ERROR('User not registered or deleted!');
+            throw new BAD_REQUEST_ERROR('User not found!');
         }
-
         const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundUser.password);
         if(!passwordMatch) {
             throw new UNAUTHENTICATED_ERROR('Authentication failed!');
         }
 
         const key = Utils.AuthUtils.createKey(64);
-        const keyStore = await KeyTokenService.createKeyToken({
+        await KeyTokenService.createKeyToken({
             userId: foundUser._id,
             key: key
         });
-        if (!keyStore) {
-            throw new BAD_REQUEST_ERROR('Error while storing keys!');
-        }
         const token = await Utils.AuthUtils.createToken({
-            payload: { shopId: foundShop._id, userId: foundUser._id },
+            payload: { shopId: foundShop._id, userId: foundUser._id, role: foundUser.role },
             key: key
         });
 
         return {
-            user: {
-                _id: foundUser._id,
-                name: foundUser.name,
-                email: foundUser.email,
-                role: userInList.role
+            shop: {
+                ...Utils.OtherUtils.getInfoData({
+                    fields: ['_id', 'name'],
+                    object: foundShop
+                }),
+                userId: foundUser._id,
+                role: foundUser.role
             },
             token: token
         }
     }
 
-    static shopRegister = async ({ shopName, shopEmail, userEmail, password, phone = null, address = null }) => {
-        // Check if the email is already registered
-        const foundShop = await ShopService.findByEmail(shopEmail);
+    static shopRegister = async ({ name, email, password, phone, address }) => {
+        const foundShop = await ShopService.findByEmail(email);
         if(foundShop) {
             throw new BAD_REQUEST_ERROR('Shop already registered!');
         }
 
-        // Check if user is exist
-        const foundUser = await UserService.findByEmail(userEmail);
-        if(!foundUser) {
-            throw new BAD_REQUEST_ERROR('User not registered!');
-        }
-
-        // Create new Shop
-        const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundUser.password);
-        if(!passwordMatch) {
-            throw new UNAUTHENTICATED_ERROR('Authentication failed!');
-        }
+        const passwordHash = await Utils.AuthUtils.createHashPassword(password);
         const newShop = await ShopService.createShop({
-            name: shopName,
-            email: shopEmail,
-            user: {
-                _id: foundUser._id,
-                email: foundUser.email,
-                role: ROLES.OWNER
-            },
-            phone,
-            address
+            name, email, password: passwordHash, phone, address
         });
 
-        if(newShop) {
+        if (newShop) {
             const key = Utils.AuthUtils.createKey(64);
-            const keyStore = await KeyTokenService.createKeyToken({
-                userId: foundUser._id,
+            await KeyTokenService.createKeyToken({
+                userId: newShop.users[0]._id,
                 key: key
             });
-
-            if (!keyStore) {
-                throw new BAD_REQUEST_ERROR('Error while storing keys!');
-            }
-
+            
             const token = await Utils.AuthUtils.createToken({
-                payload: { shopId: newShop._id, userId: foundUser._id },
+                payload: { shopId: foundShop._id, userId: newShop.users[0]._id, role: newShop.users[0].role },
                 key: key
             });
 
             return {
-                shop: Utils.OtherUtils.getInfoData({
-                    fields: ['_id', 'name', 'email'],
-                    object: newShop
-                }),
+                shop: {
+                    ...Utils.OtherUtils.getInfoData({
+                        fields: ['_id', 'name'],
+                        object: newShop
+                    }),
+                    userId: newShop.users[0]._id,
+                    role: newShop.users[0].role
+                },
                 token: token
             }
+
         }
 
         return null;
+
     }
 
     static getShop = async ( jwt_decode ) => {
-        const foundShop = await ShopService.findById(jwt_decode.shopId);
-        if(!foundShop) {
-            throw new BAD_REQUEST_ERROR('Shop not found!');
-        }
 
-        const foundUser = await UserService.findById(jwt_decode.userId);
-        if(!foundUser) {
-            throw new BAD_REQUEST_ERROR('User not found!');
-        }
-        console.log(foundShop)
-        const userInList = foundShop.users.filter(user => user._id.toString() === foundUser._id.toString())[0]
-        if(!userInList) {
-            throw new BAD_REQUEST_ERROR('User not in shop account list!');
-        }
-
-        return {
-            shopName: foundShop.name,
-            shopId: foundShop._id,
-            userName: foundUser.name,
-            userId: foundUser._id,
-            role: userInList.role
-        }
     }
 
     static adminLogin = async () => {

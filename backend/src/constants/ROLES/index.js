@@ -1,5 +1,6 @@
 module.exports = {
     OWNER: 0,
     ADMIN: 1,
-    MOD: 2,
+    EDITOR: 2,
+    MOD: 3,
 }

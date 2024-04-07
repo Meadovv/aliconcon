@@ -13,7 +13,7 @@ const {
 class AccessController {
     static userLogin = async (req, res) => {
         new SUCCESS({
-            message: 'Login successfully',
+            message: 'Login successfully!',
             metadata: await AccessService.userLogin({
                 ...getFields({
                     fields: ['email', 'password'],
@@ -25,14 +25,19 @@ class AccessController {
 
     static userRegister = async (req, res) => {
         new CREATED({
-            message: 'Shop created successfully',
-            metadata: await AccessService.userRegister(req.body)
+            message: 'User created successfully!',
+            metadata: await AccessService.userRegister({
+                ...getFields({
+                    fields: ['name', 'email', 'password', 'address', 'phone'],
+                    object: req.body
+                })
+            })
         }).send(res);
     }
 
     static getUser = async (req, res) => {
         new SUCCESS({
-            message: 'Get User Information Successfully',
+            message: 'Get User Information Successfully!',
             metadata: await AccessService.getUser(req.jwt_decode.userId)
         }).send(res);
     }
@@ -40,14 +45,24 @@ class AccessController {
     static shopLogin = async (req, res) => {
         new SUCCESS({
             message: 'Login successfully',
-            metadata: await AccessService.shopLogin(req.body)
+            metadata: await AccessService.shopLogin({
+                ...getFields({
+                    fields: ['shop_email', 'user_email', 'password'],
+                    object: req.body
+                })
+            })
         }).send(res);
     }
 
     static shopRegister = async (req, res) => {
         new SUCCESS({
             message: 'Shop created successfully',
-            metadata: await AccessService.shopRegister(req.body)
+            metadata: await AccessService.shopRegister({
+                ...getFields({
+                    fields: ['name', 'email', 'password', 'phone', 'address'],
+                    object: req.body
+                })
+            })
         }).send(res);
     }
 

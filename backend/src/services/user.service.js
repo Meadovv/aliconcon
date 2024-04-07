@@ -11,9 +11,11 @@ class UserService {
         return await userModel.findOne({ _id: id }).lean();
     }
 
-    static createUser = async ({ name, email, password, roles }) => {
+    static createUser = async ({ name, email, password, address, phone }) => {
         return await userModel.create({
-            name, email, password, roles
+            name, email, password, address: [
+                { value: address, default: true }
+            ], phone
         });
     }
 }
