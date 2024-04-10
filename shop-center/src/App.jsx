@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Error from './pages/Error';
 import CONFIG from './configs';
 import Home from './pages/Home';
+import Products from './pages/Products';
 
 import Private from './components/Private';
 import Register from './pages/Register';
@@ -33,6 +34,12 @@ function App() {
                 <Route path="/" element={
                     <Private>
                         <Home />
+                    </Private>
+                } />
+
+                <Route path="/products" element={
+                    <Private>
+                        <Products />
                     </Private>
                 } />
 
