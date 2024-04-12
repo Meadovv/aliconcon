@@ -8,6 +8,7 @@ const ProductService = require('../services/product.service');
 const CategoryService = require('../services/category.service');
 const VariationService = require('../services/variation.service');
 const ImageService = require('../services/image.service');
+const GroupService = require('../services/group.service');
 
 class ShopController {
 
@@ -282,6 +283,45 @@ class ShopController {
             metadata: await CategoryService.deleteCategory({
                 ...getFields({
                     fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static createGroup = async (req, res) => {
+        new SUCCESS({
+            message: 'Group created successfully',
+            metadata: await GroupService.create({
+                ...getFields({
+                    fields: ['name'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static deleteGroup = async (req, res) => {
+        new SUCCESS({
+            message: 'Group deleted successfully',
+            metadata: await GroupService.delete({
+                ...getFields({
+                    fields: ['groupId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static updateGroup = async (req, res) => {
+        new SUCCESS({
+            message: 'Group updated successfully',
+            metadata: await GroupService.update({
+                ...getFields({
+                    fields: ['group'],
                     object: req.body
                 }),
                 ...req.jwt_decode
