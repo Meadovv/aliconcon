@@ -1,96 +1,242 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Input, Button } from 'antd'; // Import Form, Input, Button from Ant Design
+import { Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 
-const CategoryPage = () => {
-    const [categories, setCategories] = useState([]);
-    const [showForm, setShowForm] = useState(false); // State to manage form visibility
-    const [form] = Form.useForm();
+function Categories() {
+    const { user } = useSelector((state) => state.user);
+    const [categoryList, setCategoryList] = useState([]);
+    const [categoryFilter, setCategoryFilter] = useState([]);
 
-    const headers = {
-        'x-client-id': localStorage.getItem('x-client-id'),
-        'x-token-id': localStorage.getItem('x-token-id')
+    const [reload, setReload] = useState(true);
+    const [filter, setFilter] = useState('all');
+
+    const [form] = Form.useForm();
+    const [formMode, setFormMode] = useState({
+        open: false,
+        mode: 'add',
+    });
+
+    const deleteCategory = async (categoryId) => {
+        message.success('Category delete successfully ' + categoryId);
+    };
+
+    const getCategoryList = async () => {
+        await axios
+            .post(CONFIG.API + '/category/get-list-by-shop', {
+                shopId: user.shopId,
+            })
+            .then((res) => {
+                message.success(res.data.message);
+                setCategoryList(res.data.metadata);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     };
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.post(CONFIG.API + "category/get-list-by-shop", { shopId: 'yourShopIdHere??' });
-                setCategories(response.data.metadata);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
+        getCategoryList();
+    }, [reload]);
 
-        fetchCategories();
-    }, []);
+    useEffect(() => {
+        if (filter === 'all') {
+            setCategoryFilter(categoryList);
+        } else setCategoryFilter(categoryList.filter((category) => category.status === filter));
+    }, [filter, categoryList]);
 
-    const handleToggleForm = () => {
-        // Toggle form visibility
-        setShowForm(!showForm); 
-    };
-
-    const createCategory = () => {
-        form.validateFields().then(async formValues => {
-            try {
-                const response = await axios.post(CONFIG.API + 'category/create', formValues, { headers });
-                
-                // Add newly created category to categories state
-                setCategories([...categories, response.data.metadata]);
-
-                // Reset form fields
-                form.resetFields(); 
-            } catch (error) {
-                console.error('Error creating category:', error);
-            }
+    const handleForm = () => {
+        form.validateFields().then(async (formValues) => {
+            await axios
+                .post(CONFIG.API + '/category/create', formValues, {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                })
+                .then((res) => {
+                    message.success(res.data.message);
+                    form.resetFields();
+                    setReload((prev) => prev + 1);
+                })
+                .catch((err) => {
+                    message.error(err.message);
+                });
+        });
+        setFormMode({
+            ...formMode,
+            open: false,
         });
     };
 
     return (
         <div>
-            <h2>Categories</h2>
-            <Button onClick={handleToggleForm}>Add Category</Button> {/* Button to toggle form */}
-
-            {showForm && ( // Render form if showForm is true
-            <Form
-            layout='vertical'
-            style={{ width: '80%' }}
-            onFinish={createCategory}
-            form={form}
+            <Modal
+                forceRender
+                title={formMode.mode === 'add' ? 'Add Category' : 'Edit Category'}
+                open={formMode.open}
+                onOk={handleForm}
+                onCancel={() =>
+                    setFormMode({
+                        ...formMode,
+                        open: false,
+                    })
+                }
+                okText="Add"
+                okButtonProps={{
+                    size: 'large',
+                }}
+                cancelButtonProps={{
+                    size: 'large',
+                }}
+                width={1000}
             >
-                <Form.Item label="Category Name" name="name" rules={[{ required: true, message: 'Please enter category name!' }]}>
-                    <Input />
-                </Form.Item>
+                <Form layout="vertical" form={form}>
+                    <Form.Item
+                        label="Category Name"
+                        name="name"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input category name!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
 
-                <Form.Item label="Thumbnail" name="thumbnail" rules={[{ required: true, message: 'Please enter category thumbnail URL!' }]}>
-                    <Input />
-                </Form.Item>
+                    <Form.Item
+                        label="Category Thumbnail"
+                        name="thumbnail"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input category thumbnail!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: '10px',
+                    }}
+                >
+                    <div>View Mode</div>
+                    <Radio.Group value={filter} onChange={(e) => setFilter(e.target.value)}>
+                        <Radio value="all">All</Radio>
+                        <Radio value="draft">Draft</Radio>
+                        <Radio value="published">Published</Radio>
+                    </Radio.Group>
+                </div>
 
-                <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Please select category status!' }]}>
-                    <Select defaultValue="draft">
-                        <Option value="draft">Draft</Option>
-                        <Option value="published">Published</Option>
-                    </Select>
-                </Form.Item>
+                <Button
+                    type="primary"
+                    ghost
+                    onClick={() => {
+                        setFormMode({
+                            open: true,
+                            mode: 'add',
+                        });
+                    }}
+                >
+                    Add
+                </Button>
+            </div>
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">Submit</Button>
-                </Form.Item>
-        </Form>
-            )}
-            <ul>
-                {categories.map(category => (
-                    <li key={category._id}>
-                        <h3>{category.name}</h3>
-                        <p>Thumbnail: {category.thumbnail}</p>
-                        <p>Status: {category.status}</p>
-                        {/* Add more category attributes here */}
-                    </li>
-                ))}
-            </ul>
+            <div
+                style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '20px',
+                }}
+            >
+                {categoryFilter &&
+                    categoryFilter.map((category, index) => {
+                        return (
+                            <div
+                                key={index}
+                                style={{
+                                    padding: '20px',
+                                    display: 'flex',
+                                    gap: '10px',
+                                }}
+                            >
+                                <img
+                                    src={category.thumbnail}
+                                    alt="thumbnail"
+                                    style={{
+                                        width: '80px',
+                                    }}
+                                />
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '10px',
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            fontWeight: 'bold',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        {category.name}
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '10px',
+                                        }}
+                                    >
+                                        <Button
+                                            type="primary"
+                                            ghost
+                                            danger={category.status === 'draft' ? false : true}
+                                            disabled={user.role > 1}
+                                        >
+                                            {category.status === 'draft' ? 'Activate' : 'Deactivate'}
+                                        </Button>
+                                        <Button
+                                            type="primary"
+                                            ghost
+                                            onClick={() => {
+                                                setFormMode({
+                                                    open: true,
+                                                    mode: 'edit',
+                                                });
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            danger
+                                            onClick={() => deleteCategory(category._id)}
+                                            disabled={user.role > 1}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+            </div>
         </div>
     );
-};
+}
 
-export default CategoryPage;
+
+export default Categories;

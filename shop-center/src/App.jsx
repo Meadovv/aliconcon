@@ -2,14 +2,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Error from './pages/Error';
 import CONFIG from './configs';
-import Home from './pages/Home';
+import Home from './pages/MyShop';
 import Products from './pages/Products';
 
 import Private from './components/Private';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
-import Setting from './pages/Setting';
+import Setting from './pages/Menu';
 
 function App() {
     return (

@@ -1,10 +1,8 @@
 import React from 'react';
 import Layout from '../../components/Layout';
-import { useNavigate } from 'react-router-dom';
 
-function Home (){
+function MyShop (){
 
-    const navigate = useNavigate()
     // Mock data for demonstration purposes
     const salesData = [
         { month: 'January', revenue: 1000 },
@@ -27,6 +25,9 @@ function Home (){
     return (
         
     <Layout>
+        <div>Shop ID: {user.shopId}</div>
+        <div>Shop Name: {user.shopName}</div>
+
         <div>
             <h2>Dashboard</h2>
             <div>
@@ -72,4 +73,4 @@ function Home (){
     );
 };
 
-export default Home;
+export default MyShop;
