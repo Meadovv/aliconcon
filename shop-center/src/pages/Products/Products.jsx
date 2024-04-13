@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, Row, Col, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
+import { Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
+import Product from './Product_by_Cate';
 
-function Products(categoryId) {
+function Products() {
     const { user } = useSelector((state) => state.user);
-    const [productList, setProductList] = useState([]);
+    const [productyList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
+    const [categoryList, setCategoryList] = useState([]);
 
     const [reload, setReload] = useState(true);
     const [filter, setFilter] = useState('all');
@@ -23,9 +25,8 @@ function Products(categoryId) {
 
     const getProductList = async () => {
         await axios
-            .post(CONFIG.API + '/product/get-by-shop', {
+            .post(CONFIG.API + '/product/get-list-by-shop', {
                 shopId: user.shopId,
-                category: categoryId
             })
             .then((res) => {
                 message.success(res.data.message);
@@ -36,15 +37,31 @@ function Products(categoryId) {
             });
     };
 
+    const getCategoryList = async () => {
+        await axios
+            .post(CONFIG.API + '/category/get-list-by-shop', {
+                shopId: user.shopId,
+            })
+            .then((res) => {
+                message.success(res.data.message);
+                setCategoryList(res.data.metadata);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    };
+
     useEffect(() => {
         getProductList();
+        getCategoryList();
+
     }, [reload]);
 
     useEffect(() => {
         if (filter === 'all') {
-            setProductFilter(productFilter);
-        } else setProductFilter(productList.filter((product) => product.status === filter));
-    }, [filter, productList]);
+            setProductFilter(productyList);
+        } else setProductFilter(productyList.filter((primary) => producty.status === filter));
+    }, [filter, productyList]);
 
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {
@@ -96,56 +113,47 @@ function Products(categoryId) {
                     <Form.Item
                         label="Product Name"
                         name="name"
-                        rules={[{ required: true, message: 'Please enter product name!' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input product name!',
+                            },
+                        ]}
                     >
-                        <Input />
+                        <Input size="large" />
                     </Form.Item>
 
                     <Form.Item
-                        label="Description"
-                        name="description"
-                        rules={[{ required: true, message: 'Please enter product description!' }]}
-                    >
-                        <Input.TextArea />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Price"
-                        name="price"
-                        rules={[{ required: true, message: 'Please enter product price!' }]}
-                    >
-                        <Input type="number" />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Thumbnail"
+                        label="Product Thumbnail"
                         name="thumbnail"
-                        rules={[{ required: true, message: 'Please enter product thumbnail URL!' }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input product thumbnail!',
+                            },
+                        ]}
                     >
-                        <Input />
+                        <Input size="large" />
                     </Form.Item>
 
-                    <Form.Item
-                        label="Status"
-                        name="status"
-                        initialValue="draft"
-                        rules={[{ required: true, message: 'Please select product status!' }]}
+                    <Form.Item 
+                        label="Categories" 
+                        name="categories" 
+                        rules={[
+                            { 
+                                required: true, 
+                                message: 'Please select product categories!' 
+                            }
+                        ]}
                     >
-                        <Select>
-                            <Option value="draft">Draft</Option>
-                            <Option value="published">Published</Option>
-                            <Option value="unpublished">Unpublished</Option>
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Add Product
-                        </Button>
+                        <Checkbox.Group>
+                            {categories.map(categoryList => (
+                                <Checkbox key={category._id} value={category._id}>{category.name}</Checkbox>
+                            ))}
+                        </Checkbox.Group>
                     </Form.Item>
                 </Form>
             </Modal>
-
             <div
                 style={{
                     display: 'flex',
@@ -198,6 +206,13 @@ function Products(categoryId) {
                                     gap: '10px',
                                 }}
                             >
+                                <img
+                                    src={product.thumbnail}
+                                    alt="thumbnail"
+                                    style={{
+                                        width: '80px',
+                                    }}
+                                />
                                 <div
                                     style={{
                                         display: 'flex',
@@ -205,15 +220,27 @@ function Products(categoryId) {
                                         gap: '10px',
                                     }}
                                 >
-                                    <Card
-                                        key={product._id}
-                                        hoverable
-                                        style={{ width: 300, marginBottom: 16 }}
-                                        cover={<img alt="thumbnail" src={product.thumbnail} style={{ width: '100%' }} />}
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            fontWeight: 'bold',
+                                            justifyContent: 'center',
+                                        }}
                                     >
-                                        <Card.Meta title={product.name} />
-                                    </Card>
-
+                                        {product.name}
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                        }}
+                                    >
+                                        - Categories: {product.categories}
+                                        - Attributes: {product.attributes}
+                                        - Comments: {product.comments}
+                                        - Price: {product.price}
+                                        - Description: 
+                                        <div>{product.description}</div>
+                                    </div>
                                     <div
                                         style={{
                                             display: 'flex',
