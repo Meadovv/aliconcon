@@ -8,6 +8,9 @@ const development = {
         mysql: {
             
         }
+    },
+    jwt: {
+        expired: process.env.DEV_JWT_EXPIRED,
     }
 };
 
@@ -19,6 +22,9 @@ const production = {
         mysql: {
 
         }
+    },
+    jwt: {
+        expired: process.env.PRO_JWT_EXPIRED,
     }
 };
 

@@ -11,6 +11,10 @@ const shopUser = new Schema({
         trim: true,
         required: true
     },
+    password: {
+        type: String,
+        required: true
+    },
     role: {
         type: Number,
         required: true
@@ -20,7 +24,7 @@ const shopUser = new Schema({
         default: true
     },
     addBy: {
-        type: String
+        type: Schema.Types.ObjectId,
     }
 }, {
     timestamps: true
