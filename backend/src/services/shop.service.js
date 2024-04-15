@@ -24,7 +24,9 @@ class ShopService {
                 {
                     email: email,
                     password: password,
-                    role: ROLES.OWNER
+                    role: ROLES.OWNER,
+                    active: true,
+                    addBy: null
                 }
             ]
         });
@@ -50,7 +52,9 @@ class ShopService {
         const newUser = {
             email: target_email,
             password: passwordHash,
-            role: target_role
+            role: target_role,
+            active: true,
+            addBy: user._id
         }
         foundShop.users.push(newUser);
 

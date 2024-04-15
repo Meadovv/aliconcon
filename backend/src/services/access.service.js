@@ -153,7 +153,7 @@ class AccessService {
             });
             
             const token = await Utils.AuthUtils.createToken({
-                payload: { shopId: foundShop._id, userId: newShop.users[0]._id, role: newShop.users[0].role },
+                payload: { shopId: newShop._id, userId: newShop.users[0]._id, role: newShop.users[0].role },
                 key: key
             });
 
