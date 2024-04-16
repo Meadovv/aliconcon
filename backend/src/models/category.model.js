@@ -7,12 +7,12 @@ const COLLECTION_NAME = 'categories';
 
 var categorySchema = new Schema({
     shopId: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        default: null
     },
-    userId : {
-        type: String,
-        required: true
+    parent: {
+        type: Schema.Types.ObjectId,
+        default: null
     },
     name: {
         type: String,

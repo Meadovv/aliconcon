@@ -2,9 +2,9 @@
 
 const UserService = require('./user.service');
 const ShopService = require('./shop.service');
+const AdminService = require('./admin.service');
 const KeyTokenService = require("./keyToken.service");
 const Utils = require("../utils");
-const ROLES = require("../constants/ROLES")
 
 const {
     BAD_REQUEST_ERROR,
@@ -32,7 +32,7 @@ class AccessService {
                 userId: newUser._id,
                 key: key
             });
-            
+
             const token = await Utils.AuthUtils.createToken({
                 payload: { userId: newUser._id },
                 key: key
@@ -53,16 +53,16 @@ class AccessService {
 
     static userLogin = async ({ email, password }) => {
         const foundUser = await UserService.findByEmail(email);
-        if(!foundUser) {
+        if (!foundUser) {
             throw new BAD_REQUEST_ERROR('User not registered!');
         }
 
-        if(!foundUser.active) {
+        if (!foundUser.active) {
             throw new BAD_REQUEST_ERROR('Account is banned!');
         }
 
         const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundUser.password);
-        if(!passwordMatch) {
+        if (!passwordMatch) {
             throw new UNAUTHENTICATED_ERROR('Authentication failed!');
         }
 
@@ -87,7 +87,7 @@ class AccessService {
 
     static getUser = async (userId) => {
         const foundUser = await UserService.findById(userId);
-        if(!foundUser) {
+        if (!foundUser) {
             throw new BAD_REQUEST_ERROR('User not found!');
         }
 
@@ -97,17 +97,17 @@ class AccessService {
         });
     }
 
-    static shopLogin = async ({ shop_email, user_email, password  }) => {
+    static shopLogin = async ({ shop_email, user_email, password }) => {
         const foundShop = await ShopService.findByEmail(shop_email);
-        if(!foundShop) {
+        if (!foundShop) {
             throw new BAD_REQUEST_ERROR('Shop not registered!');
         }
         const foundUser = foundShop.users.find(user => user.email === user_email);
-        if(!foundUser) {
+        if (!foundUser) {
             throw new BAD_REQUEST_ERROR('User not found!');
         }
         const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundUser.password);
-        if(!passwordMatch) {
+        if (!passwordMatch) {
             throw new UNAUTHENTICATED_ERROR('Authentication failed!');
         }
 
@@ -136,7 +136,7 @@ class AccessService {
 
     static shopRegister = async ({ name, email, password, phone, address }) => {
         const foundShop = await ShopService.findByEmail(email);
-        if(foundShop) {
+        if (foundShop) {
             throw new BAD_REQUEST_ERROR('Shop already registered!');
         }
 
@@ -151,7 +151,7 @@ class AccessService {
                 userId: newShop.users[0]._id,
                 key: key
             });
-            
+
             const token = await Utils.AuthUtils.createToken({
                 payload: { shopId: newShop._id, userId: newShop.users[0]._id, role: newShop.users[0].role },
                 key: key
@@ -175,19 +175,64 @@ class AccessService {
 
     }
 
-    static getShop = async ( jwt_decode ) => {
-
+    static getShop = async ({ shopId, userId }) => {
+        const foundShop = await ShopService.findById(shopId);
+        if (!foundShop) {
+            throw new BAD_REQUEST_ERROR('Shop not found!');
+        }
+        const foundUser = await foundShop.users.find(user => user._id.toString() === userId);
+        if (!foundUser) {
+            throw new BAD_REQUEST_ERROR('User not found!');
+        }
+        return {
+            ...Utils.OtherUtils.getInfoData({
+                fields: ['_id', 'name'],
+                object: foundShop
+            }),
+            userId: foundUser._id,
+            role: foundUser.role
+        }
     }
 
-    static adminLogin = async () => {
-
+    static adminLogin = async ({ email, password }) => {
+        const foundAdmin = await AdminService.findByEmail(email);
+        if (!foundAdmin) {
+            throw new BAD_REQUEST_ERROR('Admin not registered!');
+        }
+        const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundAdmin.password);
+        if (!passwordMatch) {
+            throw new UNAUTHENTICATED_ERROR('Authentication failed!');
+        }
+        const key = Utils.AuthUtils.createKey(64);
+        await KeyTokenService.createKeyToken({
+            userId: foundAdmin._id,
+            key: key
+        });
+        const token = await Utils.AuthUtils.createToken({
+            payload: { userId: foundAdmin._id },
+            key: key
+        });
+        return {
+            admin: Utils.OtherUtils.getInfoData({
+                fields: ['_id', 'name', 'email'],
+                object: foundAdmin
+            }),
+            token: token
+        }
     }
 
-    static getAdmin = async () => {
-
+    static getAdmin = async ({ userId }) => {
+        const foundAdmin = await AdminService.findById(userId);
+        if (!foundAdmin) {
+            throw new BAD_REQUEST_ERROR('Admin not found!');
+        }
+        return Utils.OtherUtils.getInfoData({
+            fields: ['_id', 'name', 'email'],
+            object: foundAdmin
+        });
     }
 
-    static logout = async (userId) => {
+    static logout = async ({ userId }) => {
         return await KeyTokenService.deleteByUserId(userId);
     }
 }
