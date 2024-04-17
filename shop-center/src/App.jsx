@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Error from './pages/Error';
 import CONFIG from './configs';
-import Home from './pages/MyShop';
 import Products from './pages/Products/Product_by_Cate';
 
 import Private from './components/Private';
@@ -11,6 +10,7 @@ import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Setting from './pages/Menu';
 import Categories from './pages/Category';
+import Menu from './pages/Menu';
 
 function App() {
     return (
@@ -34,7 +34,7 @@ function App() {
 
                 <Route path="/" element={
                     <Private>
-                        <Home />
+                        <Menu />
                     </Private>
                 } />
 

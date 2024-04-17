@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Popconfirm, Radio, Form, Input, Modal, message } from 'antd';
+import { Avatar } from 'antd';
 import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Categories from '../Category';
 import MyShop from '../MyShop';
 import Products from '../Products/Products';
 import Orders from '../Orders';
+import Settings from '../Setting';
 
 function MyInformation() {
     const { user } = useSelector((state) => state.user);
@@ -27,75 +28,6 @@ function MyInformation() {
         <div>
             <div>Name: {user.userName}</div>
             <div>Role: {role(user.role)}</div>
-        </div>
-    );
-}
-
-function Settings() {
-    const { user } = useSelector((state) => state.user);
-    const navigate = useNavigate();
-
-    return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-            }}
-        >
-            <div>
-                <div
-                    style={{
-                        display: user.role < 2 ? 'flex' : 'none',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <div>Account List</div>
-                    <div>
-                        <Button type="primary" size="large" ghost>
-                            Add Account
-                        </Button>
-                    </div>
-                </div>
-            </div>
-            <div
-                style={{
-                    display: user.role < 2 ? 'flex' : 'none',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <div>Danger Zone</div>
-                <Button type="primary" danger ghost size="large">
-                    Delete Shop
-                </Button>
-            </div>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                }}
-            >
-                <Popconfirm
-                    title="Logout"
-                    description="Are you sure to logout?"
-                    okText="Yes"
-                    cancelText="No"
-                    okButtonProps={{
-                        type: 'primary',
-                        danger: true,
-                        size: 'large',
-                    }}
-                    cancelButtonProps={{
-                        size: 'large',
-                        type: 'primary',
-                    }}
-                    onConfirm={() => navigate('/logout')}
-                >
-                    <Button type="primary" danger size="large">
-                        Logout
-                    </Button>
-                </Popconfirm>
-            </div>
         </div>
     );
 }
