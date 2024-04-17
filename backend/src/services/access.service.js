@@ -10,6 +10,7 @@ const {
     BAD_REQUEST_ERROR,
     UNAUTHENTICATED_ERROR,
 } = require('../core/error.response');
+const ROLES = require('../constants/ROLES');
 
 class AccessService {
 
@@ -209,7 +210,7 @@ class AccessService {
             key: key
         });
         const token = await Utils.AuthUtils.createToken({
-            payload: { userId: foundAdmin._id },
+            payload: { userId: foundAdmin._id, role: ROLES.SU },
             key: key
         });
         return {

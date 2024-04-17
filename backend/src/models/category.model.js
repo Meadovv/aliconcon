@@ -6,7 +6,7 @@ const DOCUMENT_NAME = 'aliconcon_categories';
 const COLLECTION_NAME = 'categories';
 
 var categorySchema = new Schema({
-    shopId: {
+    shop: {
         type: Schema.Types.ObjectId,
         default: null
     },
@@ -18,9 +18,9 @@ var categorySchema = new Schema({
         type: String,
         required: true
     },
-    thumbnail: {
-        type: String,
-        required: true
+    addBy: {
+        type: Schema.Types.ObjectId,
+        default: null
     },
     status: {
         type: String,

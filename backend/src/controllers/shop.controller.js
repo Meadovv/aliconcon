@@ -3,7 +3,8 @@ const {
 } = require('../core/success.response');
 const { getFields } = require('../utils/other.utils');
 const ShopService = require('../services/shop.service');
-
+const CategoryService = require('../services/category.service')
+const ProductService = require('../services/product.service')
 
 class ShopController {
     static addUser = async (req, res) => {
@@ -50,6 +51,70 @@ class ShopController {
                     object: req.body
                 }),
                 ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static createCategory = async (req, res) => {
+        new CREATED({
+            message: 'Category created successfully',
+            metadata: await CategoryService.createCategory({
+                ...getFields({
+                    fields: ['name', 'parent'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static deleteCategory = async (req, res) => {
+        new SUCCESS({
+            message: 'Category deleted successfully',
+            metadata: await CategoryService.deleteCategory({
+                ...getFields({
+                    fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static createProduct = async (req, res) => {
+        new CREATED({
+            message: 'Product created successfully',
+            metadata: await ProductService.createProduct({ ...req.body, ...req.jwt_decode })
+        }).send(res);
+    }
+
+    static deleteProduct = async (req, res) => {
+        new SUCCESS({
+            message: 'Product deleted successfully',
+            metadata: await ProductService.deleteProduct({ ...req.body, ...req.jwt_decode })
+        }).send(res);
+    }
+
+    static getCategories = async (req, res) => {
+        new SUCCESS({
+            message: 'Get shop categories successfully',
+            metadata: await CategoryService.getCategories({
+                ...getFields({
+                    fields: ['shopId'],
+                    object: req.body
+                })
+            })
+        }).send(res);
+    }
+
+    static getProducts = async (req, res) => {
+        new SUCCESS({
+            message: 'Get products successfully',
+            metadata: await CategoryService.getProducts({
+                ...getFields({
+                    fields: ['shopId', 'categoryId'],
+                    object: req.body
+                })
             })
         }).send(res);
     }

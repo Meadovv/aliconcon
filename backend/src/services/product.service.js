@@ -10,25 +10,21 @@ class ProductService {
         userId,
         name,
         description,
-        categories,
+        categoryId,
         price,
         thumbnail,
-        images,
-        attributes
     }) => {
         if(!shopId) {
             throw new UNAUTHENTICATED_ERROR('Shop ID not found!')
         }
         return await productModel.create({
-            shopId,
-            userId,
-            name,
-            description,
-            categories,
-            price,
-            thumbnail,
-            images,
-            attributes
+            shop: shopId,
+            addBy: userId,
+            name: name,
+            description: description,
+            category: categoryId,
+            price: price,
+            thumbnail: thumbnail,
         });
     }
 }

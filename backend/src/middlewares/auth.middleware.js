@@ -1,8 +1,7 @@
 'use strict'
 
-const { UNAUTHORIZED_ERROR, NOT_FOUND_ERROR, TOKEN_EXPIRED_ERROR } = require("../core/error.response");
+const { UNAUTHORIZED_ERROR, TOKEN_EXPIRED_ERROR } = require("../core/error.response");
 const KeyTokenService = require("../services/keyToken.service");
-const UserService = require('../services/user.service')
 const Utils = require("../utils");
 
 const HEADER = {
@@ -19,7 +18,7 @@ class AuthenticationMiddleware {
         if(!accessToken) throw new UNAUTHORIZED_ERROR('Header Authorization not found!');
     
         const keyStore = await KeyTokenService.findByUserId(userId);
-        if(!keyStore) throw new NOT_FOUND_ERROR('Key not found!');
+        if(!keyStore) throw new UNAUTHORIZED_ERROR('Unauthorized Error!');
     
         try {
             const decodedUser = await Utils.AuthUtils.verifyToken(accessToken, keyStore.key);
