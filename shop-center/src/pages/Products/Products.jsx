@@ -81,6 +81,7 @@ function Products() {
                     message.error(err.message);
                 });
         });
+        
         setFormMode({
             ...formMode,
             open: false,
@@ -101,18 +102,13 @@ function Products() {
                     })
                 }
                 okText="Add"
-                okButtonProps={{
-                    size: 'large',
-                }}
-                cancelButtonProps={{
-                    size: 'large',
-                }}
+                okButtonProps={{ size: 'large', }}
+                cancelButtonProps={{ size: 'large', }}
                 width={1000}
             >
                 <Form layout="vertical" form={form}>
                     <Form.Item
-                        label="Product Name"
-                        name="name"
+                        label="Product Name" name="name"
                         rules={[
                             {
                                 required: true,
@@ -123,9 +119,8 @@ function Products() {
                         <Input size="large" />
                     </Form.Item>
 
-                    <Form.Item
-                        label="Product Thumbnail"
-                        name="thumbnail"
+                    <Form.Item 
+                        label="Product Thumbnail" name="thumbnail"
                         rules={[
                             {
                                 required: true,
@@ -137,8 +132,7 @@ function Products() {
                     </Form.Item>
 
                     <Form.Item 
-                        label="Categories" 
-                        name="categories" 
+                        label="Product Categories"  name="categories" 
                         rules={[
                             { 
                                 required: true, 
@@ -147,27 +141,20 @@ function Products() {
                         ]}
                     >
                         <Checkbox.Group>
-                            {categories.map(categoryList => (
+                            {categoryList.map(category => (
                                 <Checkbox key={category._id} value={category._id}>{category.name}</Checkbox>
                             ))}
                         </Checkbox.Group>
                     </Form.Item>
                 </Form>
             </Modal>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <div
-                    style={{
-                        display: 'flex',
-                        gap: '10px',
-                    }}
+
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', }} >
+                <div style={{ display: 'flex', gap: '10px', }}
                 >
-                    <div>View Mode</div>
-                    <Radio.Group value={filter} onChange={(e) => setFilter(e.target.value)}>
+                    <div> View Mode </div>
+                    <Radio.Group  value={filter}  onChange={(e) => setFilter(e.target.value)}>
                         <Radio value="all">All</Radio>
                         <Radio value="draft">Draft</Radio>
                         <Radio value="published">Published</Radio>
@@ -175,8 +162,7 @@ function Products() {
                 </div>
 
                 <Button
-                    type="primary"
-                    ghost
+                    type="primary" ghost
                     onClick={() => {
                         setFormMode({
                             open: true,
@@ -184,70 +170,38 @@ function Products() {
                         });
                     }}
                 >
-                    Add
+                    Add new product 
                 </Button>
             </div>
 
-            <div
-                style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '20px',
-                }}
-            >
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', }} >
                 {productFilter &&
                     productFilter.map((product, index) => {
                         return (
                             <div
                                 key={index}
-                                style={{
-                                    padding: '20px',
-                                    display: 'flex',
-                                    gap: '10px',
-                                }}
+                                style={{ padding: '20px', display: 'flex', gap: '10px', }}
                             >
                                 <img
-                                    src={product.thumbnail}
-                                    alt="thumbnail"
-                                    style={{
-                                        width: '80px',
-                                    }}
+                                    src={product.thumbnail}  alt="thumbnail"
+                                    style={{ width: '80px', }}
                                 />
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '10px',
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            fontWeight: 'bold',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', }} >
+
+                                    <div style={{ display: 'flex', fontWeight: 'bold', justifyContent: 'center', }} >
                                         {product.name}
                                     </div>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                        }}
-                                    >
+
+                                    <div style={{ display: 'flex', }} >
                                         - Categories: {product.categories}
                                         - Attributes: {product.attributes}
                                         - Comments: {product.comments}
                                         - Price: {product.price}
                                         - Description: 
-                                        <div>{product.description}</div>
+                                        <div> {product.description} </div>
                                     </div>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '10px',
-                                        }}
-                                    >
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', }} >
                                         <Button
                                             type="primary"
                                             ghost
@@ -257,8 +211,7 @@ function Products() {
                                             {product.status === 'draft' ? 'Activate' : 'Deactivate'}
                                         </Button>
                                         <Button
-                                            type="primary"
-                                            ghost
+                                            type="primary"  ghost
                                             onClick={() => {
                                                 setFormMode({
                                                     open: true,
@@ -266,7 +219,7 @@ function Products() {
                                                 });
                                             }}
                                         >
-                                            Edit
+                                            Edit product
                                         </Button>
                                         <Button
                                             danger

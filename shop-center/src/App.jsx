@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Setting from './pages/Menu';
+import Categories from './pages/Category';
 
 function App() {
     return (
@@ -43,6 +44,9 @@ function App() {
                     </Private>
                 } />
 
+                <Route path="/categories" element={
+                        <Categories />
+                } />
 
 
                 <Route path="*" element={<Error error={CONFIG.ERROR.PAGE_NOT_FOUND}/>} />

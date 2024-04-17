@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Categories from '../Category';
 import MyShop from '../MyShop';
+import Products from '../Products/Products';
+import Orders from '../Orders';
 
 function MyInformation() {
     const { user } = useSelector((state) => state.user);

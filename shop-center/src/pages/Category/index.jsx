@@ -1,12 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
+import { Form, Modal, Input, Button, message, Radio } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 
 function Categories() {
-    const { user } = useSelector((state) => state.user);
-    const [categoryList, setCategoryList] = useState([]);
+    //const { user } = useSelector((state) => state.user);
+    //const [categoryList, setCategoryList] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState([]);
+
+    const categoryList = [
+        {
+            name: "Electronics",
+            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+            status: "published"
+        },
+        {
+            name: "Clothing",
+            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+            status: "published"
+        },
+        {
+            name: "Books",
+            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+            status: "draft"
+        }
+    ];
 
     const [reload, setReload] = useState(true);
     const [filter, setFilter] = useState('all');
@@ -21,6 +39,9 @@ function Categories() {
         message.success('Category delete successfully ' + categoryId);
     };
 
+
+
+    /*
     const getCategoryList = async () => {
         await axios
             .post(CONFIG.API + '/category/get-list-by-shop', {
@@ -34,10 +55,13 @@ function Categories() {
                 message.error(err.message);
             });
     };
+    */
 
+    /*
     useEffect(() => {
-        getCategoryList();
+        getCategoryList()
     }, [reload]);
+    */
 
     useEffect(() => {
         if (filter === 'all') {
@@ -119,6 +143,8 @@ function Categories() {
                     </Form.Item>
                 </Form>
             </Modal>
+
+
             <div
                 style={{
                     display: 'flex',
@@ -205,7 +231,7 @@ function Categories() {
                                             type="primary"
                                             ghost
                                             danger={category.status === 'draft' ? false : true}
-                                            disabled={user.role > 1}
+                                            /*disabled={user.role > 1}*/
                                         >
                                             {category.status === 'draft' ? 'Activate' : 'Deactivate'}
                                         </Button>
@@ -224,7 +250,7 @@ function Categories() {
                                         <Button
                                             danger
                                             onClick={() => deleteCategory(category._id)}
-                                            disabled={user.role > 1}
+                                            /*disabled={user.role > 1}*/
                                         >
                                             Delete
                                         </Button>
