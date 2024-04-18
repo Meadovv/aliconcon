@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
+import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { Form, Modal, Input, Button, message, Card, DatePicker, Space, InputNumber} from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 import Layout from '../../components/Layout';
 
 function Orders() {
     const { user } = useSelector((state) => state.user);
-    const [categoryList, setCategoryList] = useState([]);
-    const [categoryFilter, setCategoryFilter] = useState([]);
+    const [orderList, setOrderList] = useState([]);
+    const [orderFilter, setOrderFilter] = useState([]);
 
     const [reload, setReload] = useState(true);
     const [filter, setFilter] = useState('all');
@@ -15,21 +16,23 @@ function Orders() {
     const [form] = Form.useForm();
     const [formMode, setFormMode] = useState({
         open: false,
-        mode: 'add',
+        index: -1
     });
 
-    const deleteCategory = async (categoryId) => {
-        message.success('Category delete successfully ' + categoryId);
+    const [totalPrice, setTotalPrice] = useState(0);
+
+    const deleteOrder = async (orderId) => {
+        message.success('Order delete successfully ' + orderId);
     };
 
-    const getCategoryList = async () => {
+    const getOrderList = async () => {
         await axios
-            .post(CONFIG.API + '/category/get-list-by-shop', {
+            .post(CONFIG.API + '/order/get-list-by-shop', {
                 shopId: user.shopId,
             })
             .then((res) => {
                 message.success(res.data.message);
-                setCategoryList(res.data.metadata);
+                setOrderList(res.data.metadata);
             })
             .catch((err) => {
                 message.error(err.message);
@@ -37,19 +40,21 @@ function Orders() {
     };
 
     useEffect(() => {
-        getCategoryList();
+        getOrderList();
+        
     }, [reload]);
 
     useEffect(() => {
         if (filter === 'all') {
-            setCategoryFilter(categoryList);
-        } else setCategoryFilter(categoryList.filter((category) => category.status === filter));
-    }, [filter, categoryList]);
+            setOrderFilter(orderList);
+        } 
+        else setOrderFilter(orderList.filter((order) => order.status === filter));
+    }, [filter, orderList]);
 
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {
             await axios
-                .post(CONFIG.API + '/category/create', formValues, {
+                .post(CONFIG.API + '/order/create', formValues, {
                     headers: {
                         'x-client-id': localStorage.getItem('x-client-id'),
                         'x-token-id': localStorage.getItem('x-token-id'),
@@ -70,12 +75,27 @@ function Orders() {
         });
     };
 
+    const handleValuesChange = changedValues => {
+        if ('products' in changedValues) {
+            form.validateFields(['products'], (errors, values) => {
+                if (!errors) {
+                    const products = values.products || [];
+                    const calculatedTotalPrice = products.reduce((total, product) => {
+                        return total + (product.quantity * product.price);
+                    }, 0);
+                    setTotalPrice(calculatedTotalPrice);
+                    form.setFieldsValue({ price: calculatedTotalPrice });
+                }
+            });
+        }
+    };
+
     return (
         <Layout>
             <div>
                 <Modal
                     forceRender
-                    title={formMode.mode === 'add' ? 'Add Category' : 'Edit Category'}
+                    title={'Edit Product'}
                     open={formMode.open}
                     onOk={handleForm}
                     onCancel={() =>
@@ -84,157 +104,137 @@ function Orders() {
                             open: false,
                         })
                     }
-                    okText="Add"
-                    okButtonProps={{
-                        size: 'large',
-                    }}
-                    cancelButtonProps={{
-                        size: 'large',
-                    }}
+                    onValuesChange={handleValuesChange}
+                    okText="Submit"
+                    okButtonProps={{ size: 'large', }}
+                    cancelButtonProps={{ size: 'large', }}
                     width={1000}
                 >
-                    <Form layout="vertical" form={form}>
-                        <Form.Item
-                            label="Category Name"
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input category name!',
-                                },
-                            ]}
+                    <Form  layout="vertical"  form={form} initialValues={orderList[formMode.index]}> 
+                        <Form.Item 
+                            label="Order Name" name="name" 
+                            rules={[{ required: true, message: 'Please input order name!' }]}
                         >
-                            <Input size="large" />
+                            <Input />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Category Thumbnail"
-                            name="thumbnail"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input category thumbnail!',
-                                },
-                            ]}
-                        >
-                            <Input size="large" />
+                        <Form.Item label="Ship Organization" name="shipOrg">
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Payment Date" name="paymentDate">
+                            <DatePicker />
+                        </Form.Item>
+
+                        <Form.Item label="Create Date" name="createAt">
+                            <DatePicker />
+                        </Form.Item>
+
+                        <Form.List name="discounts">
+                            {(fields, { add, remove }) => (
+                                <>
+                                {fields.map((field) => (
+                                    <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                    <Form.Item
+                                        {...field}
+                                        name={[field.name, 'discountId']}
+                                        rules={[{ required: true, message: 'Please enter a discount ID' }]}
+                                    >
+                                        <Input placeholder="Discount ID" />
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                    </Space>
+                                ))}
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Add Discount
+                                    </Button>
+                                </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+
+                        <Form.Item name="status" hidden>
+                            <Input />
+                        </Form.Item>
+
+                        <Form.List name="products">
+                            {(fields, { add, remove }) => (
+                            <>
+                                {fields.map((field) => (
+                                <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                    <Form.Item
+                                        {...field}
+                                        name={[field.name, 'productId']}
+                                        rules={[{ required: true, message: 'Missing product ID' }]}
+                                    >
+                                        <Input placeholder="Product ID" />
+                                    </Form.Item>
+                                    <Form.Item
+                                        {...field}
+                                        name={[field.name, 'quantity']}
+                                        rules={[{ required: true, message: 'Missing quantity' }]}
+                                    >
+                                        <Input placeholder="Quantity" />
+                                    </Form.Item>
+                                    <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                </Space>
+                                ))}
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Add product
+                                    </Button>
+                                </Form.Item>
+                            </>
+                            )}
+                        </Form.List>
+
+                        <Form.Item label="Total Price" name="price" hidden>
+                            <InputNumber value={totalPrice} />
                         </Form.Item>
                     </Form>
                 </Modal>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <div
-                        style={{
-                            display: 'flex',
-                            gap: '10px',
-                        }}
+
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', }} >
+                    <div style={{ display: 'flex', gap: '10px', }}
                     >
-                        <div>View Mode</div>
-                        <Radio.Group value={filter} onChange={(e) => setFilter(e.target.value)}>
+                        <div> View Mode </div>
+                        <Radio.Group  value={filter}  onChange={(e) => setFilter(e.target.value)}>
                             <Radio value="all">All</Radio>
-                            <Radio value="draft">Draft</Radio>
-                            <Radio value="published">Published</Radio>
+                            <Radio value="Paid">Paid</Radio>
+                            <Radio value="Unpaid">Unpaid</Radio>
+                            <Radio value="Shipping">Shipping</Radio>
                         </Radio.Group>
                     </div>
-
-                    <Button
-                        type="primary"
-                        ghost
-                        onClick={() => {
-                            setFormMode({
-                                open: true,
-                                mode: 'add',
-                            });
-                        }}
-                    >
-                        Add
-                    </Button>
                 </div>
 
-                <div
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '20px',
-                    }}
-                >
-                    {categoryFilter &&
-                        categoryFilter.map((category, index) => {
-                            return (
-                                <div
-                                    key={index}
-                                    style={{
-                                        padding: '20px',
-                                        display: 'flex',
-                                        gap: '10px',
-                                    }}
-                                >
-                                    <img
-                                        src={category.thumbnail}
-                                        alt="thumbnail"
-                                        style={{
-                                            width: '80px',
-                                        }}
-                                    />
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '10px',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                fontWeight: 'bold',
-                                                justifyContent: 'center',
-                                            }}
-                                        >
-                                            {category.name}
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '10px',
-                                            }}
-                                        >
-                                            <Button
-                                                type="primary"
-                                                ghost
-                                                danger={category.status === 'draft' ? false : true}
-                                                disabled={user.role > 1}
-                                            >
-                                                {category.status === 'draft' ? 'Activate' : 'Deactivate'}
-                                            </Button>
-                                            <Button
-                                                type="primary"
-                                                ghost
-                                                onClick={() => {
-                                                    setFormMode({
-                                                        open: true,
-                                                        mode: 'edit',
-                                                    });
-                                                }}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                danger
-                                                onClick={() => deleteCategory(category._id)}
-                                                disabled={user.role > 1}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+                    {orderFilter && orderFilter.map((order, index) => (
+                        <Card key={index} style={{ width: 300 }}>
+                            <Card title={order.name} />
+                            <p><b>Products:</b></p>
+                            <ul>
+                                {order.products.map(product => (
+                                    <li key={product.productId}>
+                                        {product.productId}: {product.quantity}
+                                    </li>
+                                ))}
+                            </ul>
+                            <p><b>Discounts:</b> {order.discounts.map(discount => discount.discountId).join(', ')}</p>
+                            <p><b>Price:</b> {order.price}</p>
+                            <p><b>Status:</b> {order.status}</p>
+                            <p><b>Create date:</b> {order.createAt}</p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <Button type="primary" onClick={() => setFormMode({index: index, open: true})}>
+                                    Edit 
+                                </Button>
+                                <Button danger onClick={() => deleteOrder(order._id)} disabled={user.role > 1}>
+                                    Delete
+                                </Button>
+                            </div>
+                        </Card>
+                    ))}
                 </div>
             </div>
         </Layout>
