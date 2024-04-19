@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import "./Navbar.scss";
+import "./index.scss";
 import {Link} from "react-router-dom";
 import { useSelector, useDispatch} from 'react-redux';
-import { setSidebarOn } from '../../../reducer/actions/sidebar.slice';
-import { getAllCategories } from '../../../reducer/actions/category.slide';
-import { getAllCarts, getCartItemsCount, getCartTotal } from '../../../reducer/actions/cart.slice';
+import { setSidebarOn } from '../../reducer/actions/sidebar.slice';
+import { getAllCategories } from '../../reducer/actions/category.slide';
+import { getAllCarts, getCartItemsCount, getCartTotal } from '../../reducer/actions/cart.slice';
 import CartModal from "../CartModal/CartModal";
 
 const Navbar = () => {
