@@ -2,22 +2,30 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_product_attribute';
-const COLLECTION_NAME = 'attributes';
+const DOCUMENT_NAME = 'aliconcon_product_variation';
+const COLLECTION_NAME = 'variations';
 
 const schema = new Schema({
-    product:{
+    product: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_products',
         required: true
     },
     name:{
         type: String,
         required: true
     },
-    type: {
-        type: String,
-        enum: ['fixed', 'variant'],
-        default: 'fixed'
+    variation_tier_idx: {
+        type: Array,
+        default: []
+    },
+    price: {
+        type: Number,
+        required: true,
+    },
+    quantity: {
+        type: Number,
+        default: 0
     },
 }, {
     timestamps: true,

@@ -8,6 +8,7 @@ const COLLECTION_NAME = 'categories';
 var categorySchema = new Schema({
     shop: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_shops',
         default: null
     },
     parent: {

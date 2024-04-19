@@ -5,6 +5,7 @@ const { getFields } = require('../utils/other.utils');
 const ShopService = require('../services/shop.service');
 const CategoryService = require('../services/category.service')
 const ProductService = require('../services/product.service')
+const VariationService = require('../services/variation.service')
 
 class ShopController {
     static addUser = async (req, res) => {
@@ -101,7 +102,7 @@ class ShopController {
             metadata: await CategoryService.getCategories({
                 ...getFields({
                     fields: ['shopId'],
-                    object: req.body
+                    object: req.query
                 })
             })
         }).send(res);
@@ -113,6 +114,18 @@ class ShopController {
             metadata: await CategoryService.getProducts({
                 ...getFields({
                     fields: ['shopId', 'categoryId'],
+                    object: req.query
+                })
+            })
+        }).send(res);
+    }
+
+    static getVariation = async (req, res) => {
+        new SUCCESS({
+            message: 'Get variation successfully',
+            metadata: await VariationService.getVariation({
+                ...getFields({
+                    fields: ['productId', 'variation_tier_idx'],
                     object: req.body
                 })
             })

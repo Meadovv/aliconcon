@@ -1,6 +1,6 @@
 'use strict'
 
-const { model, Schema, Mongoose } = require('mongoose');
+const { model, Schema } = require('mongoose');
 
 const DOCUMENT_NAME = 'aliconcon_products';
 const COLLECTION_NAME = 'products';
@@ -26,6 +26,7 @@ const productSchema = new Schema({
     },
     category:{
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_categories',
         required: true
     },
     price: {
@@ -45,6 +46,10 @@ const productSchema = new Schema({
         enum: ['draft', 'published'],
         default: 'draft'
     },
+    variations: {
+        type: Array,
+        default: []
+    }
 }, {
     timestamps: true,
     collection: COLLECTION_NAME

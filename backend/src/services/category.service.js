@@ -46,12 +46,15 @@ class CategoryService {
         }
         if(shopId === 'all') {
             return await categoryModel.find({
-                status: 'published'
+                status: 'draft',
+                shop: null,
+                parent: null
             }).lean();
         }
+        console.log(shopId)
         return await categoryModel.find({
-            shopId: shopId,
-            status: 'published'
+            shop: shopId,
+            status: 'draft'
         }).lean();
     }
 

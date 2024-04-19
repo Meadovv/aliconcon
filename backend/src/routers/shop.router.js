@@ -8,8 +8,9 @@ const ErrorMiddleware = require('../middlewares/error.middleware');
 const router = express.Router();
 
 // Public
-router.post('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCategories));
-router.post('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProducts));
+router.get('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCategories));
+router.get('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProducts));
+router.post('/get-variation', ErrorMiddleware.asyncHandler(ShopController.getVariation));
 
 // Authentication
 router.use(ErrorMiddleware.asyncHandler(AuthenticationMiddleware.authentication));
@@ -20,7 +21,7 @@ router.post('/delete-user', ErrorMiddleware.asyncHandler(ShopController.deleteUs
 router.post('/get-user-list', ErrorMiddleware.asyncHandler(ShopController.getUserList));
 router.post('/change-password', ErrorMiddleware.asyncHandler(ShopController.changePassword));
 
-router.post('/create-product', ErrorMiddleware.asyncHandler(ShopController.createProduct)) ;
+router.post('/create-product', ErrorMiddleware.asyncHandler(ShopController.createProduct));
 router.post('/delete-product', ErrorMiddleware.asyncHandler(ShopController.deleteProduct));
 
 router.post('/create-category', ErrorMiddleware.asyncHandler(ShopController.createCategory));
