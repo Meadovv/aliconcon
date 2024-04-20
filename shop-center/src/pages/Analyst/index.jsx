@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 
-function MyShop (){
+function Analyst (){
 
     // Mock data for demonstration purposes
     const salesData = [
@@ -73,4 +73,4 @@ function MyShop (){
     );
 };
 
-export default MyShop;
+export default Analyst;

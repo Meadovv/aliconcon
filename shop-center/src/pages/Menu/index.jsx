@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
-import Layout from '../../components/Layout';
-import { UserOutlined } from '@ant-design/icons';
+import { Layout, Menu as AntMenu, Avatar } from 'antd';
+import CustomLayout from '../../components/Layout';
+import {
+    UserOutlined,
+    ShopOutlined,
+    InfoCircleOutlined,
+    AppstoreOutlined,
+    ContainerOutlined,
+    OrderedListOutlined,
+    SettingOutlined,
+  } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Categories from '../Category';
-import MyShop from '../MyShop';
+import Analyst from '../Analyst';
 import Products from '../Products/Products';
 import Orders from '../Orders';
 import Settings from '../Setting';
@@ -32,119 +41,116 @@ function MyInformation() {
     );
 }
 
+const { Sider, Content } = Layout;
+const { SubMenu } = AntMenu;
+
 const menus = [
-    {
-        label: 'My Shop',
-        link: 'my-shop',
-        content: <MyShop />,
-    },
-    {
-        label: 'My Information',
-        link: 'my-information',
-        content: <MyInformation />,
-    },
-    {
-        label: 'Products',
-        link: 'products',
-        content: <Products />,
-    },
-    {
-        label: 'Categories',
-        link: 'categories',
-        content: <Categories />,
-    },
-    {
-        label: 'Orders',
-        link: 'orders',
-        content: <Orders />,
-    },
-    {
-        label: 'Settings',
-        link: 'settings',
-        content: <Settings />,
-    },
+  {
+    label: 'My Shop',
+    link: 'my-shop',
+    icon: <ShopOutlined />,
+    content: <Analyst />,
+  },
+  {
+    label: 'My Information',
+    link: 'my-information',
+    icon: <InfoCircleOutlined />,
+    content: <MyInformation />,
+  },
+  {
+    label: 'Products',
+    link: 'products',
+    icon: <AppstoreOutlined />,
+    content: <Products />,
+  },
+  {
+    label: 'Categories',
+    link: 'categories',
+    icon: <ContainerOutlined />,
+    content: <Categories />,
+  },
+  {
+    label: 'Orders',
+    link: 'orders',
+    icon: <OrderedListOutlined />,
+    content: <Orders />,
+  },
+  {
+    label: 'Settings',
+    link: 'settings',
+    icon: <SettingOutlined />,
+    content: <Settings />,
+  },
 ];
 
 function Menu() {
     const { user } = useSelector((state) => state.user);
     const [currentMenu, setCurrentMenu] = useState(menus[0]);
+    const [collapsed, setCollapsed] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const menuLink = searchParams.get('menu');
-        if (menuLink) {
-            setCurrentMenu(menus.filter((item) => item.link === menuLink)[0]);
-        } else {
-            setCurrentMenu(menus[0]);
-        }
-    }, []);
+useEffect(() => {
+    const menuLink = searchParams.get('menu');
+    if (menuLink) {
+      setCurrentMenu(menus.find((item) => item.link === menuLink));
+    } else {
+      setCurrentMenu(menus[0]);
+    }
+}, []);
 
-    useEffect(() => {
-        navigate(`/setting?menu=${currentMenu.link}`);
-    }, [currentMenu]);
+  const handleMenuClick = (menu) => {
+    setCurrentMenu(menu);
+    navigate(`/?menu=${menu.link}`);
+  };
 
-    return (
-        <Layout>
-            <div className="global-container profile-container">
-                <div className="left-side">
-                    <div
-                        className="avatar-field"
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                        }}
-                    >
-                        <Avatar size={100} icon={<UserOutlined />} />
-                        <div
-                            style={{
-                                marginLeft: '10px',
-                                fontSize: '24px',
-                                fontWeight: 'bold',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                            }}
-                        >
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+
+return (
+    <CustomLayout>
+        <Sider collapsible collapsed={collapsed} onCollapse={toggleCollapsed}>
+            <div className="avatar-field">
+                <Avatar size={50} icon={<UserOutlined />} />
+                {!collapsed && (
+                    <div>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff', marginTop: '5px' }}>
                             {user?.shopName}
                         </div>
-                        <div
-                            style={{
-                                marginLeft: '10px',
-                                fontSize: '20px',
-                                fontWeight: 'bold',
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                color: 'gray',
-                            }}
-                        >
-                            {user?.userName}
-                        </div>
+                        <div style={{ fontSize: '14px', color: '#fff', marginTop: '2px' }}>{user?.userName}</div>
                     </div>
-                    <div className="menu">
-                        {menus &&
-                            menus.map((item) => {
-                                return (
-                                    <div
-                                        className="menu-item"
-                                        key={item.link}
-                                        style={{
-                                            color: item.link === currentMenu.link ? 'var(--primary-color)' : 'black',
-                                        }}
-                                        onClick={() =>
-                                            setCurrentMenu(menus.filter((menu) => menu.link === item.link)[0])
-                                        }
-                                    >
-                                        {item.label}
-                                    </div>
-                                );
-                            })}
-                    </div>
-                </div>
-                <div className="right-side">{currentMenu.content}</div>
+                )}    
             </div>
-        </Layout>
-    );
+            <AntMenu
+                theme="dark"
+                mode="inline"
+                selectedKeys={[currentMenu.link]}
+                defaultOpenKeys={['sub1']}
+                inlineCollapsed={collapsed}
+            >
+                {menus.map((menu) =>
+                    menu.subMenus ? (
+                        <SubMenu key={menu.link} title={menu.label} icon={menu.icon}>
+                            {menu.subMenus.map((subMenu) => (
+                                <AntMenu.Item key={subMenu.link} onClick={() => handleMenuClick(subMenu)}>
+                                    {subMenu.label}
+                                </AntMenu.Item>
+                            ))}
+                        </SubMenu>
+                    ) : (
+                        <AntMenu.Item key={menu.link} icon={menu.icon} onClick={() => handleMenuClick(menu)}>
+                            {menu.label}
+                        </AntMenu.Item>
+                    )
+                )}
+            </AntMenu>
+        </Sider>
+        <Content style={{ marginLeft: collapsed ? 80 : 200, padding: '20px' }}>
+            {currentMenu.content}
+        </Content>
+    </CustomLayout>
+  );
 }
 
 export default Menu;
