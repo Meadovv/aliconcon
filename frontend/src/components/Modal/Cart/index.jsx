@@ -1,7 +1,7 @@
 import React from 'react';
 import './index.scss';
-import { shopping_cart } from '../../utils/images';
-import { formatPrice } from '../../utils/helpers';
+import { shopping_cart } from '../../../utils/images';
+import { formatPrice } from '../../../utils/helpers';
 
 const CartModal = ({ carts }) => {
     return (

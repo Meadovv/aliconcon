@@ -5,7 +5,7 @@ import { useSelector, useDispatch} from 'react-redux';
 import { setSidebarOn } from '../../reducer/actions/sidebar.slice';
 import { getAllCategories } from '../../reducer/actions/category.slide';
 import { getAllCarts, getCartItemsCount, getCartTotal } from '../../reducer/actions/cart.slice';
-import CartModal from "../CartModal/CartModal";
+import CartModal from "../Modal/Cart";
 
 const Navbar = () => {
   const dispatch = useDispatch();
