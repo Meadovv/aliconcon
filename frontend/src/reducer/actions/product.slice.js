@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BASE_URL } from "../../utils/apiURL";
+import { BACKEND_API } from "../../apis";
 import { STATUS } from "../../utils/status";
 
 const initialState = {
@@ -45,14 +45,14 @@ const productSlice = createSlice({
 
 // for getting the products list with limited numbers
 export const fetchAsyncProducts = createAsyncThunk('products/fetch', async(limit) => {
-    const response = await fetch(`${BASE_URL}products?limit=${limit}`);
+    const response = await fetch(`${BACKEND_API}products?limit=${limit}`);
     const data = await response.json();
     return data.products;
 });
 
 // getting the single product data also
 export const fetchAsyncProductSingle = createAsyncThunk('product-single/fetch', async(id) => {
-    const response = await fetch(`${BASE_URL}products/${id}`);
+    const response = await fetch(`${BACKEND_API}products/${id}`);
     const data = await response.json();
     return data;
 });

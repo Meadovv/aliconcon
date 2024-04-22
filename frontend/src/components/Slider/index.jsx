@@ -1,9 +1,10 @@
 import React from 'react';
 import './index.scss';
-import { sliderImgs } from '../../utils/images';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+
+const sliderNumber = 2;
 
 const HeaderSlider = () => {
     let settings = {
@@ -22,12 +23,13 @@ const HeaderSlider = () => {
             <div className="container">
                 <div className="slider-content overflow-x-hidden">
                     <Slider {...settings}>
-                        <div className="slider-item">
-                            <img src={sliderImgs[0]} alt="" />
-                        </div>
-                        <div className="slider-item">
-                            <img src={sliderImgs[1]} alt="" />
-                        </div>
+                        {Array.from({ length: sliderNumber }).map((_, index) => {
+                            return (
+                                <div className="slider-item" key={index}>
+                                    <img src={`/images/slider/${index + 1}.jpg`} alt="" />
+                                </div>
+                            );
+                        })}
                     </Slider>
                 </div>
             </div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import './index.scss';
-import { shopping_cart } from '../../../utils/images';
 import { formatPrice } from '../../../utils/helpers';
 
 const CartModal = ({ carts }) => {
@@ -31,7 +30,7 @@ const CartModal = ({ carts }) => {
                 </div>
             ) : (
                 <div className="flex flex-column align-center justify-center cart-modal-empty">
-                    <img src={shopping_cart} alt="" className="" />
+                    <img src="/images/shopping_cart.png" alt="" className="" />
                     <h6 className="text-dark fw-4">No products yet</h6>
                 </div>
             )}

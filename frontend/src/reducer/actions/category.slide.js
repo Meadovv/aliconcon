@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {BASE_URL} from "../../utils/apiURL";
-import {STATUS} from "../../utils/status";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { BACKEND_API } from "../../apis";
+import { STATUS } from "../../utils/status";
 
 const initialState = {
     categories: [],
@@ -44,13 +44,13 @@ const categorySlice = createSlice({
 });
 
 export const fetchAsyncCategories = createAsyncThunk('categories/fetch', async() => {
-    const response = await fetch(`${BASE_URL}products/categories`);
+    const response = await fetch(`${BACKEND_API}products/categories`);
     const data = await response.json();
     return data;
 });
 
 export const fetchAsyncProductsOfCategory = createAsyncThunk('category-products/fetch', async(category) => {
-    const response = await fetch(`${BASE_URL}products/category/${category}`);
+    const response = await fetch(`${BACKEND_API}products/category/${category}`);
     const data = await response.json();
     return data.products;
 });
