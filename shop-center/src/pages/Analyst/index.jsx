@@ -1,8 +1,10 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Layout from '../../components/Layout';
 
 function Analyst (){
 
+    const { user } = useSelector((state) => state.user);
     // Mock data for demonstration purposes
     const salesData = [
         { month: 'January', revenue: 1000 },
@@ -23,10 +25,9 @@ function Analyst (){
     ];
 
     return (
-        
-    <Layout>
-        <div>Shop ID: {user.shopId}</div>
-        <div>Shop Name: {user.shopName}</div>
+    <div>  
+        <div>Shop ID: "the ID" </div>
+        <div>Shop Name: "the name"</div>
 
         <div>
             <h2>Dashboard</h2>
@@ -69,7 +70,7 @@ function Analyst (){
                 </table>
             </div>
         </div>
-    </Layout>
+     </div>
     );
 };
 

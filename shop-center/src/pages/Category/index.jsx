@@ -3,9 +3,13 @@ import axios from 'axios';
 import { Form, Modal, Input, Button, message, Radio } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 import Layout from '../../components/Layout';
+import { useSelector } from 'react-redux';
+import { selectShop, selectToken } from '../../reducer/actions/shop.slice';
 
 function Categories() {
-    const { user } = useSelector((state) => state.user);
+    const shop = useSelector(selectShop);
+    const token = useSelector(selectToken);
+
     const [categoryList, setCategoryList] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState([]);
 
@@ -47,7 +51,7 @@ function Categories() {
     const getCategoryList = async () => {
         await axios
             .post(CONFIG.API + '/category/get-list-by-shop', {
-                shopId: user.shopId,
+                shopId: shop._id,
             })
             .then((res) => {
                 message.success(res.data.message);
@@ -234,7 +238,7 @@ function Categories() {
                                                 type="primary"
                                                 ghost
                                                 danger={category.status === 'draft' ? false : true}
-                                                disabled={user.role > 1}
+                                                disabled={shop.role > 1}
                                             >
                                                 {category.status === 'draft' ? 'Activate' : 'Deactivate'}
                                             </Button>
@@ -253,7 +257,7 @@ function Categories() {
                                             <Button
                                                 danger
                                                 onClick={() => deleteCategory(category._id)}
-                                                disabled={user.role > 1}
+                                                disabled={shop.role > 1}
                                             >
                                                 Delete
                                             </Button>

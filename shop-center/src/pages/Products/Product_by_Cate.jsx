@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
-import Layout from '../../components/Layout';
+import { useSelector } from 'react-redux';
+import { selectShop } from '../../reducer/actions/shop.slice';
 
 function Product (categoryId) {
-    const { user } = useSelector((state) => state.user);
+    const { shop } = useSelector(selectShop);
     const [productList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
 
@@ -25,7 +26,7 @@ function Product (categoryId) {
     const getProductList = async () => {
         await axios
             .post(CONFIG.API + '/product/get-by-shop', {
-                shopId: user.shopId,
+                shopId: shop._id,
                 category: categoryId
             })
             .then((res) => {
@@ -72,7 +73,7 @@ function Product (categoryId) {
     };
 
     return (
-        <Layout>
+        <div>
             <div>
                 <Modal
                     forceRender
@@ -227,7 +228,7 @@ function Product (categoryId) {
                                                 type="primary"
                                                 ghost
                                                 danger={product.status === 'draft' ? false : true}
-                                                disabled={user.role > 1}
+                                                disabled={shop.role > 1}
                                             >
                                                 {product.status === 'draft' ? 'Activate' : 'Deactivate'}
                                             </Button>
@@ -246,7 +247,7 @@ function Product (categoryId) {
                                             <Button
                                                 danger
                                                 onClick={() => deleteProduct(product._id)}
-                                                disabled={user.role > 1}
+                                                disabled={shop.role > 1}
                                             >
                                                 Delete
                                             </Button>
@@ -257,7 +258,7 @@ function Product (categoryId) {
                         })}
                 </div>
             </div>
-        </Layout>
+        </div>
     );
 }
 

@@ -10,7 +10,6 @@ import {
     OrderedListOutlined,
     SettingOutlined,
   } from '@ant-design/icons';
-import { Avatar } from 'antd';
 import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Categories from '../Category';
@@ -18,9 +17,10 @@ import Analyst from '../Analyst';
 import Products from '../Products/Products';
 import Orders from '../Orders';
 import Settings from '../Setting';
+import { selectShop } from '../../reducer/actions/shop.slice';
 
 function MyInformation() {
-    const { user } = useSelector((state) => state.user);
+    const { shop } = useSelector(selectShop);
     const role = (role) => {
         switch (role) {
             case 0:
@@ -35,8 +35,8 @@ function MyInformation() {
     };
     return (
         <div>
-            <div>Name: {user.userName}</div>
-            <div>Role: {role(user.role)}</div>
+            <div>Name: ...</div>
+            <div>Role: ...</div>
         </div>
     );
 }
@@ -84,73 +84,78 @@ const menus = [
 ];
 
 function Menu() {
-    const { user } = useSelector((state) => state.user);
+    const { shop } = useSelector(selectShop);
     const [currentMenu, setCurrentMenu] = useState(menus[0]);
     const [collapsed, setCollapsed] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+    let menuLink = searchParams.get('menu');
 
-useEffect(() => {
-    const menuLink = searchParams.get('menu');
-    if (menuLink) {
-      setCurrentMenu(menus.find((item) => item.link === menuLink));
-    } else {
-      setCurrentMenu(menus[0]);
-    }
-}, []);
+    useEffect(() => {
+        //menuLink = searchParams.get('menu');
+        if (menuLink) {
+          setCurrentMenu(menus.find((item) => item.link === menuLink));
+        } else {
+          setCurrentMenu(menus[0]);
+        }
+    }, [menuLink]);
 
-  const handleMenuClick = (menu) => {
-    setCurrentMenu(menu);
-    navigate(`/?menu=${menu.link}`);
-  };
+    const handleMenuClick = (menu) => {
+      setCurrentMenu(menu);
+      navigate(`/?menu=${menu.link}`);
+    };
 
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
+    const toggleCollapsed = () => {
+      setCollapsed(!collapsed);
+    };
 
-return (
-    <CustomLayout>
-        <Sider collapsible collapsed={collapsed} onCollapse={toggleCollapsed}>
-            <div className="avatar-field">
-                <Avatar size={50} icon={<UserOutlined />} />
-                {!collapsed && (
-                    <div>
-                        <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff', marginTop: '5px' }}>
-                            {user?.shopName}
-                        </div>
-                        <div style={{ fontSize: '14px', color: '#fff', marginTop: '2px' }}>{user?.userName}</div>
+    return (
+        <CustomLayout>
+            <div style={{ display: 'flex' }}> {/* Ensure side-by-side layout */}
+                <Sider 
+                    collapsible 
+                    collapsed={collapsed} 
+                    onCollapse={toggleCollapsed}
+                >
+                    <div className="avatar-field">
+                        <Avatar size={50} icon={<UserOutlined />} />
+                        {!collapsed && (
+                            <div>
+                                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff', marginTop: '5px' }}>
+                                    Shop name: {shop?.name}
+                                </div>
+                            </div>
+                        )}    
                     </div>
-                )}    
-            </div>
-            <AntMenu
-                theme="dark"
-                mode="inline"
-                selectedKeys={[currentMenu.link]}
-                defaultOpenKeys={['sub1']}
-                inlineCollapsed={collapsed}
-            >
-                {menus.map((menu) =>
-                    menu.subMenus ? (
-                        <SubMenu key={menu.link} title={menu.label} icon={menu.icon}>
-                            {menu.subMenus.map((subMenu) => (
-                                <AntMenu.Item key={subMenu.link} onClick={() => handleMenuClick(subMenu)}>
-                                    {subMenu.label}
+                    <AntMenu
+                        theme="dark"
+                        mode="inline"
+                        selectedKeys={[currentMenu.link]}
+                        defaultOpenKeys={['sub1']}
+                    >
+                        {menus.map((menu) =>
+                            menu.subMenus ? (
+                                <SubMenu key={menu.link} title={menu.label} icon={menu.icon}>
+                                    {menu.subMenus.map((subMenu) => (
+                                        <AntMenu.Item key={subMenu.link} onClick={() => handleMenuClick(subMenu)}>
+                                            {subMenu.label}
+                                        </AntMenu.Item>
+                                    ))}
+                                </SubMenu>
+                            ) : (
+                                <AntMenu.Item key={menu.link} icon={menu.icon} onClick={() => handleMenuClick(menu)}>
+                                    {menu.label}
                                 </AntMenu.Item>
-                            ))}
-                        </SubMenu>
-                    ) : (
-                        <AntMenu.Item key={menu.link} icon={menu.icon} onClick={() => handleMenuClick(menu)}>
-                            {menu.label}
-                        </AntMenu.Item>
-                    )
-                )}
-            </AntMenu>
-        </Sider>
-        <Content style={{ marginLeft: collapsed ? 80 : 200, padding: '20px' }}>
-            {currentMenu.content}
-        </Content>
-    </CustomLayout>
-  );
+                            )
+                        )}
+                    </AntMenu>
+                </Sider>
+                <Content style={{ marginLeft: collapsed ? 80 : 200, padding: '20px' }}>
+                    {currentMenu.content}
+                </Content>
+            </div>
+        </CustomLayout>
+    );
 }
 
 export default Menu;

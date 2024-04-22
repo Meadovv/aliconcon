@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { Form, Modal, Input, Button, message, Card, DatePicker, Space, InputNumber} from 'antd'; // Import Form, Input, Button from Ant Design
+import { Radio, Form, Modal, Input, Button, message, Card, DatePicker, Space, InputNumber} from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
-import Layout from '../../components/Layout';
+import { useSelector } from 'react-redux';
+import { selectShop } from '../../reducer/actions/shop.slice';
 
 function Orders() {
-    const { user } = useSelector((state) => state.user);
+    const { shop } = useSelector(selectShop);
+
     const [orderList, setOrderList] = useState([]);
     const [orderFilter, setOrderFilter] = useState([]);
 
@@ -28,7 +30,7 @@ function Orders() {
     const getOrderList = async () => {
         await axios
             .post(CONFIG.API + '/order/get-list-by-shop', {
-                shopId: user.shopId,
+                shopId: shop._id,
             })
             .then((res) => {
                 message.success(res.data.message);
@@ -91,7 +93,7 @@ function Orders() {
     };
 
     return (
-        <Layout>
+        <div>
             <div>
                 <Modal
                     forceRender
@@ -237,7 +239,7 @@ function Orders() {
                     ))}
                 </div>
             </div>
-        </Layout>
+        </div>
     );
 }
 

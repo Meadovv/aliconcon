@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
+import {Checkbox, Radio, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
-import Layout from '../../components/Layout';
+import { selectShop } from '../../reducer/actions/shop.slice';
 
 function Products() {
-    const { user } = useSelector((state) => state.user);
+    const { shop } = useSelector(selectShop);
     const [productyList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
@@ -26,7 +27,7 @@ function Products() {
     const getProductList = async () => {
         await axios
             .post(CONFIG.API + '/product/get-list-by-shop', {
-                shopId: user.shopId,
+                shopId: shop._id,
             })
             .then((res) => {
                 message.success(res.data.message);
@@ -40,7 +41,7 @@ function Products() {
     const getCategoryList = async () => {
         await axios
             .post(CONFIG.API + '/category/get-list-by-shop', {
-                shopId: user.shopId,
+                shopId: shop._id,
             })
             .then((res) => {
                 message.success(res.data.message);
@@ -89,7 +90,7 @@ function Products() {
     };
 
     return (
-        <Layout>
+        <div>
                 <div>
                     <Modal
                         forceRender
@@ -207,7 +208,7 @@ function Products() {
                                                     type="primary"
                                                     ghost
                                                     danger={product.status === 'draft' ? false : true}
-                                                    disabled={user.role > 1}
+                                                    disabled={shop.role > 1}
                                                 >
                                                     {product.status === 'draft' ? 'Activate' : 'Deactivate'}
                                                 </Button>
@@ -225,7 +226,7 @@ function Products() {
                                                 <Button
                                                     danger
                                                     onClick={() => deleteProduct(product._id)}
-                                                    disabled={user.role > 1}
+                                                    disabled={shop.role > 1}
                                                 >
                                                     Delete
                                                 </Button>
@@ -236,7 +237,7 @@ function Products() {
                             })}
                     </div>
                 </div>
-        </Layout>
+        </div>
     );
 }
 
