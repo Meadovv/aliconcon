@@ -7,7 +7,8 @@ import { STATUS } from '../../utils/status';
 import Loader from '../../components/Loader';
 import { formatPrice } from '../../utils/helpers';
 import { addToCart, getCartMessageStatus, setCartMessageOff, setCartMessageOn } from '../../reducer/actions/cart.slice';
-import CartMessage from '../../components/CartMessage';
+
+import { message } from 'antd';
 
 const ProductSinglePage = () => {
     const { id } = useParams();
@@ -195,8 +196,6 @@ const ProductSinglePage = () => {
                     </div>
                 </div>
             </div>
-
-            {cartMessageStatus && <CartMessage />}
         </main>
     );
 };
