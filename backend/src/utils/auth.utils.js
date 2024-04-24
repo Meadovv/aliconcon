@@ -1,11 +1,12 @@
 'use strict'
 
+const app_config = require('../configs/app.config');
 const JWT = require('jsonwebtoken');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 class AuthUtils {
     static createToken = async ({ payload, key }) => {
-        const accessToken = JWT.sign(payload, key, { expiresIn: '1 day' });
+        const accessToken = JWT.sign(payload, key, { expiresIn: app_config.jwt.expired });
         return accessToken;
     }
 

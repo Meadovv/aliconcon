@@ -1,6 +1,7 @@
 'use strict'
 
-const { Schema, model} = require('mongoose');
+const app_config = require('../configs/app.config');
+const { Schema, model } = require('mongoose');
 
 const DOCUMENT_NAME = 'aliconcon_key';
 const COLLECTION_NAME = 'keys';
@@ -14,7 +15,12 @@ var keyTokenSchema = new Schema({
     key: {
         type: String,
         required: true
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        index: { expires: app_config.jwt.expired},
+    },
 }, {
     timestamps: true,
     collection: COLLECTION_NAME

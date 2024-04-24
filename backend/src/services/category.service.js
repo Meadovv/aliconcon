@@ -1,5 +1,6 @@
 const categoryModel = require('../models/category.model')
 const shopModel = require('../models/shop.model')
+const adminModel = require('../models/admin.model')
 
 const {
     BAD_REQUEST_ERROR,
@@ -8,55 +9,57 @@ const {
 } = require('../core/error.response');
 
 class CategoryService {
-    static createCategory = async ({ shopId, userId, name, thumbnail }) => {
-        if(!shopId) {
-            throw new UNAUTHENTICATED_ERROR('Shop ID not found!')
+    static createCategory = async ({ shopId, userId, name, thumbnail, parent }) => {
+        let addBy = null;
+        if(!parent) {
+            addBy = await adminModel.findById({
+                _id: userId
+            }).lean();
+            if(!addBy) {
+                throw new BAD_REQUEST_ERROR('You are not authorized to create this category!')
+            }
+        }
+        if(parent) {
+            const parentCategory = await categoryModel.findById({
+                _id: parent
+            }).lean();
+            if(!parentCategory) {
+                throw new BAD_REQUEST_ERROR('Parent category not found!')
+            }
+            if(parentCategory.parent) {
+                throw new BAD_REQUEST_ERROR('You can not create category under this category!')
+            }
         }
         return await categoryModel.create({
-            shopId, userId, name, thumbnail
+            shop: shopId,
+            parent: parent,
+            name: name,
+            thumbnail: thumbnail,
+            addBy: userId,
+            status: 'draft'
         })
     }
 
-    static getCategoryByShop = async ({ shopId }) => {
+    static getCategories = async ({ shopId }) => {
         if(!shopId) {
             throw new BAD_REQUEST_ERROR('Shop ID not found!')
         }
+        if(shopId === 'all') {
+            return await categoryModel.find({
+                status: 'draft',
+                shop: null,
+                parent: null
+            }).lean();
+        }
+        console.log(shopId)
         return await categoryModel.find({
-            shopId: shopId
-        })
+            shop: shopId,
+            status: 'draft'
+        }).lean();
     }
 
-    static deleteById = async ({ shopId, userId, categoryId }) => {
-        if(!shopId) {
-            throw new UNAUTHENTICATED_ERROR('Shop ID not found!')
-        }
-        const foundCategory = await categoryModel.findById({
-            _id: categoryId
-        })
-        if(!foundCategory) {
-            throw new BAD_REQUEST_ERROR('Category not found!')
-        }
-        if(foundCategory.shopId !== shopId) {
-            throw new UNAUTHENTICATED_ERROR('This shop does not own this category!')
-        }
-
-        const foundShop = await shopModel.findById(shopId)
-        if(!foundShop) {
-            throw new BAD_REQUEST_ERROR('Shop not found!')
-        }
-
-        const user = foundShop.users.find(user => user._id == userId)
-        if(!user) {
-            throw new UNAUTHENTICATED_ERROR('You are not a member of this shop!')
-        }
-
-        if(user.role > 1) {
-            throw new FORBIDDEN_ERROR('You do not have permission to do this action');
-        }
-
-        return await categoryModel.deleteOne({
-            _id: categoryId
-        })
+    static getProducts = async ({ shopId }) => {
+        
     }
 }
 

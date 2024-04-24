@@ -69,26 +69,39 @@ class AccessController {
     static getShop = async (req, res) => {
         new SUCCESS({
             message: 'Get Shop Information Successfully',
-            metadata: await AccessService.getShop(req.jwt_decode)
+            metadata: await AccessService.getShop({
+                ...req.jwt_decode
+            })
         }).send(res);
     }
 
     static adminLogin = async (req, res, next) => {
-
-    }
-
-    static adminRegister = async (req, res, next) => {
-
+        new SUCCESS({
+            message: 'Login successfully',
+            metadata: await AccessService.adminLogin({
+                ...getFields({
+                    fields: ['email', 'password'],
+                    object: req.body
+                })
+            })
+        }).send(res);
     }
 
     static getAdmin = async (req, res, next) => {
-
+        new SUCCESS({
+            message: 'Get Admin Information Successfully',
+            metadata: await AccessService.getAdmin({
+                ...req.jwt_decode
+            })
+        }).send(res);
     }
 
     static logout = async (req, res, next) => {
         new SUCCESS({
             message: 'Logout successfully',
-            metadata: await AccessService.logout(req.userId)
+            metadata: await AccessService.logout({
+                ...req.jwt_decode
+            })
         }).send(res);
     }
 }

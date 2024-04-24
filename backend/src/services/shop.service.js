@@ -24,7 +24,9 @@ class ShopService {
                 {
                     email: email,
                     password: password,
-                    role: ROLES.OWNER
+                    role: ROLES.OWNER,
+                    active: true,
+                    addBy: null
                 }
             ]
         });
@@ -50,13 +52,83 @@ class ShopService {
         const newUser = {
             email: target_email,
             password: passwordHash,
-            role: target_role
+            role: target_role,
+            active: true,
+            addBy: user._id
         }
         foundShop.users.push(newUser);
 
         await shopModel.updateOne({ _id: shopId }, { users: foundShop.users });
 
-        return newUser;
+        return Utils.OtherUtils.getInfoData({
+            fields: ['_id', 'email', 'role'],
+            object: newUser
+        });
+    }
+
+    static deleteUser = async ({ shopId, userId, target_email }) => {
+        const foundShop = await shopModel.findById({ _id: shopId }).lean();
+        if (!foundShop) {
+            throw new BAD_REQUEST_ERROR('Shop not found!');
+        }
+        const user = foundShop.users.find(user => user._id == userId);
+        if(!user) {
+            throw new BAD_REQUEST_ERROR('You are not in shop account list!');
+        }
+        const targetUser = foundShop.users.find(user => user.email === target_email);
+        if (!targetUser) {
+            throw new BAD_REQUEST_ERROR('User not found!');
+        }
+        if(user.role >= targetUser.role) {
+            throw new BAD_REQUEST_ERROR('You are not authorized to delete user!');
+        }
+        foundShop.users = foundShop.users.filter(user => user.email !== target_email);
+
+        await shopModel.updateOne({ _id: shopId }, { users: foundShop.users });
+
+        return Utils.OtherUtils.getInfoData({
+            fields: ['_id', 'email', 'role'],
+            object: targetUser
+        });
+    }
+
+    static getUserList = async ({ shopId, userId }) => {
+        const foundShop = await shopModel.findById({ _id: shopId }).lean();
+        if (!foundShop) {
+            throw new BAD_REQUEST_ERROR('Shop not found!');
+        }
+        const foundUser = foundShop.users.find(user => user._id == userId);
+        console.log(foundUser);
+        if(!foundUser) {
+            throw new BAD_REQUEST_ERROR('You are not in shop account list!');
+        }
+        const userList = []
+        foundShop.users.forEach(user => {
+            if(user.role > foundUser.role) userList.push(Utils.OtherUtils.getInfoData({
+                fields: ['_id', 'email', 'role'],
+                object: user
+            }));
+        })
+        return userList;
+    }
+
+    static changePassword = async ({ shopId, userId, old_password, new_password }) => {
+        const foundShop = await shopModel.findById({ _id: shopId }).lean();
+        if (!foundShop) {
+            throw new BAD_REQUEST_ERROR('Shop not found!');
+        }
+        const user = foundShop.users.find(user => user._id == userId);
+        if(!user) {
+            throw new BAD_REQUEST_ERROR('You are not in shop account list!');
+        }
+        if (!await Utils.AuthUtils.comparePassword(old_password, user.password)) {
+            throw new BAD_REQUEST_ERROR('Old password is incorrect!');
+        }
+        const passwordHash = await Utils.AuthUtils.createHashPassword(new_password);
+        return Utils.OtherUtils.getInfoData({
+            fields: ['_id', 'email', 'role'],
+            object: user
+        })
     }
 }
 

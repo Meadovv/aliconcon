@@ -13,9 +13,7 @@ router.post('/user/login', ErrorMiddleware.asyncHandler(AccessController.userLog
 router.post('/shop/register', ErrorMiddleware.asyncHandler(AccessController.shopRegister));
 router.post('/shop/login', ErrorMiddleware.asyncHandler(AccessController.shopLogin));
 
-router.post('/admin/register', ErrorMiddleware.asyncHandler(AccessController.adminLogin));
-router.post('/admin/login', ErrorMiddleware.asyncHandler(AccessController.adminRegister));
-
+router.post('/admin/login', ErrorMiddleware.asyncHandler(AccessController.adminLogin));
 
 // Authentication
 router.use(ErrorMiddleware.asyncHandler(AuthenticationMiddleware.authentication));
