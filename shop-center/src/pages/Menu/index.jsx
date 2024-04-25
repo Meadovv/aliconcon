@@ -10,17 +10,19 @@ import {
     OrderedListOutlined,
     SettingOutlined,
   } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Categories from '../Category';
 import Analyst from '../Analyst';
 import Products from '../Products/Products';
 import Orders from '../Orders';
 import Settings from '../Setting';
-import { selectShop } from '../../reducer/actions/shop.slice';
+import { selectShop, setAuth } from '../../reducer/actions/auth.slice';
+import UserSetting from '../UserSetting';
 
 function MyInformation() {
-    const { shop } = useSelector(selectShop);
+    const shop = useSelector(selectShop);
+
     const role = (role) => {
         switch (role) {
             case 0:
@@ -35,8 +37,8 @@ function MyInformation() {
     };
     return (
         <div>
-            <div>Name: ...</div>
-            <div>Role: ...</div>
+            <div>Shop name: {shop.name}</div>
+            <div>Role: {shop.role}</div>
         </div>
     );
 }
@@ -76,6 +78,12 @@ const menus = [
     content: <Orders />,
   },
   {
+    label: 'Shop User',
+    link: 'shop-user',
+    icon: <UserOutlined />,
+    content: <UserSetting />,
+  },
+  {
     label: 'Settings',
     link: 'settings',
     icon: <SettingOutlined />,
@@ -84,22 +92,45 @@ const menus = [
 ];
 
 function Menu() {
-    const { shop } = useSelector(selectShop);
+
+    const shop  = useSelector(selectShop);
+    
     const [currentMenu, setCurrentMenu] = useState(menus[0]);
     const [collapsed, setCollapsed] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+    console.log("aaa");
+
+    const dispatch = useDispatch();
+    // Dispatch setAuth() only if shop data is not already set
+    if(!shop){
+        dispatch(setAuth({
+            shop : {
+                _id : 'shop test id',
+                name : 'Shop test name',
+                userId : 'User test id',
+                role : 1,
+            },
+            token : 'testToken',
+        }));
+        console.log("222");
+    }
+
     let menuLink = searchParams.get('menu');
 
     useEffect(() => {
         //menuLink = searchParams.get('menu');
-        if (menuLink) {
+        if (shop && menuLink) {
           setCurrentMenu(menus.find((item) => item.link === menuLink));
         } else {
           setCurrentMenu(menus[0]);
         }
-    }, [menuLink]);
+    }, [menuLink]); 
 
+    
+    
+    console.log(shop);
+    
     const handleMenuClick = (menu) => {
       setCurrentMenu(menu);
       navigate(`/?menu=${menu.link}`);

@@ -4,12 +4,11 @@ import { Form, Modal, Input, Button, message, Radio } from 'antd'; // Import For
 import CONFIG from '../../configs';
 import Layout from '../../components/Layout';
 import { useSelector } from 'react-redux';
-import { selectShop, selectToken } from '../../reducer/actions/shop.slice';
+import { selectShop, selectToken } from '../../reducer/actions/auth.slice';
 
 function Categories() {
     const shop = useSelector(selectShop);
-    const token = useSelector(selectToken);
-
+    
     const [categoryList, setCategoryList] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState([]);
 
@@ -22,52 +21,47 @@ function Categories() {
         mode: 'add',
     });
 
-    // Testing 
-    setCategoryList([
-        {
-            name: "Electronics",
-            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
-            status: "published"
-        },
-        {
-            name: "Clothing",
-            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
-            status: "published"
-        },
-        {
-            name: "Books",
-            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
-            status: "draft"
-        }
-    ]);
-
     const deleteCategory = async (categoryId) => {
         message.success('Category delete successfully ' + categoryId);
     };
 
-
-
-    /*
     const getCategoryList = async () => {
-        await axios
-            .post(CONFIG.API + '/category/get-list-by-shop', {
-                shopId: shop._id,
-            })
-            .then((res) => {
-                message.success(res.data.message);
-                setCategoryList(res.data.metadata);
-            })
-            .catch((err) => {
-                message.error(err.message);
-            });
-    };
-    */
+        // await axios
+        //     .post(CONFIG.API + 'shop/get-categories', {
+        //         shopId: shop._id,
+        //     })
+        //     .then((res) => {
+        //         message.success(res.data.message);
+        //         setCategoryList(res.data.metadata);
+        //     })
+        //     .catch((err) => {
+        //         message.error(err.message);
+        //     });
 
-    /*
+        // Testing 
+        setCategoryList([
+            {
+                name: "Electronics",
+                thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+                status: "published"
+            },
+            {
+                name: "Clothing",
+                thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+                status: "published"
+            },
+            {
+                name: "Books",
+                thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+                status: "draft"
+            }
+        ]);
+    };
+  
     useEffect(() => {
         getCategoryList()
     }, [reload]);
-    */
+
 
     useEffect(() => {
         if (filter === 'all') {

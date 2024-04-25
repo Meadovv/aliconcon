@@ -10,6 +10,7 @@ const authSlice = createSlice({
         setAuth: (state, action) => {
             state.shop = action.payload.shop;
             state.token = action.payload.token;
+            console.log("aaa");
         },
         removeAuth: (state) => {
             state.shop = null;

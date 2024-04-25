@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import {Checkbox, Radio, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
-import { selectShop } from '../../reducer/actions/shop.slice';
+import { selectShop } from '../../reducer/actions/auth.slice';
 
 function Products() {
-    const { shop } = useSelector(selectShop);
+    const shop = useSelector(selectShop);
     const [productyList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
@@ -26,7 +26,7 @@ function Products() {
 
     const getProductList = async () => {
         await axios
-            .post(CONFIG.API + '/product/get-list-by-shop', {
+            .post(CONFIG.API + '/shop/get-products', {
                 shopId: shop._id,
             })
             .then((res) => {
@@ -40,7 +40,7 @@ function Products() {
 
     const getCategoryList = async () => {
         await axios
-            .post(CONFIG.API + '/category/get-list-by-shop', {
+            .post(CONFIG.API + '/shop/get-categories', {
                 shopId: shop._id,
             })
             .then((res) => {
@@ -61,13 +61,13 @@ function Products() {
     useEffect(() => {
         if (filter === 'all') {
             setProductFilter(productyList);
-        } else setProductFilter(productyList.filter((primary) => producty.status === filter));
+        } else setProductFilter(productyList.filter((product) => product.status === filter));
     }, [filter, productyList]);
 
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {
             await axios
-                .post(CONFIG.API + '/product/create', formValues, {
+                .post(CONFIG.API + '/shop/product/create', formValues, {
                     headers: {
                         'x-client-id': localStorage.getItem('x-client-id'),
                         'x-token-id': localStorage.getItem('x-token-id'),

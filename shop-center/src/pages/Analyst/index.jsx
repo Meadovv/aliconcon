@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Layout from '../../components/Layout';
+import { selectShop } from '../../reducer/actions/auth.slice';
 
 function Analyst (){
 
-    const { user } = useSelector((state) => state.user);
+    const shop = useSelector(selectShop);
     // Mock data for demonstration purposes
     const salesData = [
         { month: 'January', revenue: 1000 },
@@ -26,8 +26,8 @@ function Analyst (){
 
     return (
     <div>  
-        <div>Shop ID: "the ID" </div>
-        <div>Shop Name: "the name"</div>
+        <div>Shop ID:{shop._id} </div>
+        <div>Shop Name: {shop.name}</div>
 
         <div>
             <h2>Dashboard</h2>

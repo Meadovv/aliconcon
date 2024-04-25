@@ -4,7 +4,7 @@ import CONFIG from "../../configs"
 import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { message } from "antd"
-import { removeAuth } from "../../reducer/actions/shop.slice"
+import { removeAuth } from "../../reducer/actions/auth.slice"
 
 export default function Logout() {
 

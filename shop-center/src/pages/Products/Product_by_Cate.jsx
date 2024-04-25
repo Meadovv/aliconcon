@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Card, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 import { useSelector } from 'react-redux';
-import { selectShop } from '../../reducer/actions/shop.slice';
+import { selectShop } from '../../reducer/actions/auth.slice';
 
 function Product (categoryId) {
     const { shop } = useSelector(selectShop);

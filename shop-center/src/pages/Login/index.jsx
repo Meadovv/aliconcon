@@ -4,13 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import CONFIG from '../../configs';
-import { setAuth } from '../../reducer/actions/shop.slice';
+import { setAuth } from '../../reducer/actions/auth.slice';
 
 export default function Login() {
 
     const [form] = Form.useForm();
     const navigate = useNavigate()
-    const [user, setUser] = useState('');
     const dispatch = useDispatch();
 
     const login = () => {
@@ -21,9 +20,20 @@ export default function Login() {
                 message.success(res.data.message);
 
                 // Dispatch the setAuth action to update the state in Redux store
+                // dispatch(setAuth({
+                //     shop : res.data.metadata.shop, 
+                //     token : res.data.metadata.token
+                // }));
+
+                //Test shop object
                 dispatch(setAuth({
-                    shop : res.data.metadata.shop, 
-                    token : res.data.metadata.token
+                    shop : {
+                        _id : 'shop test id',
+                        name : 'Shop test name',
+                        userId : 'User test id',
+                        role : 1,
+                    },
+                    token : 'testToken',
                 }));
 
                 localStorage.setItem('x-client-id', res.data.metadata.shop._id);
