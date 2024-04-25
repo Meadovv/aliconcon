@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { formatPrice } from '../../utils/helpers';
 import './index.scss';
 
+import { IMAGE_HOST } from '../../apis';
+
 const Product = ({ product }) => {
     const navigate = useNavigate();
     return (
         <div className="product-item bg-white" onClick={() => navigate('/a')} style={{
             cursor: 'pointer'
         }}>
-            <div className="category">{product?.category}</div>
+            <div className="category">{product?.category.name}</div>
             <div className="product-item-img">
-                <img className="img-cover" src={product?.images[0]} alt={product.title} />
+                <img className="img-cover" src={IMAGE_HOST.THUMBNAIL(product?.thumbnail)} alt={product?.name} />
             </div>
             <div className="product-item-info fs-14">
                 <div className="title py-2">{product?.title}</div>
