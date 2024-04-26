@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import CartModal from "../../Modal/Cart";
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
 
   const navigate = useNavigate();
+  const cart = useSelector((state) => state.cart)
 
   const handleSearchTerm = (e) => {
 
@@ -57,8 +59,10 @@ const Navbar = () => {
         <div className='navbar-cart flex align-center'>
           <div className='cart-btn' onClick={() => navigate('/cart')}>
             <i className='fa-solid fa-cart-shopping'></i>
-            <div className='cart-items-value'>{0}</div>
-            <CartModal carts = {null} />
+            <div className='cart-items-value' style={{
+              display: cart.itemCount ? 'block' : 'none'
+            }}>{cart.itemCount}</div>
+            <CartModal carts = {cart.carts} />
           </div>
         </div>
       </div>

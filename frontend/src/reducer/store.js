@@ -1,13 +1,17 @@
-import {configureStore} from "@reduxjs/toolkit";
-import sidebarReducer from "./actions/sidebar.slice";
-import categoryReducer from "./actions/category.slide";
-import productReducer from "./actions/product.slice";
-import cartReducer from "./actions/cart.slice";
-import searchReducer from "./actions/search.slice";
+import { configureStore } from "@reduxjs/toolkit";
+import {
+    userReducer,
+    modalReducer,
+    categoryReducer,
+    productReducer,
+    cartReducer,
+    searchReducer
+} from './actions';
 
 const store = configureStore({
     reducer: {
-        sidebar: sidebarReducer,
+        user: userReducer,
+        modal: modalReducer,
         category: categoryReducer,
         product: productReducer,
         cart: cartReducer,

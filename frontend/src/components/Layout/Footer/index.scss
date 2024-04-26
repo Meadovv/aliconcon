@@ -2,5 +2,16 @@
     .copyright-text{
         display: block;
         margin-top: 0.7rem;
+        font-size: 1.3rem;
+        font-weight: 500;
+    }
+
+    .link {
+        color: white;
+        text-transform: capitalize;
+        text-decoration: none;
+        font-size: 1.3rem;
+        font-weight: 500;
+        cursor: pointer;
     }
 }

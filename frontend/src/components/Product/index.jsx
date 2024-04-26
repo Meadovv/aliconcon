@@ -8,12 +8,12 @@ import { IMAGE_HOST } from '../../apis';
 const Product = ({ product }) => {
     const navigate = useNavigate();
     return (
-        <div className="product-item bg-white" onClick={() => navigate('/a')} style={{
+        <div className="product-item bg-white" onClick={() => navigate(`/product/${product._id}`)} style={{
             cursor: 'pointer'
         }}>
             <div className="category">{product?.category.name}</div>
             <div className="product-item-img">
-                <img className="img-cover" src={IMAGE_HOST.THUMBNAIL(product?.thumbnail)} alt={product?.name} />
+                <img className="img-cover" src={IMAGE_HOST.THUMBNAIL(product?.thumbnail.name)} alt={product?.name} />
             </div>
             <div className="product-item-info fs-14">
                 <div className="title py-2">{product?.title}</div>

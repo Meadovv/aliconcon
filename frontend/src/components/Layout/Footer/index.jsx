@@ -7,13 +7,13 @@ const Footer = () => {
     <footer className='footer bg-orange'>
       <div className = "container py-4 text-center">
         <div className='flex align-center justify-center text-white fw-3 fs-14'>
-          <Link to = "/" className='text-uppercase'>privacy policy</Link>
+          <p className='link'>privacy policy</p>
           <div className='vert-line'></div>
-          <Link to = "/" className='text-uppercase'>term of service</Link>
+          <p className='link'>term of service</p>
           <div className='vert-line'></div>
-          <Link to = "/" className='text-uppercase'>About SnapUp.</Link>
+          <p className='link'>about Aliconcon.</p>
         </div>
-        <span className='text-white copyright-text text-manrope fs-14 fw-3'>&copy; 2022 SnapUp. All Rights Reserved.</span>
+        <span className='text-white copyright-text text-manrope fs-14 fw-3'>&copy; 2024 Aliconcon. All Rights Reserved.</span>
       </div>
     </footer>
   )

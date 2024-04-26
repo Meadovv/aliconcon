@@ -1,6 +1,6 @@
 // import { Home, Product, Cart, Search } from '../../pages';
 
-import { Home } from '../../pages';
+import { Home, Product } from '../../pages';
 
 const routers = [
     {
@@ -8,11 +8,11 @@ const routers = [
         component: <Home />,
         middleware: false,
     },
-    // {
-    //     path: '/product/:id',
-    //     component: <Product />,
-    //     middleware: false,
-    // },
+    {
+        path: '/product/:id',
+        component: <Product />,
+        middleware: false,
+    },
     // {
     //     path: '/cart',
     //     component: <Cart />,

@@ -2,61 +2,27 @@ import React, { useEffect, useState } from 'react';
 import './index.scss';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAsyncProductSingle, getProductSingle, getSingleProductStatus } from '../../reducer/actions/product.slice';
 import { STATUS } from '../../utils/status';
 import Loader from '../../components/Loader';
 import { formatPrice } from '../../utils/helpers';
-import { addToCart, getCartMessageStatus, setCartMessageOff, setCartMessageOn } from '../../reducer/actions/cart.slice';
+
+import { getProduct } from '../../reducer/actions/product.slice';
+import { addToCart } from '../../reducer/actions/cart.slice';
 
 import { message } from 'antd';
 
 const ProductSinglePage = () => {
-    const { id } = useParams();
-    const dispatch = useDispatch();
-    const product = useSelector(getProductSingle);
-    const productSingleStatus = useSelector(getSingleProductStatus);
-    const [quantity, setQuantity] = useState(1);
-    const cartMessageStatus = useSelector(getCartMessageStatus);
+
+    const { current, status } = useSelector((state) => state.product);
 
     // getting single product
     useEffect(() => {
-        dispatch(fetchAsyncProductSingle(id));
 
-        if (cartMessageStatus) {
-            setTimeout(() => {
-                dispatch(setCartMessageOff());
-            }, 2000);
-        }
-    }, [cartMessageStatus]);
+    }, []);
 
-    let discountedPrice = product?.price - product?.price * (product?.discountPercentage / 100);
-    if (productSingleStatus === STATUS.LOADING) {
+    if (status.current === STATUS.LOADING) {
         return <Loader />;
     }
-
-    const increaseQty = () => {
-        setQuantity((prevQty) => {
-            let tempQty = prevQty + 1;
-            if (tempQty > product?.stock) tempQty = product?.stock;
-            return tempQty;
-        });
-    };
-
-    const decreaseQty = () => {
-        setQuantity((prevQty) => {
-            let tempQty = prevQty - 1;
-            if (tempQty < 1) tempQty = 1;
-            return tempQty;
-        });
-    };
-
-    const addToCartHandler = (product) => {
-        let discountedPrice = product?.price - product?.price * (product?.discountPercentage / 100);
-        let totalPrice = quantity * discountedPrice;
-
-        dispatch(addToCart({ ...product, quantity: quantity, totalPrice, discountedPrice }));
-        dispatch(setCartMessageOn(true));
-    };
 
     return (
         <main className="py-5 bg-whitesmoke">
@@ -67,7 +33,7 @@ const ProductSinglePage = () => {
                             <div className="product-img">
                                 <div className="product-img-zoom">
                                     <img
-                                        src={product ? (product.images ? product.images[0] : '') : ''}
+                                        src={current ? (product.images ? product.images[0] : '') : ''}
                                         alt=""
                                         className="img-cover"
                                     />
@@ -76,28 +42,28 @@ const ProductSinglePage = () => {
                                 <div className="product-img-thumbs flex align-center my-2">
                                     <div className="thumb-item">
                                         <img
-                                            src={product ? (product.images ? product.images[1] : '') : ''}
+                                            src={current ? (product.images ? product.images[1] : '') : ''}
                                             alt=""
                                             className="img-cover"
                                         />
                                     </div>
                                     <div className="thumb-item">
                                         <img
-                                            src={product ? (product.images ? product.images[2] : '') : ''}
+                                            src={current ? (product.images ? product.images[2] : '') : ''}
                                             alt=""
                                             className="img-cover"
                                         />
                                     </div>
                                     <div className="thumb-item">
                                         <img
-                                            src={product ? (product.images ? product.images[3] : '') : ''}
+                                            src={current ? (product.images ? product.images[3] : '') : ''}
                                             alt=""
                                             className="img-cover"
                                         />
                                     </div>
                                     <div className="thumb-item">
                                         <img
-                                            src={product ? (product.images ? product.images[4] : '') : ''}
+                                            src={current ? (product.images ? product.images[4] : '') : ''}
                                             alt=""
                                             className="img-cover"
                                         />
@@ -108,25 +74,25 @@ const ProductSinglePage = () => {
 
                         <div className="product-single-r">
                             <div className="product-details font-manrope">
-                                <div className="title fs-20 fw-5">{product?.title}</div>
+                                <div className="title fs-20 fw-5">{current?.title}</div>
                                 <div>
-                                    <p className="para fw-3 fs-15">{product?.description}</p>
+                                    <p className="para fw-3 fs-15">{current?.description}</p>
                                 </div>
                                 <div className="info flex align-center flex-wrap fs-14">
                                     <div className="rating">
                                         <span className="text-orange fw-5">Rating:</span>
-                                        <span className="mx-1">{product?.rating}</span>
+                                        <span className="mx-1">{current?.rating}</span>
                                     </div>
                                     <div className="vert-line"></div>
                                     <div className="brand">
                                         <span className="text-orange fw-5">Brand:</span>
-                                        <span className="mx-1">{product?.brand}</span>
+                                        <span className="mx-1">{current?.brand}</span>
                                     </div>
                                     <div className="vert-line"></div>
                                     <div className="brand">
                                         <span className="text-orange fw-5">Category:</span>
                                         <span className="mx-1 text-capitalize">
-                                            {product?.category ? product.category.replace('-', ' ') : ''}
+                                            {current?.category ? current.category.replace('-', ' ') : ''}
                                         </span>
                                     </div>
                                 </div>
