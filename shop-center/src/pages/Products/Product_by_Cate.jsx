@@ -25,7 +25,7 @@ function Product (categoryId) {
 
     const getProductList = async () => {
         await axios
-            .post(CONFIG.API + '/product/get-by-shop', {
+            .post(CONFIG.API + '/shop/get-products', {
                 shopId: shop._id,
                 category: categoryId
             })
@@ -51,12 +51,15 @@ function Product (categoryId) {
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {
             await axios
-                .post(CONFIG.API + '/product/create', formValues, {
-                    headers: {
-                        'x-client-id': localStorage.getItem('x-client-id'),
-                        'x-token-id': localStorage.getItem('x-token-id'),
-                    },
-                })
+                .post(CONFIG.API + '/shop/create-product'
+                    , formValues
+                    , {
+                        headers: {
+                            'x-client-id': localStorage.getItem('x-client-id'),
+                            'x-token-id': localStorage.getItem('x-token-id'),
+                        },
+                    }
+                )
                 .then((res) => {
                     message.success(res.data.message);
                     form.resetFields();

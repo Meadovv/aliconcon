@@ -24,12 +24,30 @@ function Orders() {
     const [totalPrice, setTotalPrice] = useState(0);
 
     const deleteOrder = async (orderId) => {
-        message.success('Order delete successfully ' + orderId);
+        await axios
+            .post(CONFIG.API + '/shop/delete-user', 
+                {
+                    orderId : orderId,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     };
 
     // const getOrderList = async () => {
     //     await axios
-    //         .post(CONFIG.API + '/order/get-list-by-shop', {
+    //         .post(CONFIG.API + '/shop/get-order-list', {
     //             shopId: shop._id,
     //         })
     //         .then((res) => {

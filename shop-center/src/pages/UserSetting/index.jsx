@@ -15,56 +15,94 @@ function UserSetting() {
     const [formMode, setFormMode] = useState({
         open: false,
         mode: 'add',
-        userId: null, // Used for editing mode
+        user_email: null, // Used for editing mode
     });
 
     const getUserList = async () => {
-        // Fetch user list data from API
-        try {
-            const response = await axios.get(CONFIG.API + 'shop/get-user-list', {
+        await axios
+            .post(CONFIG.API + '/shop/get-user-list', {
                 headers: {
                     'x-client-id': localStorage.getItem('x-client-id'),
                     'x-token-id': localStorage.getItem('x-token-id'),
                 },
+            })
+            .then((res) => {
+                message.success(res.data.message);
+                setUserList(res.data.metadata);
+            })
+            .catch((err) => {
+                message.error(err.message);
             });
-            setUserList(response.data);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        }
     };
 
-    useEffect(() => {
-        getUserList();
-    }, [reload]);
+    const addUser = async (data) => {
+        await axios
+            .post(CONFIG.API + '/shop/add-user'
+                , data
+                , {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    };
 
-    const deleteUser = async (productId) => {
-        message.success('Product delete successfully ' + productId);
+    const deleteUser = async (user_email) => {
+        await axios
+            .post(CONFIG.API + '/shop/delete-user', 
+                {
+                    target_email : user_email,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     };
 
     const handleForm = async () => {
         try {
             const formValues = await form.validateFields();
-            let endpoint = formMode.mode === 'add' ? '/shop/add-user' : '/shop/update-user';
             if (formMode.mode === 'edit') {
-                endpoint += `${formMode.userId}`; 
+                deleteUser(formMode.user_email);
+                addUser(formValues);
             }
-            const response = await axios.post(CONFIG.API + endpoint, formValues, {
-                headers: {
-                    'x-client-id': localStorage.getItem('x-client-id'),
-                    'x-token-id': localStorage.getItem('x-token-id'),
-                },
-            });
-            message.success(response.data.message);
+            else if(formMode.mode === 'add'){
+                addUser(formValues);
+            }
             form.resetFields();
-            setReload(prev => !prev);
+            setReload((prev) => prev + 1);
         } catch (error) {
             message.error(error.message);
         }
+
+
         setFormMode({
             ...formMode,
             open: false,
         });
     };
+
+    useEffect(() => {
+        getUserList();
+    }, [reload]);
 
     return (
             <div>
@@ -96,24 +134,24 @@ function UserSetting() {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            label="Pssword"
+                            label="Password"
                             name="target_password"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input username!',
+                                    message: 'Please input user password!',
                                 },
                             ]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            label="Role"
-                            name="target_role"
+                            label="user"
+                            name="target_Password"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input name!',
+                                    message: 'Please input user role!',
                                 },
                             ]}
                         >
@@ -128,7 +166,7 @@ function UserSetting() {
                         setFormMode({
                             open: true,
                             mode: 'add',
-                            userId: null,
+                            user_email: null,
                         });
                     }}
                 >
@@ -138,14 +176,14 @@ function UserSetting() {
                 {/* Render user list */}
                 <ul>
                     {userList.map(user => (
-                        <li key={user.userId}>
-                            {user.name} - {user.email} - {user.username} - {user.address}
+                        <li key={user._id}>
+                            {user._id} - {user.email} - {user.role}
                             <Button
                                 onClick={() => {
                                     setFormMode({
                                         open: true,
                                         mode: 'edit',
-                                        userId: user.userId,
+                                        user_email: user.email,
                                     });
                                     form.setFieldsValue(user);
                                 }}
@@ -154,7 +192,7 @@ function UserSetting() {
                             </Button>
                             <Button
                                 danger
-                                onClick={() => deleteUser(user._id)}
+                                onClick={() => deleteUser(user.email)}
                                 disabled={shop.role > 1}
                             >
                                 Delete

@@ -22,7 +22,25 @@ function Categories() {
     });
 
     const deleteCategory = async (categoryId) => {
-        message.success('Category delete successfully ' + categoryId);
+        await axios
+            .post(CONFIG.API + '/shop/delete-category', 
+                {
+                    categoryId : categoryId,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     };
 
     const getCategoryList = async () => {
@@ -72,12 +90,15 @@ function Categories() {
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {
             await axios
-                .post(CONFIG.API + '/category/create', formValues, {
-                    headers: {
-                        'x-client-id': localStorage.getItem('x-client-id'),
-                        'x-token-id': localStorage.getItem('x-token-id'),
-                    },
-                })
+                .post(CONFIG.API + '/shop/create-category'
+                    , formValues
+                    , {
+                        headers: {
+                            'x-client-id': localStorage.getItem('x-client-id'),
+                            'x-token-id': localStorage.getItem('x-token-id'),
+                        },
+                    }
+                )
                 .then((res) => {
                     message.success(res.data.message);
                     form.resetFields();
