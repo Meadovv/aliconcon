@@ -7,15 +7,30 @@ import Slider from '../../components/Slider/';
 import ProductList from '../../components/ProductList';
 import Loader from '../../components/Loader';
 
-import { STATUS } from '../../utils/status';
-import { getProducts } from '../../reducer/actions/product.slice';
+import axios from 'axios';
+import api from '../../apis';
+import { message } from 'antd';
 
 const HomePage = () => {
     const dispatch = useDispatch();
-    const { list, status } = useSelector((state) => state.product);
+    const [products, setProducts] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    const getProducts = async () => {
+        setLoading(true);
+        await axios.get(api.GET_PRODUCTS({ shop: '', category: '', low_price: '', high_price: '' }))
+        .then(res => {
+            setProducts(res.data.metadata)
+        })
+        .catch(err => {
+            console.error(err);
+            message.error(err.response.data.message);
+        })
+        setLoading(false);
+    }
 
     useEffect(() => {
-        dispatch(getProducts());
+        getProducts();
     }, []);
 
     return (
@@ -30,7 +45,7 @@ const HomePage = () => {
                             <div className="title-md">
                                 <h3>See our products</h3>
                             </div>
-                            {status.list === STATUS.LOADING ? <Loader /> : <ProductList products={list} />}
+                            {loading ? <Loader /> : <ProductList products={products} />}
                         </div>
 
                         {/* <div className="categories-item">

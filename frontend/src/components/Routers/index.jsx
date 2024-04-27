@@ -7,11 +7,13 @@ const routers = [
         path: '/',
         component: <Home />,
         middleware: false,
+        layout: true,
     },
     {
         path: '/product/:id',
         component: <Product />,
         middleware: false,
+        layout: true,
     },
     // {
     //     path: '/cart',

@@ -1,12 +1,15 @@
-import { createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { STATUS } from "../../utils/status";
-import api from "../../apis";
+import { createSlice } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({
-    name: "product",
-    initialState: null,
-    reducers: {},
+    name: "user",
+    initialState: {},
+    reducers: {
+        setUser: (state, action) => {
+            Object.assign(state, action.payload);
+        }
+    },
 });
+
+export const { setUser } = userSlice.actions;
 
 export default userSlice.reducer;
