@@ -2,7 +2,7 @@
 import React from 'react';
 import Product from './Product';
 
-const ProductList = () => {
+const ProductList = ({ addToCart }) => {
     const products = [
       { id: 1, name: 'Product 1', price: 10, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTljFg3WXjWysOHEA1zgrpzqQsMhGdgKYd6ufbyZCIgaQ&s' },
       { id: 2, name: 'Product 2', price: 20, imageUrl: 'https://salt.tikicdn.com/cache/550x550/ts/product/01/35/3e/7d05efdc92a37b3103e18550569757e9.png' },
@@ -18,6 +18,7 @@ const ProductList = () => {
           name={product.name}
           price={product.price}
           imageUrl={product.imageUrl}
+          addToCart={() => addToCart(product)} // Pass addToCart function as prop
         />
       ))}
     </div>
