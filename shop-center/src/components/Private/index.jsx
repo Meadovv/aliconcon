@@ -11,7 +11,7 @@ function Private({ children }) {
     const dispatch = useDispatch()
 
     const getUser = async () => {
-        await axios.post(CONFIG.API + '/auth/shop/get', {}, {
+        await axios.post(CONFIG.API + '/access/shop/metadata', {}, {
             headers: {
                 'x-client-id': localStorage.getItem('x-client-id'),
                 'x-token-id': localStorage.getItem('x-token-id')

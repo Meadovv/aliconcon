@@ -1,7 +1,10 @@
 import React from 'react';
 import Layout from '../../components/Layout';
+import { useSelector } from 'react-redux';
 
 function MyShop (){
+
+    const { user } = useSelector((state) => state.user);
 
     // Mock data for demonstration purposes
     const salesData = [

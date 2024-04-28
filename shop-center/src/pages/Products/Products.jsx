@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
+import { Form, Modal, Input, Button, Checkbox, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 import Layout from '../../components/Layout';
+import { useSelector } from 'react-redux';
 
 function Products() {
     const { user } = useSelector((state) => state.user);
-    const [productyList, setProductList] = useState([]);
+    const [productList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
 
@@ -59,9 +60,9 @@ function Products() {
 
     useEffect(() => {
         if (filter === 'all') {
-            setProductFilter(productyList);
-        } else setProductFilter(productyList.filter((primary) => producty.status === filter));
-    }, [filter, productyList]);
+            setProductFilter(productList);
+        } else setProductFilter(productList.filter((primary) => producty.status === filter));
+    }, [filter, productList]);
 
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {

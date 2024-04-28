@@ -1,5 +1,6 @@
 import { Button, Popconfirm } from 'antd'
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function Settings() {
     const { user } = useSelector((state) => state.user);

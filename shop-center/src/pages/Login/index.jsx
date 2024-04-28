@@ -12,10 +12,10 @@ export default function Login() {
     const login = () => {
         form.validateFields()
         .then(async formValues => {
-            await axios.post(CONFIG.API + '/auth/shop/login', formValues)
+            await axios.post(CONFIG.API + '/access/shop/login', formValues)
             .then(res => {
                 message.success(res.data.message)
-                localStorage.setItem('x-client-id', res.data.metadata.user._id);
+                localStorage.setItem('x-client-id', res.data.metadata.shop.userId);
                 localStorage.setItem('x-token-id', res.data.metadata.token);
                 navigate('/')
             })
@@ -57,7 +57,7 @@ export default function Login() {
                     >
                         <Form.Item
                             label='Shop Email'
-                            name='shopEmail'
+                            name='shop_email'
                             rules={[
                                 {
                                     required: true,
@@ -70,7 +70,7 @@ export default function Login() {
 
                         <Form.Item
                             label='User Email'
-                            name='userEmail'
+                            name='user_email'
                             rules={[
                                 {
                                     required: true,
