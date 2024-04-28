@@ -9,7 +9,7 @@ import {
 
 const store = configureStore({
     reducer: {
-        user: userReducer,
+        auth: userReducer,
         modal: modalReducer,
         category: categoryReducer,
         cart: cartReducer,

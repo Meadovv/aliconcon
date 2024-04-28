@@ -12,6 +12,8 @@ const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const { user } = useSelector((state) => state.auth);
+
     return (
         <>
             <LoginModal />
@@ -35,19 +37,25 @@ const Header = () => {
                                 </ul>
                             </div>
                             <div className="header-cnt-top-r">
-                                <ul className="top-links flex align-center">
-                                    <li>
-                                        <p className="link" onClick={() => navigate('/register')}>
-                                            Register
-                                        </p>
-                                    </li>
-                                    <li className="vert-line"></li>
-                                    <li>
-                                        <p className="link" onClick={() => dispatch(openModal({ modal: 'login' }))}>
-                                            Login
-                                        </p>
-                                    </li>
-                                </ul>
+                                {user?.name ? (
+                                    <p className="link" onClick={() => navigate('/logout')}>
+                                        {user.name}
+                                    </p>
+                                ) : (
+                                    <ul className="top-links flex align-center">
+                                        <li>
+                                            <p className="link" onClick={() => navigate('/register')}>
+                                                Register
+                                            </p>
+                                        </li>
+                                        <li className="vert-line"></li>
+                                        <li>
+                                            <p className="link" onClick={() => dispatch(openModal({ modal: 'login' }))}>
+                                                Login
+                                            </p>
+                                        </li>
+                                    </ul>
+                                )}
                             </div>
                         </div>
 

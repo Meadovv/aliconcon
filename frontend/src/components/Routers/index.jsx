@@ -1,8 +1,14 @@
 // import { Home, Product, Cart, Search } from '../../pages';
 
-import { Home, Product } from '../../pages';
+import { Home, Product, Logout } from '../../pages';
 
 const routers = [
+    {
+        path: '/logout',
+        component: <Logout />,
+        middleware: false,
+        layout: false,
+    },
     {
         path: '/',
         component: <Home />,

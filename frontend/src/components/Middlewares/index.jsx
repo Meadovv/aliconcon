@@ -30,7 +30,6 @@ export default function Middlewares({ middleware }) {
             })
             .catch((error) => {
                 console.error(error);
-                message.error(error.response.data.message);
                 localStorage.clear();
             });
         }

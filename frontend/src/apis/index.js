@@ -20,6 +20,7 @@ const api = {
     },
     LOGIN: BACKEND_API + 'user/login',
     METADATA: BACKEND_API + 'user/metadata',
+    LOGOUT: BACKEND_API + 'access/logout',
 }
 
 export default api;
