@@ -3,7 +3,7 @@ import './index.scss';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Loader from '../../components/Loader';
-import { formatPrice } from '../../utils/helpers';
+import { formatPrice, formatNumber } from '../../utils/helpers';
 
 import axios from 'axios';
 import api from '../../apis';
@@ -17,6 +17,16 @@ export default function Product() {
     const [product, setProduct] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const params = useParams();
+
+    const [quantity, setQuantity] = React.useState(1);
+    const increaseQuantity = () => {
+        setQuantity((prev) => prev + 1);
+    };
+
+    const decreaseQuantity = () => {
+        if (quantity === 1) return;
+        setQuantity((prev) => prev - 1);
+    };
 
     const getProduct = async (productId) => {
         setLoading(true);
@@ -57,77 +67,58 @@ export default function Product() {
                                         className="img-cover"
                                     />
                                 </div>
-
-                                <div className="product-img-thumbs flex align-center my-2">
-                                    <div className="thumb-item">
-                                        <img
-                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
-                                            alt=""
-                                            className="img-cover"
-                                        />
-                                    </div>
-                                    <div className="thumb-item">
-                                        <img
-                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
-                                            alt=""
-                                            className="img-cover"
-                                        />
-                                    </div>
-                                    <div className="thumb-item">
-                                        <img
-                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
-                                            alt=""
-                                            className="img-cover"
-                                        />
-                                    </div>
-                                    <div className="thumb-item">
-                                        <img
-                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
-                                            alt=""
-                                            className="img-cover"
-                                        />
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
                         <div className="product-single-r">
                             <div className="product-details font-manrope">
-                                <div className="title fs-20 fw-5">{product?.name}</div>
-                                <div>
-                                    <p className="para fw-3 fs-15">{product?.description}</p>
+                                <div className="title fs-26 fw-7">
+                                    {product?.name}
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            fontSize: '14px',
+                                            fontWeight: '450'
+                                        }}
+                                    >
+                                        <div>Yêu thích: {formatNumber(product?.likes)}</div>
+                                        <div className="vert-line"></div>
+                                        <div>Đã bán: {formatNumber(product?.sell_count)}</div>
+                                    </div>
                                 </div>
                                 <div className="info flex align-center flex-wrap fs-14">
-                                    <div className="rating">
+                                    {/* <div className="rating">
                                         <span className="text-orange fw-5">Rating:</span>
                                         <span className="mx-1">{product?.rating}</span>
                                     </div>
-                                    <div className="vert-line"></div>
-                                    <div className="brand">
-                                        <span className="text-orange fw-5">Brand:</span>
-                                        <span className="mx-1">{current?.brand}</span>
-                                    </div>
-                                    <div className="vert-line"></div>
+                                    <div className="vert-line"></div> */}
                                     <div className="brand">
                                         <span className="text-orange fw-5">Category:</span>
-                                        <span className="mx-1 text-capitalize">
-                                            {current?.category ? current.category.replace('-', ' ') : ''}
-                                        </span>
+                                        <span className="mx-1 text-capitalize">{product?.category.name}</span>
                                     </div>
                                 </div>
-
+                                <div>
+                                    <p className="para fw-3 fs-15">{product?.description}</p>
+                                </div>
                                 <div className="price">
                                     <div className="flex align-center">
-                                        <div className="old-price text-gray">{formatPrice(product?.price)}</div>
-                                        <span className="fs-14 mx-2 text-dark">Inclusive of all taxes</span>
+                                        <div
+                                            className="old-price text-gray"
+                                            style={{
+                                                display: product?.sale === 0 ? 'none' : 'block',
+                                            }}
+                                        >
+                                            {formatPrice(product?.price)}
+                                        </div>
                                     </div>
 
                                     <div className="flex align-center my-1">
                                         <div className="new-price fw-5 font-poppins fs-24 text-orange">
-                                            {formatPrice(discountedPrice)}
+                                            {formatPrice(product?.price - (product?.price * product?.sale) / 100)}
                                         </div>
                                         <div className="discount bg-orange fs-13 text-white fw-6 font-poppins">
-                                            {product?.discountPercentage}% OFF
+                                            {product?.sale}% OFF
                                         </div>
                                     </div>
                                 </div>
@@ -138,7 +129,7 @@ export default function Product() {
                                         <button
                                             type="button"
                                             className="qty-decrease flex align-center justify-center"
-                                            onClick={() => decreaseQty()}
+                                            onClick={() => decreaseQuantity()}
                                         >
                                             <i className="fas fa-minus"></i>
                                         </button>
@@ -146,7 +137,7 @@ export default function Product() {
                                         <button
                                             type="button"
                                             className="qty-increase flex align-center justify-center"
-                                            onClick={() => increaseQty()}
+                                            onClick={() => increaseQuantity()}
                                         >
                                             <i className="fas fa-plus"></i>
                                         </button>
