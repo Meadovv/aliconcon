@@ -73,6 +73,7 @@ function Orders() {
 
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {
+
             await axios
                 .post(CONFIG.API + '/order/create', formValues, {
                     headers: {
@@ -212,8 +213,8 @@ function Orders() {
                             <p><b>Products:</b></p>
                             <ul>
                                 {order.products.map(product => (
-                                    <li key={product.productId}>
-                                        {product.productId}: {product.quantity}
+                                    <li key={product._id}>
+                                        {product._id}: {product.quantity}
                                     </li>
                                 ))}
                             </ul>

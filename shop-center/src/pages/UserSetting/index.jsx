@@ -147,7 +147,7 @@ function UserSetting() {
                         </Form.Item>
                         <Form.Item
                             label="user"
-                            name="target_Password"
+                            name="target_role"
                             rules={[
                                 {
                                     required: true,

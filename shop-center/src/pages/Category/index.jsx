@@ -4,7 +4,7 @@ import { Form, Modal, Input, Button, message, Radio } from 'antd'; // Import For
 import CONFIG from '../../configs';
 import Layout from '../../components/Layout';
 import { useSelector } from 'react-redux';
-import { selectShop, selectToken } from '../../reducer/actions/auth.slice';
+import { selectShop } from '../../reducer/actions/auth.slice';
 
 function Categories() {
     const shop = useSelector(selectShop);

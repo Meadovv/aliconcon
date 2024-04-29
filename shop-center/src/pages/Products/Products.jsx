@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import {Checkbox, Radio, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
+import {Checkbox, Radio, Form, Modal, Input, Button, message } from 'antd';
 import CONFIG from '../../configs';
 import { selectShop } from '../../reducer/actions/auth.slice';
 
@@ -23,7 +23,7 @@ function Products() {
     const getProducts = async () => {
         await getCategoryList()
         .then(categoryList.map((category) => {
-            getProductList(category.categoryId);
+            getProductList(category._id);
         }))
     };
 
@@ -243,59 +243,60 @@ function Products() {
                         <div key={categoryIndex} style={{ marginBottom: '20px' }}>
                             <h2 style={{ marginBottom: '10px' }}>{category.categoryName}</h2>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-                                {productFilter.map((product, productIndex) => (
-                                    <div key={productIndex} style={{ display: 'flex', flexDirection: 'column', gap: '10px', }}>
-                                        <img src={product.thumbnail} alt="thumbnail" style={{ width: '80px' }} />
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', }}>
-                                            <div style={{ fontWeight: 'bold' }}>{product.name}</div>
-                                            <div><b>Categories:</b> {product.categories}</div>
-                                            <div><b>Attributes:</b> {product.attributes}</div>
-                                            <div><b>Comments:</b> {product.comments}</div>
-                                            <div><b>Price:</b> {product.price}</div>
-                                            <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                                <b>Description:</b> {product.description}
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '5px', }}>
-                                                <Button
-                                                    type="primary"
-                                                    ghost
-                                                    danger={product.status === 'draft' ? false : true}
-                                                    disabled={shop.role > 1}
-                                                    style={{ flex: '1' }}
-                                                >
-                                                    {product.status === 'draft' ? 'Activate' : 'Deactivate'}
-                                                </Button>
-                                                <Button
-                                                    type="primary"
-                                                    ghost
-                                                    onClick={() => {
-                                                        setFormMode({
-                                                            open: true,
-                                                            mode: 'edit',
-                                                        });
-                                                    }}
-                                                    style={{ flex: '1' }}
-                                                >
-                                                    Edit product
-                                                </Button>
-                                                <Button
-                                                    danger
-                                                    onClick={() => deleteProduct(product._id)}
-                                                    disabled={shop.role > 1}
-                                                    style={{ flex: '1' }}
-                                                >
-                                                    Delete
-                                                </Button>
+                                {productFilter.map((product, productIndex) => {
+                                    if(product.categoryId === category._id) return (
+                                        <div key={productIndex} style={{ display: 'flex', flexDirection: 'column', gap: '10px', }}>
+                                            <img src={product.thumbnail} alt="thumbnail" style={{ width: '80px' }} />
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', }}>
+                                                <div style={{ fontWeight: 'bold' }}>{product.name}</div>
+                                                <div><b>Categories:</b> {product.categories}</div>
+                                                <div><b>Attributes:</b> {product.attributes}</div>
+                                                <div><b>Comments:</b> {product.comments}</div>
+                                                <div><b>Price:</b> {product.price}</div>
+                                                <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                    <b>Description:</b> {product.description}
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '5px', }}>
+                                                    <Button
+                                                        type="primary"
+                                                        ghost
+                                                        danger={product.status === 'draft' ? false : true}
+                                                        disabled={shop.role > 1}
+                                                        style={{ flex: '1' }}
+                                                    >
+                                                        {product.status === 'draft' ? 'Activate' : 'Deactivate'}
+                                                    </Button>
+                                                    <Button
+                                                        type="primary"
+                                                        ghost
+                                                        onClick={() => {
+                                                            setFormMode({
+                                                                open: true,
+                                                                mode: 'edit',
+                                                            });
+                                                        }}
+                                                        style={{ flex: '1' }}
+                                                    >
+                                                        Edit product
+                                                    </Button>
+                                                    <Button
+                                                        danger
+                                                        onClick={() => deleteProduct(product._id)}
+                                                        disabled={shop.role > 1}
+                                                        style={{ flex: '1' }}
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                    else return null;
+                                })}
                             </div>
                         </div>
                     ))}
-                </div>
-
-                
+                </div>   
             </div>
         </div>
     );

@@ -8,8 +8,7 @@ const authSlice = createSlice({
     },
     reducers: {
         setAuth: (state, action) => {
-            state.shop = action.payload.shop;
-            state.token = action.payload.token;
+            state.shop = action.payload;
             console.log("aaa");
         },
         removeAuth: (state) => {
@@ -23,6 +22,5 @@ export const { setAuth, removeAuth } = authSlice.actions;
 
 // Selector function to access shop and token
 export const selectShop = (state) => state.auth.shop;
-export const selectToken = (state) => state.auth.token;
 
 export default authSlice.reducer;
