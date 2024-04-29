@@ -31,9 +31,9 @@ function Header() {
                     <MenuItem>Thông báo</MenuItem>
                     <MenuItem>Giỏ hàng</MenuItem>
                     <MenuItem onClick={() => {
-                        if(user._id) navigate('/setting');
+                        if(user._id && user._id !== -1) navigate('/setting');
                         else dispatch(switchModal());
-                    }}>{user._id ? user.name : 'Đăng nhập'}</MenuItem>
+                    }}>{user._id && user._id !== -1 ? user.name : 'Đăng nhập'}</MenuItem>
                 </MenuContainer>
             </HeaderContainer>
         </>

@@ -1,19 +1,22 @@
 import Header from '../Header';
 import Footer from '../Footer';
+import Content from '../Content';
 import { Fragment } from 'react';
 
 import Guest from '../Middleware/Guest';
 import Public from '../Middleware/Public';
 import Private from '../Middleware/Private';
 
-export default function Layout({ header, footer, children, middleware }) {
+import { Layout as OriginalLayout } from 'antd';
+
+export default function Layout({ header, footer, page, middleware }) {
     const Container = () => {
         return (
-            <>
+            <OriginalLayout>
                 {header && <Header />}
-                {children}
+                <Content page={page} />
                 {footer && <Footer />}
-            </>
+            </OriginalLayout>
         );
     };
 

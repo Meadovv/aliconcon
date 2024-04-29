@@ -21,6 +21,7 @@ export const LoginModal = () => {
             localStorage.setItem('x-client-id', res.data.metadata.user._id);
             localStorage.setItem('x-token-id', res.data.metadata.token);
             message.success(res.data.message);
+            window.location.reload();
         })
         .catch(err => {
             console.log(err)

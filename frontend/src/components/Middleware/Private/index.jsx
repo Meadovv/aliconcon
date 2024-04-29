@@ -23,8 +23,8 @@ function Private({ children }) { // Người dùng đã đăng nhập mới có 
             dispatch(setUser(response.data.metadata))
         })
         .catch(err => {
-            console.log(err)
             localStorage.clear();
+            dispatch(removeUser());
         })
         dispatch(setLoader(false))
     }

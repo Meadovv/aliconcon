@@ -1,19 +1,19 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import CONFIG from "../../configs"
 import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { message } from "antd"
-import { setUser } from "../../reducer/actions/user.slice"
+import { removeUser } from "../../reducer/actions/user.slice"
+import { setLoader } from "../../reducer/actions/loader.slice"
 
 export default function Logout() {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [loading, setLoading] = useState(false);
 
     const logout = async () => {
-        setLoading(true);
+        dispatch(setLoader(true))
         await axios.post(CONFIG.API + '/access/logout', {}, {
             headers: {
                 ['x-client-id']: localStorage.getItem('x-client-id'),
@@ -21,22 +21,18 @@ export default function Logout() {
             }
         }).then(res => {
             message.success(res.data.message)
-            localStorage.removeItem('x-client-id')
-            localStorage.removeItem('x-token-id')
-            dispatch(setUser(null))
+            localStorage.clear();
+            dispatch(removeUser())
             navigate('/')
         }).catch(err => {
             message(err.message);
-            console.log(err)
         })
-        setLoading(false);
+        dispatch(setLoader(false))
     }
 
     useEffect(() => {
         logout()
     }, [])
 
-    return (
-        loading ? <div>Logging out...</div> : <div></div>
-    )
+    return null;
 }

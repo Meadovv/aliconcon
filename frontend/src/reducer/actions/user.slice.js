@@ -13,9 +13,13 @@ const userSlice = createSlice({
         setUser: (state, action) => {
             state.user = action.payload;
         },
-        getUser: (state) => {
-            return state.user;
-        },
+        removeUser: (state) => {
+            state.user = {
+                _id: -1,
+                name: null,
+                email: null,
+            }
+        }
     }
 })
 
