@@ -16,7 +16,7 @@ const routers = [
         layout: true,
     },
     {
-        path: '/product/:id',
+        path: '/product/:productId',
         component: <Product />,
         middleware: false,
         layout: true,

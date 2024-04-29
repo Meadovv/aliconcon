@@ -90,8 +90,18 @@
         padding: 0 12px 10px 12px;
         text-align: center;
         font-family: $font-family-manrope;
-        font-size: 16px;
-        opacity: 0.8;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px
+    }
+
+    &-sub {
+        padding: 0 12px 10px 12px;
+        text-align: center;
+        font-family: $font-family-manrope;
+        font-size: 14px;
+        font-weight: 500;
         display: flex;
         justify-content: space-between;
         gap: 10px

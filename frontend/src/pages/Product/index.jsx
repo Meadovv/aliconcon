@@ -1,27 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './index.scss';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { STATUS } from '../../utils/status';
 import Loader from '../../components/Loader';
 import { formatPrice } from '../../utils/helpers';
 
+import axios from 'axios';
+import api from '../../apis';
 import { message } from 'antd';
 
-const ProductSinglePage = () => {
+import { IMAGE_HOST } from '../../apis';
 
-    const { current, status } = useSelector((state) => state.product);
+import Error from '../Error';
 
-    // getting single product
-    useEffect(() => {
+export default function Product() {
+    const [product, setProduct] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+    const params = useParams();
 
-    }, []);
+    const getProduct = async (productId) => {
+        setLoading(true);
+        await axios
+            .get(
+                api.GET_PRODUCT({
+                    id: productId,
+                    user: localStorage.getItem('client'),
+                }),
+            )
+            .then((res) => {
+                setProduct(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
 
-    if (status.current === STATUS.LOADING) {
-        return <Loader />;
-    }
+    React.useEffect(() => {
+        getProduct(params.productId);
+    }, [params]);
 
-    return (
+    return loading ? (
+        <Loader />
+    ) : (
         <main className="py-5 bg-whitesmoke">
             <div className="product-single">
                 <div className="container">
@@ -30,7 +52,7 @@ const ProductSinglePage = () => {
                             <div className="product-img">
                                 <div className="product-img-zoom">
                                     <img
-                                        src={current ? (product.images ? product.images[0] : '') : ''}
+                                        src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
                                         alt=""
                                         className="img-cover"
                                     />
@@ -39,28 +61,28 @@ const ProductSinglePage = () => {
                                 <div className="product-img-thumbs flex align-center my-2">
                                     <div className="thumb-item">
                                         <img
-                                            src={current ? (product.images ? product.images[1] : '') : ''}
+                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
                                             alt=""
                                             className="img-cover"
                                         />
                                     </div>
                                     <div className="thumb-item">
                                         <img
-                                            src={current ? (product.images ? product.images[2] : '') : ''}
+                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
                                             alt=""
                                             className="img-cover"
                                         />
                                     </div>
                                     <div className="thumb-item">
                                         <img
-                                            src={current ? (product.images ? product.images[3] : '') : ''}
+                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
                                             alt=""
                                             className="img-cover"
                                         />
                                     </div>
                                     <div className="thumb-item">
                                         <img
-                                            src={current ? (product.images ? product.images[4] : '') : ''}
+                                            src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
                                             alt=""
                                             className="img-cover"
                                         />
@@ -71,14 +93,14 @@ const ProductSinglePage = () => {
 
                         <div className="product-single-r">
                             <div className="product-details font-manrope">
-                                <div className="title fs-20 fw-5">{current?.title}</div>
+                                <div className="title fs-20 fw-5">{product?.name}</div>
                                 <div>
-                                    <p className="para fw-3 fs-15">{current?.description}</p>
+                                    <p className="para fw-3 fs-15">{product?.description}</p>
                                 </div>
                                 <div className="info flex align-center flex-wrap fs-14">
                                     <div className="rating">
                                         <span className="text-orange fw-5">Rating:</span>
-                                        <span className="mx-1">{current?.rating}</span>
+                                        <span className="mx-1">{product?.rating}</span>
                                     </div>
                                     <div className="vert-line"></div>
                                     <div className="brand">
@@ -161,6 +183,4 @@ const ProductSinglePage = () => {
             </div>
         </main>
     );
-};
-
-export default ProductSinglePage;
+}
