@@ -3,9 +3,12 @@ import axios from 'axios';
 import { Form, Modal, Input, Button, message, Radio } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 import Layout from '../../components/Layout';
+import { useSelector } from 'react-redux';
+import { selectShop } from '../../reducer/actions/auth.slice';
 
 function Categories() {
-    const { user } = useSelector((state) => state.user);
+    const shop = useSelector(selectShop);
+    
     const [categoryList, setCategoryList] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState([]);
 
@@ -18,52 +21,65 @@ function Categories() {
         mode: 'add',
     });
 
-    // Testing 
-    setCategoryList([
-        {
-            name: "Electronics",
-            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
-            status: "published"
-        },
-        {
-            name: "Clothing",
-            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
-            status: "published"
-        },
-        {
-            name: "Books",
-            thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
-            status: "draft"
-        }
-    ]);
-
     const deleteCategory = async (categoryId) => {
-        message.success('Category delete successfully ' + categoryId);
-    };
-
-
-
-    /*
-    const getCategoryList = async () => {
         await axios
-            .post(CONFIG.API + '/category/get-list-by-shop', {
-                shopId: user.shopId,
-            })
+            .post(CONFIG.API + '/shop/delete-category', 
+                {
+                    categoryId : categoryId,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
             .then((res) => {
                 message.success(res.data.message);
-                setCategoryList(res.data.metadata);
+                setReload((prev) => prev + 1);
             })
             .catch((err) => {
                 message.error(err.message);
             });
     };
-    */
 
-    /*
+    const getCategoryList = async () => {
+        // await axios
+        //     .post(CONFIG.API + 'shop/get-categories', {
+        //         shopId: shop._id,
+        //     })
+        //     .then((res) => {
+        //         message.success(res.data.message);
+        //         setCategoryList(res.data.metadata);
+        //     })
+        //     .catch((err) => {
+        //         message.error(err.message);
+        //     });
+
+        // Testing 
+        setCategoryList([
+            {
+                name: "Electronics",
+                thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+                status: "published"
+            },
+            {
+                name: "Clothing",
+                thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+                status: "published"
+            },
+            {
+                name: "Books",
+                thumbnail: "https://cdn.britannica.com/02/162502-050-FEEA94DE/Vulture.jpg",
+                status: "draft"
+            }
+        ]);
+    };
+  
     useEffect(() => {
         getCategoryList()
     }, [reload]);
-    */
+
 
     useEffect(() => {
         if (filter === 'all') {
@@ -74,12 +90,15 @@ function Categories() {
     const handleForm = () => {
         form.validateFields().then(async (formValues) => {
             await axios
-                .post(CONFIG.API + '/category/create', formValues, {
-                    headers: {
-                        'x-client-id': localStorage.getItem('x-client-id'),
-                        'x-token-id': localStorage.getItem('x-token-id'),
-                    },
-                })
+                .post(CONFIG.API + '/shop/create-category'
+                    , formValues
+                    , {
+                        headers: {
+                            'x-client-id': localStorage.getItem('x-client-id'),
+                            'x-token-id': localStorage.getItem('x-token-id'),
+                        },
+                    }
+                )
                 .then((res) => {
                     message.success(res.data.message);
                     form.resetFields();
@@ -234,7 +253,7 @@ function Categories() {
                                                 type="primary"
                                                 ghost
                                                 danger={category.status === 'draft' ? false : true}
-                                                disabled={user.role > 1}
+                                                disabled={shop.role > 1}
                                             >
                                                 {category.status === 'draft' ? 'Activate' : 'Deactivate'}
                                             </Button>
@@ -253,7 +272,7 @@ function Categories() {
                                             <Button
                                                 danger
                                                 onClick={() => deleteCategory(category._id)}
-                                                disabled={user.role > 1}
+                                                disabled={shop.role > 1}
                                             >
                                                 Delete
                                             </Button>

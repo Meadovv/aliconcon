@@ -1,13 +1,17 @@
 import { Button, Popconfirm } from 'antd'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+<<<<<<< HEAD
+=======
+import { selectShop } from '../../reducer/actions/auth.slice';
+>>>>>>> thien
 
 function Settings() {
-    const { user } = useSelector((state) => state.user);
+    const shop = useSelector(selectShop);
     const navigate = useNavigate();
 
     return (
-        <Layout>
+        <div>
             <div
                 style={{
                     display: 'flex',
@@ -18,7 +22,7 @@ function Settings() {
                 <div>
                     <div
                         style={{
-                            display: user.role < 2 ? 'flex' : 'none',
+                            display: shop.role < 2 ? 'flex' : 'none',
                             justifyContent: 'space-between',
                         }}
                     >
@@ -32,7 +36,7 @@ function Settings() {
                 </div>
                 <div
                     style={{
-                        display: user.role < 2 ? 'flex' : 'none',
+                        display: shop.role < 2 ? 'flex' : 'none',
                         justifyContent: 'space-between',
                     }}
                 >
@@ -69,7 +73,7 @@ function Settings() {
                     </Popconfirm>
                 </div>
             </div>
-        </Layout>
+        </div>
     );
 }
 

@@ -4,7 +4,7 @@ import CONFIG from "../../configs"
 import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { message } from "antd"
-import { setUser } from "../../reducer/actions/user.slice"
+import { removeAuth } from "../../reducer/actions/auth.slice"
 
 export default function Logout() {
 
@@ -14,16 +14,18 @@ export default function Logout() {
 
     const logout = async () => {
         setLoading(true);
-        await axios.post(CONFIG.API + '/auth/logout', {}, {
+        await axios.post(CONFIG.API + '/access/logout', {}, {
             headers: {
                 ['x-client-id']: localStorage.getItem('x-client-id'),
                 ['x-token-id']: localStorage.getItem('x-token-id')
             }
         }).then(res => {
             message.success(res.data.message)
+            
             localStorage.removeItem('x-client-id')
             localStorage.removeItem('x-token-id')
-            dispatch(setUser(null))
+
+            dispatch(removeAuth())
             navigate('/login')
         }).catch(err => {
             message(err.message);

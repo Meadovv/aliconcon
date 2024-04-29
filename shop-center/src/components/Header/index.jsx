@@ -1,13 +1,15 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaBell, FaUser, FaInfoCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { selectShop, setAuth } from '../../reducer/actions/auth.slice';
 
 function Header() {
-    const { user } = useSelector(state => state.user)
+
+    const shop = useSelector(selectShop);
 
     const navigate = useNavigate();
-
+    
     return (
         <div className="header global-container">
             <div className="logo" onClick={() => navigate('/')}>
@@ -31,14 +33,14 @@ function Header() {
                 <div
                     className="item"
                     onClick={() => {
-                        if (!user) navigate('/login')
+                        if (!shop) navigate('/login')
                         else navigate(`/setting`)
                     }}
                 >
                     <div className="icon">
                         <FaUser />
                     </div>
-                    <div className="label">{user ? user.userName : 'Đăng nhập'}</div>
+                    <div className="label">{shop ? shop.name : 'Đăng nhập'}</div>
                 </div>
             </div>
         </div>

@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../../reducer/actions/user.slice';
 
 import axios from 'axios'
 import CONFIG from '../../configs';
 import Error from '../../pages/Error';
+import { setAuth, selectShop } from '../../reducer/actions/auth.slice';
 
 function Private({ children }) {
-    const { user } = useSelector(state => state.user)
+    const shop = useSelector(selectShop)
     const dispatch = useDispatch()
 
     const getUser = async () => {
@@ -18,7 +18,7 @@ function Private({ children }) {
             }
         })
         .then(response => {
-            dispatch(setUser(response.data.metadata))
+            dispatch(setAuth(response.data.metadata))
         })
         .catch(err => {
             console.log(err)
@@ -27,10 +27,11 @@ function Private({ children }) {
     }
 
     useEffect(() => {
-        if(!user) getUser();
-    }, [user])
+        if(!shop) getUser();
+        else console.log(shop);
+    }, [shop])
 
-    if(user) return children;
+    if(shop) return children;
     return <Error error={CONFIG.ERROR.NEED_LOGIN}/>
 }
 

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { Form, Modal, Input, Button, message, Card, DatePicker, Space, InputNumber} from 'antd'; // Import Form, Input, Button from Ant Design
+import { Radio, Form, Modal, Input, Button, message, Card, DatePicker, Space, InputNumber} from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
-import Layout from '../../components/Layout';
+import { useSelector } from 'react-redux';
+import { selectShop } from '../../reducer/actions/auth.slice';
 
 function Orders() {
-    const { user } = useSelector((state) => state.user);
+    const shop = useSelector(selectShop);
+
     const [orderList, setOrderList] = useState([]);
     const [orderFilter, setOrderFilter] = useState([]);
 
@@ -22,25 +24,43 @@ function Orders() {
     const [totalPrice, setTotalPrice] = useState(0);
 
     const deleteOrder = async (orderId) => {
-        message.success('Order delete successfully ' + orderId);
-    };
-
-    const getOrderList = async () => {
         await axios
-            .post(CONFIG.API + '/order/get-list-by-shop', {
-                shopId: user.shopId,
-            })
+            .post(CONFIG.API + '/shop/delete-user', 
+                {
+                    orderId : orderId,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
             .then((res) => {
                 message.success(res.data.message);
-                setOrderList(res.data.metadata);
+                setReload((prev) => prev + 1);
             })
             .catch((err) => {
                 message.error(err.message);
             });
     };
 
+    // const getOrderList = async () => {
+    //     await axios
+    //         .post(CONFIG.API + '/shop/get-order-list', {
+    //             shopId: shop._id,
+    //         })
+    //         .then((res) => {
+    //             message.success(res.data.message);
+    //             setOrderList(res.data.metadata);
+    //         })
+    //         .catch((err) => {
+    //             message.error(err.message);
+    //         });
+    // };
+
     useEffect(() => {
-        getOrderList();
+        // getOrderList();
         
     }, [reload]);
 
@@ -91,7 +111,7 @@ function Orders() {
     };
 
     return (
-        <Layout>
+        <div>
             <div>
                 <Modal
                     forceRender
@@ -129,30 +149,6 @@ function Orders() {
                         <Form.Item label="Create Date" name="createAt">
                             <DatePicker />
                         </Form.Item>
-
-                        <Form.List name="discounts">
-                            {(fields, { add, remove }) => (
-                                <>
-                                {fields.map((field) => (
-                                    <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                    <Form.Item
-                                        {...field}
-                                        name={[field.name, 'discountId']}
-                                        rules={[{ required: true, message: 'Please enter a discount ID' }]}
-                                    >
-                                        <Input placeholder="Discount ID" />
-                                    </Form.Item>
-                                    <MinusCircleOutlined onClick={() => remove(field.name)} />
-                                    </Space>
-                                ))}
-                                <Form.Item>
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                        Add Discount
-                                    </Button>
-                                </Form.Item>
-                                </>
-                            )}
-                        </Form.List>
 
                         <Form.Item name="status" hidden>
                             <Input />
@@ -221,15 +217,15 @@ function Orders() {
                                     </li>
                                 ))}
                             </ul>
-                            <p><b>Discounts:</b> {order.discounts.map(discount => discount.discountId).join(', ')}</p>
                             <p><b>Price:</b> {order.price}</p>
                             <p><b>Status:</b> {order.status}</p>
                             <p><b>Create date:</b> {order.createAt}</p>
+
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Button type="primary" onClick={() => setFormMode({index: index, open: true})}>
                                     Edit 
                                 </Button>
-                                <Button danger onClick={() => deleteOrder(order._id)} disabled={user.role > 1}>
+                                <Button danger onClick={() => deleteOrder(order._id)} disabled={shop.role > 1}>
                                     Delete
                                 </Button>
                             </div>
@@ -237,7 +233,7 @@ function Orders() {
                     ))}
                 </div>
             </div>
-        </Layout>
+        </div>
     );
 }
 

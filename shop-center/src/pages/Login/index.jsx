@@ -1,27 +1,38 @@
 import { Button, Form, Input, message } from 'antd'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import CONFIG from '../../configs';
+import { setAuth } from '../../reducer/actions/auth.slice';
 
 export default function Login() {
 
     const [form] = Form.useForm();
     const navigate = useNavigate()
+    const dispatch = useDispatch();
 
     const login = () => {
         form.validateFields()
         .then(async formValues => {
             await axios.post(CONFIG.API + '/access/shop/login', formValues)
+<<<<<<< HEAD
             .then(res => {
                 message.success(res.data.message)
+=======
+            .then(res => { 
+                message.success(res.data.message);
+
+                // Dispatch the setAuth action to update the state in Redux store
+                dispatch(setAuth(res.data.metadata.shop));
+>>>>>>> thien
                 localStorage.setItem('x-client-id', res.data.metadata.shop.userId);
                 localStorage.setItem('x-token-id', res.data.metadata.token);
-                navigate('/')
+                navigate('/');
             })
             .catch(err => {
-                console.log(err)
-                message.error(err.response.data.message)
+                console.log(err);
+                message.error(err.response.data.message);
             })
             form.resetFields();
         })
@@ -29,7 +40,7 @@ export default function Login() {
 
     useEffect(() => {
         if(localStorage.getItem('x-client-id') && localStorage.getItem('x-token-id')) {
-            navigate('/')
+            navigate('/');
         }
     }, [])
 
@@ -61,7 +72,7 @@ export default function Login() {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your name!',
+                                    message: 'Please input your Shop email!',
                                 },
                             ]}
                         >
