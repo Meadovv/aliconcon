@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Form, Modal, Input, Button, message } from 'antd';
+import { Form, Modal, Input, Button, Select, message } from 'antd';
 import Layout from '../../components/Layout';
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
+import CONFIG from '../../configs';
 
 function UserSetting() {
     const shop = useSelector(selectShop);
@@ -20,7 +21,7 @@ function UserSetting() {
 
     const getUserList = async () => {
         await axios
-            .post(CONFIG.API + '/shop/get-user-list', {
+            .post(CONFIG.API + '/shop/get-user-list', {}, {
                 headers: {
                     'x-client-id': localStorage.getItem('x-client-id'),
                     'x-token-id': localStorage.getItem('x-token-id'),
@@ -146,7 +147,7 @@ function UserSetting() {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            label="user"
+                            label="Role"
                             name="target_role"
                             rules={[
                                 {
@@ -155,7 +156,16 @@ function UserSetting() {
                                 },
                             ]}
                         >
-                            <Input />
+                            <Select
+                                size='large'
+                                placeholder="Select a role"
+                                allowClear
+                                options={[
+                                    {value: 1, label: 'Admin'},
+                                    {value: 2, label: 'EDITOR'},
+                                    {value: 3, label: 'MOD'},
+                                ]}
+                            />
                         </Form.Item>
                     </Form>
                 </Modal>

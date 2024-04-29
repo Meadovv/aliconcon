@@ -15,28 +15,13 @@ export default function Login() {
     const login = () => {
         form.validateFields()
         .then(async formValues => {
-            await axios.post(CONFIG.API + '/auth/shop/login', formValues)
-            .then(res => {
+            await axios.post(CONFIG.API + '/access/shop/login', formValues)
+            .then(res => { 
                 message.success(res.data.message);
 
                 // Dispatch the setAuth action to update the state in Redux store
-                // dispatch(setAuth({
-                //     shop : res.data.metadata.shop, 
-                //     token : res.data.metadata.token
-                // }));
-
-                //Test shop object
-                dispatch(setAuth({
-                    shop : {
-                        _id : 'shop test id',
-                        name : 'Shop test name',
-                        userId : 'User test id',
-                        role : 1,
-                    },
-                    token : 'testToken',
-                }));
-
-                localStorage.setItem('x-client-id', res.data.metadata.shop._id);
+                dispatch(setAuth(res.data.metadata.shop));
+                localStorage.setItem('x-client-id', res.data.metadata.shop.userId);
                 localStorage.setItem('x-token-id', res.data.metadata.token);
                 navigate('/');
             })
@@ -78,7 +63,7 @@ export default function Login() {
                     >
                         <Form.Item
                             label='Shop Email'
-                            name='shopEmail'
+                            name='shop_email'
                             rules={[
                                 {
                                     required: true,
@@ -91,7 +76,7 @@ export default function Login() {
 
                         <Form.Item
                             label='User Email'
-                            name='userEmail'
+                            name='user_email'
                             rules={[
                                 {
                                     required: true,

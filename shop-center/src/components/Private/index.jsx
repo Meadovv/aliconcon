@@ -4,14 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios'
 import CONFIG from '../../configs';
 import Error from '../../pages/Error';
-import { selectShop } from '../../reducer/actions/auth.slice';
+import { setAuth, selectShop } from '../../reducer/actions/auth.slice';
 
 function Private({ children }) {
     const shop = useSelector(selectShop)
     const dispatch = useDispatch()
 
     const getUser = async () => {
-        await axios.post(CONFIG.API + '/auth/shop/get', {}, {
+        await axios.post(CONFIG.API + '/access/shop/metadata', {}, {
             headers: {
                 'x-client-id': localStorage.getItem('x-client-id'),
                 'x-token-id': localStorage.getItem('x-token-id')
@@ -28,6 +28,7 @@ function Private({ children }) {
 
     useEffect(() => {
         if(!shop) getUser();
+        else console.log(shop);
     }, [shop])
 
     if(shop) return children;
