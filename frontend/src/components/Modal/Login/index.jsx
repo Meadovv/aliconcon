@@ -73,7 +73,7 @@ function LoginModal() {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={handleLogin} isLoading={loading}>
+                        <Button colorScheme="red" mr={3} onClick={handleLogin} isLoading={loading}>
                             Login
                         </Button>
                         <Button variant="ghost" onClick={onCloseModal} isLoading={loading}>

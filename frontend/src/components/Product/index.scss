@@ -6,7 +6,7 @@
     box-shadow: rgba(50, 50, 93, 0.05) 0px 2px 5px -1px, rgba(0, 0, 0, 0.05) 0px 1px 3px -1px;
     transition: $transition-ease;
 
-    .category{
+    .sale{
         position: absolute;
         left: -5px;
         top: 1.6rem;
@@ -60,6 +60,11 @@
             font-weight: 500;
             letter-spacing: 0.3px;
         }
+        .short_description{
+            font-size: 13px;
+            color: $clr-gray;
+            font-style: italic;
+        }
         .price{
             position: relative;
             .old-price{
@@ -78,16 +83,18 @@
                 font-family: $font-family-poppins;
                 color: darken($clr-orange, 5%);
             }
-
-            &::after{
-                content: "";
-                position: absolute;
-                top: calc(100% + 6px);
-                height: 1px;
-                background-color: lighten($clr-orange, 10%);
-                width: 60px;
-            }
         }
+    }
+
+    &-action {
+        padding: 0 12px 10px 12px;
+        text-align: center;
+        font-family: $font-family-manrope;
+        font-size: 16px;
+        opacity: 0.8;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px
     }
 
     &:hover{

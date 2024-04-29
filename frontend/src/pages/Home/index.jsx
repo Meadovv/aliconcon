@@ -43,7 +43,7 @@ const HomePage = () => {
                     <div className="categories py-5">
                         <div className="categories-item">
                             <div className="title-md">
-                                <h3>See our products</h3>
+                                <h4>See our products</h4>
                             </div>
                             {loading ? <Loader /> : <ProductList products={products} />}
                         </div>
