@@ -17,7 +17,7 @@ export default function Shop() {
     return (
         <Fragment>
             <CategoryContainer>
-                Aliconcon / Thế giới di động
+                {`Aliconcon > Thế giới di động`}
             </CategoryContainer>
             <HeaderContainer>
                 <HeaderPanel>

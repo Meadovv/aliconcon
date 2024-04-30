@@ -60,22 +60,22 @@ export default function Footer() {
                             <h5>Liên hệ</h5>
                             <Form layout="vertical" onFinish={onFinish}>
                                 <Form.Item
-                                    name="name"
+                                    name="contact_form_name"
                                     rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
                                 >
                                     <Input placeholder="Họ và tên" size="large" />
                                 </Form.Item>
                                 <Form.Item
-                                    name="email"
+                                    name="contact_form_email"
                                     rules={[{ required: true, message: 'Vui lòng nhập địa chỉ hòm thư!' }]}
                                 >
                                     <Input placeholder="Thư điện tử" size="large" />
                                 </Form.Item>
-                                <Form.Item name="title" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}>
+                                <Form.Item name="contact_form_title" rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}>
                                     <Input placeholder="Tiêu đề" size="large" />
                                 </Form.Item>
                                 <Form.Item
-                                    name="content"
+                                    name="contact_form_content"
                                     rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
                                 >
                                     <Input.TextArea placeholder="Nội dung" size="large" />

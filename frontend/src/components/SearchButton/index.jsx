@@ -1,4 +1,4 @@
-import { Button, Input } from 'antd';
+import { Button, Input, message } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 export default function SearchButton({ placeholder, onSearch, size, buttonText, buttonColor, buttonTextColor }) {
@@ -14,7 +14,7 @@ export default function SearchButton({ placeholder, onSearch, size, buttonText, 
 
     const _onSearch = (value) => {
         if(!value) {
-            alert('Không được để trống!');
+            message.warning('Vui lòng nhập từ khóa tìm kiếm!');
         } else {
             if(onSearch) onSearch(value);
             else console.log(value);

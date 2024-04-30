@@ -13,6 +13,7 @@ var categorySchema = new Schema({
     },
     parent: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_categories',
         default: null
     },
     name: {

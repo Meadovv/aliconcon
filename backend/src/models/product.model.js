@@ -57,7 +57,14 @@ const productSchema = new Schema({
     },
     rating: {
         type: Number,
-        default: 0
+        default: 0.0
+    },
+    likes: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'aliconcon_users'
+        }],
+        default: []
     },
     status: {
         type: String,

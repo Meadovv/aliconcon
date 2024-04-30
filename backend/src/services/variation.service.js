@@ -46,6 +46,12 @@ class VariationService {
 
     }
 
+    static getVariations = async ({ product }) => {
+        return await variationModel.find({
+            product: product
+        });
+    }
+
     static getVariation = async ({ productId, variation_tier_idx }) => {
         return await variationModel.findOne({
             product: productId,
