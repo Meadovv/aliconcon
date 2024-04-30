@@ -3,6 +3,8 @@ import Home from "../../pages/Home";
 import Logout from "../../pages/Logout";
 import Error from "../../pages/Error";
 
+import Shop from "../../pages/Shop";
+
 const routers = [
     {
         path: '/login',
@@ -31,6 +33,13 @@ const routers = [
         header: true,
         footer: true,
         middleware: 'private'
+    },
+    {
+        path: '/shop/:shopId',
+        page: <Shop />,
+        header: true,
+        footer: true,
+        middleware: 'guest'
     },
     {
         path: '*',

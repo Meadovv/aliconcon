@@ -14,15 +14,32 @@ const productSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    name:{
+    editBy: {
+        type: [{
+            user: {
+                type: Schema.Types.ObjectId,
+                required: true
+            },
+            action: String
+        }],
+        default: []
+    },
+    name: {
         type:String,
         trim: true,
         maxLength: 150
     },
-    description:{
+    description: {
         type:String,
+        required: true,
         trim: true,
         maxLength: 500
+    },
+    short_description: {
+        type: String,
+        required: true,
+        trim: true,
+        maxLength: 150
     },
     category:{
         type: Schema.Types.ObjectId,
@@ -49,7 +66,11 @@ const productSchema = new Schema({
     variations: {
         type: Array,
         default: []
-    }
+    },
+    sell_count: {
+        type: Number,
+        default: 0
+    },
 }, {
     timestamps: true,
     collection: COLLECTION_NAME
