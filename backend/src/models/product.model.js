@@ -8,6 +8,7 @@ const COLLECTION_NAME = 'products';
 const productSchema = new Schema({
     shop: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_shops',
         required: true
     },
     addBy: {

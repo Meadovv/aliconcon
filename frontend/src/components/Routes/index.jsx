@@ -4,6 +4,7 @@ import Logout from "../../pages/Logout";
 import Error from "../../pages/Error";
 
 import Shop from "../../pages/Shop";
+import Product from "../../pages/Product";
 
 const routers = [
     {
@@ -37,6 +38,13 @@ const routers = [
     {
         path: '/shop/:shopId',
         page: <Shop />,
+        header: true,
+        footer: true,
+        middleware: 'guest'
+    },
+    {
+        path: '/product/:productId',
+        page: <Product />,
         header: true,
         footer: true,
         middleware: 'guest'
