@@ -11,7 +11,7 @@ export default function Footer() {
         <Layout.Footer style={{
             backgroundColor: '#f8f9fa',
         }}>
-            <div className="container bg-red">
+            <div className="container">
                 <footer className="py-5">
                     <div className="row justify-content-between">
                         <div className="col-6 col-md-2 mb-3">
@@ -56,7 +56,7 @@ export default function Footer() {
                             </ul>
                         </div>
 
-                        <div className="col-md-5 offset-md-1 mb-3 border border-dark p-3 rounded bg-white">
+                        <div className="col-md-5 offset-md-1 mb-3 border p-3 rounded bg-white">
                             <h5>Liên hệ</h5>
                             <Form layout="vertical" onFinish={onFinish}>
                                 <Form.Item
