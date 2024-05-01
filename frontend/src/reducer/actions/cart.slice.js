@@ -29,7 +29,9 @@ const cartSlice = createSlice({
 
             const idx = state.carts.findIndex((item) => item.product._id === product._id && item.variation._id === variation._id);
             if (idx !== -1) {
-                state.carts[idx].quantity += quantity;
+                if(state.carts[idx].quantity + quantity <= state.carts[idx].variation.quantity) {
+                    state.carts[idx].quantity += quantity;
+                }
             } else {
                 state.carts.push({
                     product,
@@ -61,10 +63,17 @@ const cartSlice = createSlice({
         },
 
         removeFromCart: (state, action) => {
+            const productId = action.payload.product._id;
+            const variationId = action.payload.variation._id;
+            const idx = state.carts.findIndex((item) => item.product._id === productId && item.variation._id === variationId);
+            if (idx !== -1) {
+                state.carts.splice(idx, 1);
+            }
             calculate(state);
         },
 
         clearCart: (state) => {
+            state.carts = [];
             calculate(state);
         }
     }
