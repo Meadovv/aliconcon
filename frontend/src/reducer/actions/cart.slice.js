@@ -10,8 +10,8 @@ const calculate = (state) => {
     let itemCount = 0;
     let total = 0;
     state.carts.forEach((cart) => {
-        itemCount += cart.quantity;
-        total += cart.quantity * cart.variant.price;
+        itemCount += cart?.quantity;
+        total += cart?.quantity * cart?.variation?.price;
     });
     state.itemCount = itemCount;
     state.total = total;
@@ -24,16 +24,16 @@ const cartSlice = createSlice({
     reducers: {
         addToCart: (state, action) => {
             const product = action.payload.product;
-            const variant = action.payload.variant;
+            const variation = action.payload.variation;
             const quantity = action.payload.quantity;
 
-            const idx = state.carts.findIndex((item) => item.product._id === product._id && item.variant._id === variant._id);
+            const idx = state.carts.findIndex((item) => item.product._id === product._id && item.variation._id === variation._id);
             if (idx !== -1) {
                 state.carts[idx].quantity += quantity;
             } else {
                 state.carts.push({
                     product,
-                    variant,
+                    variation,
                     quantity: quantity
                 });
             }

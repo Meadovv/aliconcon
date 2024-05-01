@@ -50,7 +50,7 @@ export default function Middlewares({ middleware }) {
                 dispatch(restoreCart({ carts: res.data.metadata }));
             })
             .catch(err => {
-                console.error(err);
+                console.log(err);
                 message.error(err.response.data.message);
             })
         } else {

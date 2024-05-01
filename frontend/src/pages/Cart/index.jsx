@@ -65,10 +65,10 @@ const CartPage = () => {
                       <span className='cart-ctxt fw-5'>{cart?.product.name}</span>
                       <span className='cart-ctxt' style={{
                         fontStyle: 'italic',
-                      }}>{cart?.variant.name}</span>
+                      }}>{cart?.variation.name}</span>
                     </div>
                     <div className='cart-ctd'>
-                      <span className='cart-ctxt'>{formatPrice(cart?.variant.price)}</span>
+                      <span className='cart-ctxt'>{formatPrice(cart?.variation.price)}</span>
                     </div>
                     <div className='cart-ctd'>
                       <div className='qty-change flex align-center'>
@@ -87,7 +87,7 @@ const CartPage = () => {
                     </div>
 
                     <div className='cart-ctd'>
-                      <span className='cart-ctxt text-orange fw-5'>{formatPrice(cart?.variant.price * cart?.quantity)}</span>
+                      <span className='cart-ctxt text-orange fw-5'>{formatPrice(cart?.variation.price * cart?.quantity)}</span>
                     </div>
 
                     <div className='cart-ctd'>
