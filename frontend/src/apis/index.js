@@ -18,6 +18,8 @@ const api = {
     GET_PRODUCT: ({ id, user }) => {
         return BACKEND_API + 'shop/get-product?id=' + id + '&user=' + user;
     },
+    GET_CART: BACKEND_API + 'shop/get-cart',
+    ADD_TO_CART: BACKEND_API + 'shop/add-to-cart',
     GET_VARIANT: BACKEND_API + 'shop/get-variation',
     LOGIN: BACKEND_API + 'user/login',
     METADATA: BACKEND_API + 'user/metadata',

@@ -48,7 +48,7 @@ const Navbar = () => {
           <div className='cart-btn' onClick={() => navigate('/cart')}>
             <i className='fa-solid fa-cart-shopping'></i>
             <div className='cart-items-value' style={{
-              display: cart.itemCount ? 'block' : 'none'
+              display: cart.itemCount ? 'flex' : 'none'
             }}>{cart.itemCount}</div>
             <CartModal carts = {cart.carts} />
           </div>

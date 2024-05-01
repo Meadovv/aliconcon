@@ -9,6 +9,8 @@ import { setUser } from '../../reducer/actions/user.slice';
 
 import { restoreCart } from '../../reducer/actions/cart.slice';
 
+import { message } from 'antd';
+
 export default function Middlewares({ middleware }) {
 
     const user = useSelector(state => state.user)
@@ -36,14 +38,30 @@ export default function Middlewares({ middleware }) {
         }
     }
 
-    const getCart = async (userId) => {
-        const cartJSON = localStorage.getItem('carts');
-        if(cartJSON) dispatch(restoreCart({ carts: JSON.parse(cartJSON) }));
+    const getCart = async () => {
+        if(localStorage.getItem('token') && localStorage.getItem('client')) {
+            await axios.post(api.GET_CART, {}, {
+                headers: {
+                    'x-token-id': localStorage.getItem('token'),
+                    'x-client-id': localStorage.getItem('client')
+                }
+            })
+            .then(res => {
+                dispatch(restoreCart({ carts: res.data.metadata }));
+            })
+            .catch(err => {
+                console.error(err);
+                message.error(err.response.data.message);
+            })
+        } else {
+            const cartJSON = localStorage.getItem('carts');
+            if(cartJSON) dispatch(restoreCart({ carts: JSON.parse(cartJSON) }));
+        }
     }
 
     React.useEffect(() => {
         getUser();
-        getCart(user?._id);
+        getCart();
     }, [user, getUser])
 
     if(middleware) return localStorage.getItem('token') && localStorage.getItem('client') ? null : <Navigate to='/login' />

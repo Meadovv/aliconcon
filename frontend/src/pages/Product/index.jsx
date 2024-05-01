@@ -19,6 +19,7 @@ import Error from '../Error';
 
 export default function Product() {
     const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
     const [product, setProduct] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [variantTierIdx, setVariantTierIdx] = React.useState([]);
@@ -76,13 +77,33 @@ export default function Product() {
         
     }
 
-    const addToCartHandler = (product) => {
+    const addToCartHandler = async () => {
         if(quantity > variant?.quantity) {
             message.error('Not enough quantity in stock');
             return;
         }
         dispatch(addToCart({ product, variant, quantity }));
-        message.success('Added to cart');
+        if(user) {
+            await axios.post(api.ADD_TO_CART, {
+                productId: product._id,
+                variationId: variant._id,
+                quantity: quantity,
+            }, {
+                headers: {
+                    'x-token-id': localStorage.getItem('token'),
+                    'x-client-id': localStorage.getItem('client'),
+                }
+            })
+            .then(res => {
+                message.success(res.data.message);
+            })
+            .catch(err => {
+                console.error(err);
+                message.error(err.response.data.message);
+            })
+        } else {
+            message.success('Added to cart');
+        }
     }
 
     const getVariant = async ({ productId, variation_tier_idx }) => {
@@ -253,7 +274,7 @@ export default function Product() {
                                         <span
                                             className="btn-text mx-2"
                                             onClick={() => {
-                                                addToCartHandler(product);
+                                                addToCartHandler();
                                             }}
                                         >
                                             add to cart
