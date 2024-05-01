@@ -53,6 +53,7 @@ const CartPage = () => {
           <div className='cart-cbody bg-white'>
             {
               carts.map((cart, idx) => {
+                const newPrice = cart?.variation.price - (cart?.variation.price * cart?.product.sale) / 100;
                 return (
                   <div className='cart-ctr py-4' key = {idx}>
                     <div className='cart-ctd'>
@@ -67,8 +68,17 @@ const CartPage = () => {
                         fontStyle: 'italic',
                       }}>{cart?.variation.name}</span>
                     </div>
-                    <div className='cart-ctd'>
-                      <span className='cart-ctxt'>{formatPrice(cart?.variation.price)}</span>
+                    <div className='cart-ctd' style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}>
+                      <span className='cart-ctxt' style={{
+                        textDecoration: 'line-through',
+                        display: cart?.product.sale ? 'block' : 'none',
+                      }}>{formatPrice(cart?.variation.price)}</span>
+                      <span className='cart-ctxt' style={{
+                        fontWeight: 600,
+                      }}>{formatPrice(newPrice)}</span>
                     </div>
                     <div className='cart-ctd'>
                       <div className='qty-change flex align-center'>

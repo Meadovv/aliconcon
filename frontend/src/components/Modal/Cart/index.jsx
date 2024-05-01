@@ -19,9 +19,9 @@ const CartModal = ({ carts }) => {
                         return (
                             <div className="cart-modal-item grid align-center font-manrope py-2" key={index}>
                                 <div className="cart-modal-item-img">
-                                    {/* <img src={IMAGE_HOST.THUMBNAIL(
+                                    <img src={IMAGE_HOST.THUMBNAIL(
                                         variation?.thumbnail ? variation?.thumbnail.name : product?.thumbnail.name
-                                    )} alt="" className="img-cover" /> */}
+                                    )} alt="" className="img-cover" />
                                 </div>
                                 <div>
                                     <div className="cart-modal-item-title fs-14 font-manrope text-capitalize" style={{
@@ -33,6 +33,12 @@ const CartModal = ({ carts }) => {
                                         color: '#9b9b9b'
                                     }}>
                                         {variation?.name}
+                                    </div>
+                                    <div className="cart-modal-item-price text-gray fs-14 fw-6" style={{
+                                        display: product?.sale ? 'block' : 'none',
+                                        textDecoration: 'line-through',
+                                    }}>
+                                        {formatPrice(variation?.price)}
                                     </div>
                                     <div className="cart-modal-item-price text-orange fs-14 fw-6">
                                         {formatPrice(newPrice)}
