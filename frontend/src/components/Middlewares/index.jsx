@@ -11,7 +11,7 @@ import { restoreCart } from '../../reducer/actions/cart.slice';
 
 import { message } from 'antd';
 
-export default function Middlewares({ middleware }) {
+export default function Middlewares({ middleware, component }) {
 
     const user = useSelector(state => state.user)
     const dispatch = useDispatch();
@@ -51,7 +51,6 @@ export default function Middlewares({ middleware }) {
             })
             .catch(err => {
                 console.log(err);
-                message.error(err.response.data.message);
             })
         } else {
             const cartJSON = localStorage.getItem('carts');
@@ -61,9 +60,12 @@ export default function Middlewares({ middleware }) {
 
     React.useEffect(() => {
         getUser();
-        getCart();
     }, [user, getUser])
 
-    if(middleware) return localStorage.getItem('token') && localStorage.getItem('client') ? null : <Navigate to='/login' />
-    else return null;
+    React.useEffect(() => {
+        getCart();
+    }, [])
+
+    if(middleware) return localStorage.getItem('token') && localStorage.getItem('client') ? component : <Navigate to='/' />
+    else return component;
 }

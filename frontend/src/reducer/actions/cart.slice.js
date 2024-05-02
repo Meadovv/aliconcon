@@ -11,7 +11,7 @@ const calculate = (state) => {
     let total = 0;
     state.carts.forEach((cart) => {
         itemCount += cart?.quantity;
-        total += cart?.quantity * cart?.variation?.price;
+        total += cart?.quantity * (cart.variation.price - (cart.variation.price * cart.product.sale) / 100);
     });
     state.itemCount = itemCount;
     state.total = total;

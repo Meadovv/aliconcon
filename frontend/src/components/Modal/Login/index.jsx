@@ -42,13 +42,13 @@ function LoginModal() {
         await axios.post(api.LOGIN, loginForm)
             .then((response) => {
                 message.success(response.data.message);
-                dispatch(setUser(response.data.metadata.user));
                 localStorage.setItem('token', response.data.metadata.token);
                 localStorage.setItem('client', response.data.metadata.user._id);
+                window.location.reload();
                 onCloseModal();
             })
             .catch((error) => {
-                console.error(error);
+                console.log(error);
                 message.error(error.response.data.message);
             });
         setLoading(false);

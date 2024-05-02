@@ -52,6 +52,10 @@ const CartPage = () => {
         toggleCart({ product, variation, type: false });
     };
 
+    const handleCheckout = () => {
+        navigate('/checkout');
+    }
+
     const handleDeleteItem = async ({ product, variation }) => {
         dispatch(removeFromCart({ product, variation }));
         if(!user) return;
@@ -250,7 +254,7 @@ const CartPage = () => {
                                 <span className="text-orange fs-22 mx-2 fw-6">{formatPrice(total)}</span>
                             </div>
 
-                            <button type="button" className="checkout-btn text-white bg-orange fs-16">
+                            <button type="button" className="checkout-btn text-white bg-orange fs-16" onClick={() => handleCheckout()}>
                                 Check Out
                             </button>
                         </div>

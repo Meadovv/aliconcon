@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { openModal } from '../../../reducer/actions/modal.slice';
 
 import LoginModal from '../../Modal/Login';
+import PaymentModal from '../../Modal/Payment';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Header = () => {
     return (
         <>
             <LoginModal />
+            <PaymentModal />
             <header className="header text-white">
                 <div className="container">
                     <div className="header-cnt">

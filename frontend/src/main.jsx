@@ -12,6 +12,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ChakraProvider>
         <ReducerProvider store={store}>
             <App />
-        </ReducerProvider>,
+        </ReducerProvider>
     </ChakraProvider>
 );
