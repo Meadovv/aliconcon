@@ -2,8 +2,8 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_groups';
-const COLLECTION_NAME = 'groups';
+const DOCUMENT_NAME = 'aliconcon_shop_orders';
+const COLLECTION_NAME = 'shop_orders';
 
 const schema = new Schema({
     shop:{
@@ -11,14 +11,28 @@ const schema = new Schema({
         ref: 'aliconcon_shops',
         required: true
     },
-    addBy: {
+    order: {
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_users',
+        ref: 'aliconcon_orders',
         required: true
     },
-    name: {
-        type: String,
+    items: {
+        type: Array,
+        default: []
+    },
+    total: {
+        type: Number,
         required: true
+    },
+    status: {
+        type: Number,
+        enum: [0, 1],
+        default: 0
+    },
+    paid: {
+        type: Number,
+        enum: [0, 1],
+        default: 0
     },
 }, {
     timestamps: true,

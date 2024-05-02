@@ -1,6 +1,8 @@
 'use strict'
 
 const userModel = require('../models/user.model');
+const productModel = require('../models/product.model');
+const commentModel = require('../models/comment.model');
 const {
     BAD_REQUEST_ERROR,
     UNAUTHENTICATED_ERROR,
@@ -101,6 +103,24 @@ class UserService {
         }
         foundUser.password = undefined;
         return foundUser;
+    }
+
+    static leaveComment = async ({ userId, productId, comment }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        const foundProduct = await productModel.findById(productId).lean();
+        if (!foundProduct) {
+            throw new NOT_FOUND_ERROR('Product not found!');
+        }
+        const newComment = await commentModel.create({
+            user: userId,
+            product: productId,
+            comment
+        });
+
+        return newComment;
     }
 }
 

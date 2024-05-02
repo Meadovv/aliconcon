@@ -9,6 +9,7 @@ const {
     getFields
 } = require('../utils/other.utils');
 const OrderService = require("../services/order.service");
+const ProductService = require("../services/product.service");
 
 
 class UserController {
@@ -58,20 +59,7 @@ class UserController {
             })
         }).send(res);
     }
-
-    static getComments = async (req, res) => {
-        new SUCCESS({
-            message: 'Get comment successfully',
-            metadata: await UserService.getComment({
-                ...getFields({
-                    fields: ['productId'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
+    
     static getInformation = async (req, res) => {
         new SUCCESS({
             message: 'Get information successfully',
@@ -167,6 +155,23 @@ class UserController {
             metadata: await OrderService.getOrderByOwner({
                 ...getFields({
                     fields: ['orderId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getOrdersByOwner = async (req, res) => {
+
+    }
+
+    static switchProductLike = async (req, res) => {
+        new SUCCESS({
+            message: 'Switch product like successfully',
+            metadata: await ProductService.switchProductLike({
+                ...getFields({
+                    fields: ['productId'],
                     object: req.body
                 }),
                 ...req.jwt_decode

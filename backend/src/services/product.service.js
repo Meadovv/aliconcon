@@ -4,6 +4,7 @@ const shopModel = require('../models/shop.model');
 const imageModel = require('../models/image.model');
 const userModel = require('../models/user.model');
 const ROLES = require('../constants/ROLES')
+const commentModel = require('../models/comment.model');
 
 const utils = require('../utils');
 
@@ -52,18 +53,14 @@ class ProductService {
         });
         await VariationService.createVariations(newProduct);
         const products = await productModel.find({ shop: shopId })
-        .select('_id name category price thumbnail addBy createdAt')
-        .populate({
-            path: 'category',
-            select: '_id name'
-        })
-        .populate('addBy', '_id name')
-        .lean();
+            .select('_id name category price thumbnail addBy createdAt')
+            .populate({
+                path: 'category',
+                select: '_id name'
+            })
+            .populate('addBy', '_id name')
+            .lean();
         return products;
-    }
-
-    static switchProductLike = async ({ shopId, userId, productId }) => {
-
     }
 
     static getProduct = async ({ id, user }) => {
@@ -86,10 +83,15 @@ class ProductService {
             .populate('shop', '_id name')
             .limit(5)
             .lean();
-        
+
         relatedProducts.forEach(item => {
             item.sale = item.sale ? item.sale.discount : 0;
         });
+
+        product.comments = await commentModel
+            .find({ product: id })
+            .populate('user', '_id name')
+            .lean();
 
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
@@ -97,10 +99,28 @@ class ProductService {
         product.sale = product.sale ? product.sale.discount : 0;
 
         return utils.OtherUtils.getInfoData({
-            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count', 'relatedProducts'],
+            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count', 'relatedProducts', 'comments'],
             object: product
         });
     }
+
+    static switchProductLike = async ({ userId, productId }) => {
+        userId = userId.toString();
+        const foundProduct = await productModel.findById(productId).lean();
+        if (!foundProduct) throw new BAD_REQUEST_ERROR('Product not found!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        const likes = foundProduct.likes.map(String); // Convert all IDs to strings
+        const index = likes.indexOf(userId);
+        if (index !== -1) {
+            likes.splice(index, 1);
+        } else {
+            likes.push(userId);
+        }
+        await productModel.findByIdAndUpdate(productId, { likes });
+        return this.getProduct({ id: productId, user: userId });
+    }
+
 
     static getProductsByAdmin = async ({ shopId, userId }) => {
         if (!shopId) throw new BAD_REQUEST_ERROR('Shop not found!')

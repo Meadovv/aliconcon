@@ -1,8 +1,10 @@
 const productModel = require("../models/product.model");
 const userModel = require("../models/user.model");
+const shopModel = require("../models/shop.model");
 const variationModel = require("../models/variation.model");
 const cartModel = require("../models/cart.model");
 const orderModel = require("../models/order.model");
+const shopOrderModel = require("../models/shopOrder.model");
 
 const {
     BAD_REQUEST_ERROR, NOT_FOUND_ERROR
@@ -33,7 +35,7 @@ class CartService {
             return {
                 product: {
                     ...item.product,
-                    sale: foundProduct?.sale.discount
+                    sale: foundProduct.sale ? foundProduct.sale.discount : 0
                 },
                 variation: item.variation,
                 quantity: item.quantity,
@@ -170,10 +172,11 @@ class CartService {
         await Promise.all(carts.map(async (item) => {
             const foundProduct = await productModel.findById(item.product._id).lean();
             const foundVariation = await variationModel.findById(item.variation._id).lean();
+            await productModel.findByIdAndUpdate(foundProduct._id, { sell_count: foundProduct.sell_count + item.quantity });
             await variationModel.findByIdAndUpdate(foundVariation._id, { quantity: foundVariation.quantity - item.quantity });
             if (information.userId) await cartModel.findOneAndDelete({ product: foundProduct._id, variation: foundVariation._id, user: information.userId });
         }));
-        
+
         const order = await orderModel.create({
             user: information.userId ? information.userId : null,
             user_name: information.name,
@@ -182,6 +185,32 @@ class CartService {
             items: cartItems,
             total: totalCash
         });
+
+        const shopMap = new Map();
+        await Promise.all(cartItems.map(async (item) => {
+            const foundProduct = await productModel.findById(item.product._id).lean();
+            const foundShop = await shopModel.findById(foundProduct.shop).lean();
+            if (!shopMap.has(foundShop._id.toString())) {
+                shopMap.set(foundShop._id.toString(), []);
+            }
+            const shopItems = shopMap.get(foundShop._id.toString());
+            shopItems.push(item);
+        }));
+
+        console.log(shopMap.keys(), shopMap.values());
+
+        await Promise.all(Array.from(shopMap.keys()).map(async (shopId) => {
+            await shopOrderModel.create({
+                shop: shopId,
+                order: order._id,
+                items: shopMap.get(shopId),
+                total: shopMap.get(shopId).reduce((acc, item) => {
+                    const foundVariation = item.variation;
+                    const foundProduct = item.product;
+                    return acc + (foundVariation.price - (foundVariation.price * (foundProduct.sale ? foundProduct.sale : 0) / 100)) * item.quantity;
+                }, 0)
+            })
+        }));
 
         return order;
     }

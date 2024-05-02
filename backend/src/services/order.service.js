@@ -1,4 +1,5 @@
 const orderModel = require("../models/order.model");
+const shopOrder = require("../models/shopOrder.model");
 
 const {
     BAD_REQUEST_ERROR, NOT_FOUND_ERROR
@@ -20,7 +21,32 @@ class OrderService {
     }
 
     static getOrdersByOwner = async ({ userId }) => {
-        return await orderModel.find({ user: userId });
+        return await orderModel.find({ user: userId }).lean();
+    }
+
+    static getOrdersByShop = async ({ shopId }) => {
+        return await shopOrder.find({ shop: shopId }).lean();
+    }
+
+    static getOrderByShop = async ({ shopId, orderId }) => {
+        const foundShopOrder = await shopOrder.findOne({ shop: shopId, _id: orderId }).lean();
+        if (!foundShopOrder) throw new NOT_FOUND_ERROR('Order not found');
+
+        const foundOrder = await orderModel.findById(foundShopOrder.order).lean();
+        if (!foundOrder) throw new NOT_FOUND_ERROR('Order not found');
+
+        return {
+            user: {
+                name: foundOrder.user_name,
+                phone: foundOrder.user_phone,
+                address: foundOrder.user_address
+            },
+            items: foundShopOrder.items,
+            total: foundShopOrder.total,
+            status: foundShopOrder.status,
+            paid: foundShopOrder.paid,
+        }
+
     }
 }
 

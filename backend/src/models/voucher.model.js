@@ -24,21 +24,6 @@ const schema = new Schema({
         type: String,
         required: true
     },
-    items: {
-        type: [{
-            _id: {
-                type: Schema.Types.ObjectId,
-                ref: 'aliconcon_products',
-                required: true
-            },
-            addBy: {
-                type: Schema.Types.ObjectId,
-                ref: 'aliconcon_users',
-                required: true
-            }
-        }],
-        default: []
-    },
     discount: {
         type: Number,
         required: true

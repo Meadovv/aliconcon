@@ -8,6 +8,7 @@ const ProductService = require('../services/product.service');
 const CategoryService = require('../services/category.service');
 const VariationService = require('../services/variation.service');
 const VoucherService = require('../services/voucher.service');
+const OrderService = require('../services/order.service');
 class ShopController {
 
     static getShop = async (req, res) => {
@@ -374,6 +375,28 @@ class ShopController {
         new SUCCESS({
             message: 'Get vouchers successfully',
             metadata: await VoucherService.getVouchers({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getOrdersByShop = async (req, res) => {
+        new SUCCESS({
+            message: 'Get orders successfully',
+            metadata: await OrderService.getOrdersByShop({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getOrderByShop = async (req, res) => {
+        new SUCCESS({
+            message: 'Get order successfully',
+            metadata: await OrderService.getOrderByShop({
+                ...getFields({
+                    fields: ['orderId'],
+                    object: req.body
+                }),
                 ...req.jwt_decode
             })
         }).send(res);

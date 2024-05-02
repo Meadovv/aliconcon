@@ -48,4 +48,7 @@ router.post('/get-voucher', ErrorMiddleware.asyncHandler(ShopController.getVouch
 router.post('/get-vouchers', ErrorMiddleware.asyncHandler(ShopController.getVouchers));
 router.post('/update-voucher', ErrorMiddleware.asyncHandler(ShopController.updateVoucher));
 
+router.post('/get-orders', ErrorMiddleware.asyncHandler(ShopController.getOrdersByShop));
+router.post('/get-order', ErrorMiddleware.asyncHandler(ShopController.getOrderByShop));
+
 module.exports = router;
