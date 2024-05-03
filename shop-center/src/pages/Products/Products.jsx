@@ -246,7 +246,9 @@ function Products() {
                                 {productFilter.map((product, productIndex) => {
                                     if(product.categoryId === category._id) return (
                                         <div key={productIndex} style={{ display: 'flex', flexDirection: 'column', gap: '10px', }}>
+
                                             <img src={product.thumbnail} alt="thumbnail" style={{ width: '80px' }} />
+
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', }}>
                                                 <div style={{ fontWeight: 'bold' }}>{product.name}</div>
                                                 <div><b>Categories:</b> {product.categories}</div>
@@ -256,6 +258,7 @@ function Products() {
                                                 <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                     <b>Description:</b> {product.description}
                                                 </div>
+                                                
                                                 <div style={{ display: 'flex', gap: '5px', }}>
                                                     <Button
                                                         type="primary"

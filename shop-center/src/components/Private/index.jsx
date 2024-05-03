@@ -10,8 +10,11 @@ function Private({ children }) {
     const shop = useSelector(selectShop)
     const dispatch = useDispatch()
 
+    // Reload shop
     const getUser = async () => {
-        await axios.post(CONFIG.API + '/access/shop/metadata', {}, {
+        await axios.post(CONFIG.API + '/access/shop/metadata'
+        , {}
+        , {
             headers: {
                 'x-client-id': localStorage.getItem('x-client-id'),
                 'x-token-id': localStorage.getItem('x-token-id')
