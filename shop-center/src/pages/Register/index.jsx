@@ -1,14 +1,36 @@
 import { Button, Form, Input, Tooltip } from 'antd'
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import CONFIG from '../../configs';
+import { setAuth } from '../../reducer/actions/auth.slice'
 
 export default function Authentication() {
 
     const [form] = Form.useForm();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const register = () => {
-        
+        form.validateFields()
+        .then(async formValues => {
+            await axios.post(CONFIG.API + '/access/shop/register', formValues)
+            .then(res => { 
+                message.success(res.data.message);
+
+                // Dispatch the setAuth action to update the state in Redux store
+                dispatch(setAuth(res.data.metadata.shop));
+                localStorage.setItem('x-client-id', res.data.metadata.shop.userId);
+                localStorage.setItem('x-token-id', res.data.metadata.token);
+                navigate('/');
+            })
+            .catch(err => {
+                console.log(err);
+                message.error(err.response.data.message);
+            })
+            form.resetFields();
+        })
     }
 
     useEffect(() => {
@@ -37,6 +59,7 @@ export default function Authentication() {
                             width: '80%'
                         }}
                         onFinish={register}
+                        form={form}
                     >
                         <Form.Item
                             label='Shop Name'
@@ -108,6 +131,12 @@ export default function Authentication() {
                         <Form.Item
                             label='Address'
                             name='address'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your address!',
+                                },
+                            ]}
                         >
                             <Input size='large'/>
                         </Form.Item>

@@ -16,16 +16,11 @@ export default function Login() {
         form.validateFields()
         .then(async formValues => {
             await axios.post(CONFIG.API + '/access/shop/login', formValues)
-<<<<<<< HEAD
-            .then(res => {
-                message.success(res.data.message)
-=======
             .then(res => { 
                 message.success(res.data.message);
 
                 // Dispatch the setAuth action to update the state in Redux store
                 dispatch(setAuth(res.data.metadata.shop));
->>>>>>> thien
                 localStorage.setItem('x-client-id', res.data.metadata.shop.userId);
                 localStorage.setItem('x-token-id', res.data.metadata.token);
                 navigate('/');

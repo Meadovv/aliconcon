@@ -7,7 +7,6 @@ import { selectShop } from '../../reducer/actions/auth.slice';
 
 function Products() {
     const shop = useSelector(selectShop);
->>>>>>> thien
     const [productList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
@@ -90,11 +89,7 @@ function Products() {
     useEffect(() => {
         if (filter === 'all') {
             setProductFilter(productList);
-<<<<<<< HEAD
-        } else setProductFilter(productList.filter((primary) => producty.status === filter));
-=======
         } else setProductFilter(productList.filter((product) => product.status === filter));
->>>>>>> thien
     }, [filter, productList]);
 
     const handleForm = () => {
