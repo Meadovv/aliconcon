@@ -1,6 +1,6 @@
 // import { Home, Product, Cart, Search } from '../../pages';
 
-import { Home, Product, Cart, Logout, Checkout } from '../../pages';
+import { Home, Product, Cart, Logout, Shop, Checkout } from '../../pages';
 
 const routers = [
     {
@@ -18,6 +18,12 @@ const routers = [
     {
         path: '/product/:productId',
         component: <Product />,
+        middleware: false,
+        layout: true,
+    },
+    {
+        path: '/shop/:shopId',
+        component: <Shop />,
         middleware: false,
         layout: true,
     },

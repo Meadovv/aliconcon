@@ -18,6 +18,9 @@ const api = {
     GET_PRODUCT: ({ id, user }) => {
         return BACKEND_API + 'shop/get-product?id=' + id + '&user=' + user;
     },
+    GET_CATEGORY: ({ shop }) => {
+        return BACKEND_API + 'shop/get-categories?shopId=' + shop;
+    },
     REMOVE_FROM_CART: BACKEND_API + 'shop/remove-from-cart',
     CLEAR_CART: BACKEND_API + 'shop/clear-cart',
     TOGGLE_CART: BACKEND_API + 'shop/toggle-cart',

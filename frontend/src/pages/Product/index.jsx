@@ -11,14 +11,14 @@ import { message } from 'antd';
 
 import { IMAGE_HOST } from '../../apis';
 
-import { 
-    Select
-} from '@chakra-ui/react';
+import { Select } from '@chakra-ui/react';
+import { BsShop } from 'react-icons/bs';
 
-import Error from '../Error';
+import { useNavigate } from 'react-router-dom';
 
 export default function Product() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
     const [product, setProduct] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
@@ -66,65 +66,69 @@ export default function Product() {
     }, [params]);
 
     React.useEffect(() => {
-        if(product) {
-            if(variantTierIdx.length === product?.variations?.length) {
+        if (product) {
+            if (variantTierIdx.length === product?.variations?.length) {
                 getVariant({ productId: product._id, variation_tier_idx: variantTierIdx });
             }
         }
     }, [product, variantTierIdx]);
 
-    const likeSwitch = async (productId) => {
-        
-    }
+    const likeSwitch = async (productId) => {};
 
     const addToCartHandler = async () => {
-        if(quantity > variation?.quantity) {
+        if (quantity > variation?.quantity) {
             message.error('Not enough quantity in stock');
             return;
         }
         dispatch(addToCart({ product, variation, quantity }));
-        if(user) {
-            await axios.post(api.ADD_TO_CART, {
-                productId: product._id,
-                variationId: variation._id,
-                quantity: quantity,
-            }, {
-                headers: {
-                    'x-token-id': localStorage.getItem('token'),
-                    'x-client-id': localStorage.getItem('client'),
-                }
-            })
-            .then(res => {
-                message.success(res.data.message);
-            })
-            .catch(err => {
-                console.error(err);
-                message.error(err.response.data.message);
-            })
+        if (user) {
+            await axios
+                .post(
+                    api.ADD_TO_CART,
+                    {
+                        productId: product._id,
+                        variationId: variation._id,
+                        quantity: quantity,
+                    },
+                    {
+                        headers: {
+                            'x-token-id': localStorage.getItem('token'),
+                            'x-client-id': localStorage.getItem('client'),
+                        },
+                    },
+                )
+                .then((res) => {
+                    message.success(res.data.message);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    message.error(err.response.data.message);
+                });
         } else {
             message.success('Added to cart');
         }
-    }
+    };
 
     const getVariant = async ({ productId, variation_tier_idx }) => {
-        if(!product || !variantTierIdx?.length) return;
-        await axios.post(api.GET_VARIANT, {
-            productId: productId,
-            variation_tier_idx: variation_tier_idx,
-        })
-        .then(res => {
-            setVariant(res.data.metadata);
-        })
-        .catch(err => {
-            console.error(err);
-            message.error(err.response.data.message);
-        })
-    }
+        if (!product || !variantTierIdx?.length) return;
+        await axios
+            .post(api.GET_VARIANT, {
+                productId: productId,
+                variation_tier_idx: variation_tier_idx,
+            })
+            .then((res) => {
+                setVariant(res.data.metadata);
+            })
+            .catch((err) => {
+                console.error(err);
+                message.error(err.response.data.message);
+            });
+    };
 
     return loading ? (
         <Loader />
     ) : (
-        <main className="py-5 bg-whitesmoke">
+        <main className="py-3 bg-whitesmoke">
             <div className="product-single">
                 <div className="container">
                     <div className="product-single-content bg-white grid">
@@ -133,7 +137,9 @@ export default function Product() {
                                 <div className="product-img-zoom">
                                     <img
                                         src={IMAGE_HOST.ORIGINAL(
-                                            variation?.thumbnail ? variation?.thumbnail?.name : product?.thumbnail?.name,
+                                            variation?.thumbnail
+                                                ? variation?.thumbnail?.name
+                                                : product?.thumbnail?.name,
                                         )}
                                         alt=""
                                         className="img-cover"
@@ -145,23 +151,29 @@ export default function Product() {
                         <div className="product-single-r">
                             <div className="product-details font-manrope">
                                 <div className="title fs-26 fw-7">
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                    }}>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
                                         <span>{product?.name}</span>
-                                        <i className="fas fa-bookmark" style={{
-                                            color: product?.isLike ? '#ff5e14' : 'black',
-                                            fontSize: '20px',
-                                            cursor: 'pointer',
-                                        }} onClick={() => likeSwitch(product._id)}></i>
+                                        <i
+                                            className="fas fa-bookmark"
+                                            style={{
+                                                color: product?.isLike ? '#ff5e14' : 'black',
+                                                fontSize: '20px',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => likeSwitch(product._id)}
+                                        ></i>
                                     </div>
                                     <div
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
                                             fontSize: '14px',
-                                            fontWeight: '450'
+                                            fontWeight: '450',
                                         }}
                                     >
                                         <div>Likes: {formatNumber(product?.likes)}</div>
@@ -196,45 +208,63 @@ export default function Product() {
                                         <div className="new-price fw-5 font-poppins fs-24 text-orange">
                                             {formatPrice(variation?.price - (variation?.price * product?.sale) / 100)}
                                         </div>
-                                        <div className="discount bg-orange fs-13 text-white fw-6 font-poppins" style={{
-                                            display: product?.sale === 0 ? 'none' : 'block',
-                                        }}>
+                                        <div
+                                            className="discount bg-orange fs-13 text-white fw-6 font-poppins"
+                                            style={{
+                                                display: product?.sale === 0 ? 'none' : 'block',
+                                            }}
+                                        >
                                             {product?.sale}% OFF
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className='flex-column align-center my-3' style={{
-                                    width: '100%',
-                                }}>
+                                <div
+                                    className="flex-column align-center my-3"
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                >
                                     {product?.variations.map((variation, index) => {
                                         return (
-                                            <div key={index} style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between',
-                                                width: '100%',
-                                                marginTop: '10px',
-                                            }}>
-                                                <div style={{
-                                                    marginRight: '10px',
-                                                    width: '150px'
-                                                }}>{variation.name}</div>
-                                                <Select value={variantTierIdx[index]} onChange={(e) => {
-                                                    setVariantTierIdx(prev => {
-                                                        const newVariantTierIdx = [...prev];
-                                                        newVariantTierIdx[index] = Number(e.target.value);
-                                                        return newVariantTierIdx;
-                                                    });
-                                                }}>
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    width: '100%',
+                                                    marginTop: '10px',
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        marginRight: '10px',
+                                                        width: '150px',
+                                                    }}
+                                                >
+                                                    {variation.name}
+                                                </div>
+                                                <Select
+                                                    value={variantTierIdx[index]}
+                                                    onChange={(e) => {
+                                                        setVariantTierIdx((prev) => {
+                                                            const newVariantTierIdx = [...prev];
+                                                            newVariantTierIdx[index] = Number(e.target.value);
+                                                            return newVariantTierIdx;
+                                                        });
+                                                    }}
+                                                >
                                                     {variation.options.map((tier, idx) => {
                                                         return (
-                                                            <option key={idx} value={idx}>{tier}</option>
-                                                        )
+                                                            <option key={idx} value={idx}>
+                                                                {tier}
+                                                            </option>
+                                                        );
                                                     })}
                                                 </Select>
                                             </div>
-                                        )
+                                        );
                                     })}
                                 </div>
 
@@ -286,6 +316,91 @@ export default function Product() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div className="container my-3">
+                    <div
+                        className="product-single-content bg-white"
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <div style={{
+                            display: 'flex',
+                            gap: '2rem',
+                        }}>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginLeft: '10px',
+                                }}
+                            >
+                                <BsShop size={48} />
+                            </div>
+                            <div>
+                                <div
+                                    style={{
+                                        fontSize: '1.2rem',
+                                        fontWeight: 600,
+                                        color: '#F94E30',
+                                    }}
+                                >
+                                    {product?.shop.name}
+                                </div>
+                                <div
+                                    style={{
+                                        fontSize: '0.8rem',
+                                        fontWeight: 600,
+                                        color: 'gray',
+                                    }}
+                                >
+                                    ID: {product?.shop._id}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="button" style={{
+                                backgroundColor: '#F94E30',
+                                padding: '5px 10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }} onClick={() => navigate(`/shop/${product._id}`)}>
+                                <span style={{
+                                    color: 'white',
+                                    textTransform: 'capitalize',
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                }}>view shop</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="container my-3">
+                    <div
+                        className="product-single-content bg-white"
+                        style={{
+                            display: 'flex',
+                        }}
+                    >
+                        {product?.description}
+                    </div>
+                </div>
+
+                <div className="container my-3">
+                    <div
+                        className="product-single-content bg-white"
+                        style={{
+                            display: 'flex',
+                        }}
+                    >
+                        <div>Comments</div>
                     </div>
                 </div>
             </div>
