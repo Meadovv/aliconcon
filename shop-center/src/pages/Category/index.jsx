@@ -19,7 +19,28 @@ function Categories() {
     const [formMode, setFormMode] = useState({
         open: false,
         mode: 'add',
+        categoryId: null,
     });
+
+    const addCategory = async (data) => {
+        await axios
+            .post(CONFIG.API + '/shop/create-category' 
+                , data
+                , {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    };
 
     const deleteCategory = async (categoryId) => {
         await axios
@@ -87,27 +108,23 @@ function Categories() {
         } else setCategoryFilter(categoryList.filter((category) => category.status === filter));
     }, [filter, categoryList]);
 
-    const handleForm = () => {
-        form.validateFields().then(async (formValues) => {
-            await axios
-                .post(CONFIG.API + '/shop/create-category'
-                    , formValues
-                    , {
-                        headers: {
-                            'x-client-id': localStorage.getItem('x-client-id'),
-                            'x-token-id': localStorage.getItem('x-token-id'),
-                        },
-                    }
-                )
-                .then((res) => {
-                    message.success(res.data.message);
-                    form.resetFields();
-                    setReload((prev) => prev + 1);
-                })
-                .catch((err) => {
-                    message.error(err.message);
-                });
-        });
+    const handleForm = async () => {
+        try {
+            const formValues = await form.validateFields();
+            if (formMode.mode === 'edit') {
+                deleteCategory(formMode.categoryId);
+                addCategory(formValues);
+            }
+            else if(formMode.mode === 'add'){
+                addCategory(formValues);
+            }
+            form.resetFields();
+            setReload((prev) => prev + 1);
+        } catch (error) {
+            message.error(error.message);
+        }
+
+
         setFormMode({
             ...formMode,
             open: false,
@@ -115,117 +132,133 @@ function Categories() {
     };
 
     return (
-        <Layout>
-            <div>
-                <Modal
-                    forceRender
-                    title={formMode.mode === 'add' ? 'Add Category' : 'Edit Category'}
-                    open={formMode.open}
-                    onOk={handleForm}
-                    onCancel={() =>
-                        setFormMode({
-                            ...formMode,
-                            open: false,
-                        })
-                    }
-                    okText="Add"
-                    okButtonProps={{
-                        size: 'large',
-                    }}
-                    cancelButtonProps={{
-                        size: 'large',
-                    }}
-                    width={1000}
-                >
-                    <Form layout="vertical" form={form}>
-                        <Form.Item
-                            label="Category Name"
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input category name!',
-                                },
-                            ]}
-                        >
-                            <Input size="large" />
-                        </Form.Item>
+        <div>
+            <Modal
+                forceRender
+                title={formMode.mode === 'add' ? 'Add Category' : 'Edit Category'}
+                open={formMode.open}
+                onOk={handleForm}
+                onCancel={() =>
+                    setFormMode({
+                        ...formMode,
+                        open: false,
+                    })
+                }
+                okText="Add"
+                okButtonProps={{
+                    size: 'large',
+                }}
+                cancelButtonProps={{
+                    size: 'large',
+                }}
+                width={1000}
+            >
+                <Form layout="vertical" form={form}>
+                    <Form.Item
+                        label="Category Name"
+                        name="name"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input category name!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
 
-                        <Form.Item
-                            label="Category Thumbnail"
-                            name="thumbnail"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input category thumbnail!',
-                                },
-                            ]}
-                        >
-                            <Input size="large" />
-                        </Form.Item>
-                    </Form>
-                </Modal>
+                    <Form.Item
+                        label="Category Thumbnail"
+                        name="thumbnail"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input category thumbnail!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                </Form>
+            </Modal>
 
 
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}
+            >
                 <div
                     style={{
                         display: 'flex',
-                        justifyContent: 'space-between',
+                        gap: '10px',
                     }}
                 >
-                    <div
-                        style={{
-                            display: 'flex',
-                            gap: '10px',
-                        }}
-                    >
-                        <div>View Mode</div>
-                        <Radio.Group value={filter} onChange={(e) => setFilter(e.target.value)}>
-                            <Radio value="all">All</Radio>
-                            <Radio value="draft">Draft</Radio>
-                            <Radio value="published">Published</Radio>
-                        </Radio.Group>
-                    </div>
-
-                    <Button
-                        type="primary"
-                        ghost
-                        onClick={() => {
-                            setFormMode({
-                                open: true,
-                                mode: 'add',
-                            });
-                        }}
-                    >
-                        Add
-                    </Button>
+                    <div>View Mode</div>
+                    <Radio.Group value={filter} onChange={(e) => setFilter(e.target.value)}>
+                        <Radio value="all">All</Radio>
+                        <Radio value="draft">Draft</Radio>
+                        <Radio value="published">Published</Radio>
+                    </Radio.Group>
                 </div>
 
-                <div
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '20px',
+                <Button
+                    type="primary"
+                    ghost
+                    onClick={() => {
+                        setFormMode({
+                            open: true,
+                            mode: 'add',
+                            categoryId: null,
+                        });
                     }}
                 >
-                    {categoryFilter &&
-                        categoryFilter.map((category, index) => {
-                            return (
-                                <div
-                                    key={index}
+                    Add category
+                </Button>
+            </div>
+
+            <div
+                style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '20px',
+                }}
+            >
+                {categoryFilter &&
+                    categoryFilter.map((category, index) => {
+                        return (
+                            <div
+                                key={index}
+                                style={{
+                                    padding: '20px',
+                                    display: 'flex',
+                                    gap: '10px',
+                                }}
+                            >
+                                <img
+                                    src={category.thumbnail}
+                                    alt="thumbnail"
                                     style={{
-                                        padding: '20px',
+                                        width: '80px',
+                                    }}
+                                />
+                                <div
+                                    style={{
                                         display: 'flex',
+                                        flexDirection: 'column',
                                         gap: '10px',
                                     }}
                                 >
-                                    <img
-                                        src={category.thumbnail}
-                                        alt="thumbnail"
+                                    <div
                                         style={{
-                                            width: '80px',
+                                            display: 'flex',
+                                            fontWeight: 'bold',
+                                            justifyContent: 'center',
                                         }}
-                                    />
+                                    >
+                                        {category.name}
+                                    </div>
                                     <div
                                         style={{
                                             display: 'flex',
@@ -233,58 +266,42 @@ function Categories() {
                                             gap: '10px',
                                         }}
                                     >
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                fontWeight: 'bold',
-                                                justifyContent: 'center',
+                                        <Button
+                                            type="primary"
+                                            ghost
+                                            danger={category.status === 'draft' ? false : true}
+                                            disabled={shop.role > 1}
+                                        >
+                                            {category.status === 'draft' ? 'Activate' : 'Deactivate'}
+                                        </Button>
+                                        <Button
+                                            type="primary"
+                                            ghost
+                                            onClick={() => {
+                                                setFormMode({
+                                                    open: true,
+                                                    mode: 'edit',
+                                                    categoryId: category._id,
+                                                });
                                             }}
                                         >
-                                            {category.name}
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '10px',
-                                            }}
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            danger
+                                            onClick={() => deleteCategory(category._id)}
+                                            disabled={shop.role > 1}
                                         >
-                                            <Button
-                                                type="primary"
-                                                ghost
-                                                danger={category.status === 'draft' ? false : true}
-                                                disabled={shop.role > 1}
-                                            >
-                                                {category.status === 'draft' ? 'Activate' : 'Deactivate'}
-                                            </Button>
-                                            <Button
-                                                type="primary"
-                                                ghost
-                                                onClick={() => {
-                                                    setFormMode({
-                                                        open: true,
-                                                        mode: 'edit',
-                                                    });
-                                                }}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                danger
-                                                onClick={() => deleteCategory(category._id)}
-                                                disabled={shop.role > 1}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </div>
+                                            Delete
+                                        </Button>
                                     </div>
                                 </div>
-                            );
-                        })}
-                </div>
+                            </div>
+                        );
+                    })}
             </div>
-        </Layout>
-        );
+        </div>
+    );
 }
 
 

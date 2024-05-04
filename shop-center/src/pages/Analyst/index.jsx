@@ -1,20 +1,10 @@
 import React from 'react';
-<<<<<<< HEAD:shop-center/src/pages/MyShop/index.jsx
-import Layout from '../../components/Layout';
-import { useSelector } from 'react-redux';
-=======
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
->>>>>>> thien:shop-center/src/pages/Analyst/index.jsx
 
 function Analyst (){
 
-<<<<<<< HEAD:shop-center/src/pages/MyShop/index.jsx
-    const { user } = useSelector((state) => state.user);
-
-=======
     const shop = useSelector(selectShop);
->>>>>>> thien:shop-center/src/pages/Analyst/index.jsx
     // Mock data for demonstration purposes
     const salesData = [
         { month: 'January', revenue: 1000 },

@@ -1,10 +1,7 @@
 import { Button, Popconfirm } from 'antd'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-<<<<<<< HEAD
-=======
 import { selectShop } from '../../reducer/actions/auth.slice';
->>>>>>> thien
 
 function Settings() {
     const shop = useSelector(selectShop);
