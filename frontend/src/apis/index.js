@@ -21,6 +21,9 @@ const api = {
     GET_CATEGORY: ({ shop }) => {
         return BACKEND_API + 'shop/get-categories?shopId=' + shop;
     },
+    GET_SHOP: ({ shop }) => {
+        return BACKEND_API + 'shop/get-shop?shopId=' + shop;
+    },
     REMOVE_FROM_CART: BACKEND_API + 'shop/remove-from-cart',
     CLEAR_CART: BACKEND_API + 'shop/clear-cart',
     TOGGLE_CART: BACKEND_API + 'shop/toggle-cart',

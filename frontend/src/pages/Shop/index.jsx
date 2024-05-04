@@ -6,6 +6,10 @@ import { useParams } from 'react-router-dom';
 import api from '../../apis'
 import { message } from 'antd';
 
+import ProductList from '../../components/ProductList';
+
+import { MdOutlineMarkEmailRead, MdRadioButtonChecked, MdPhone } from "react-icons/md";
+
 export default function Shop() {
     const [shop, setShop] = React.useState(null);
     const [products, setProducts] = React.useState(null);
@@ -13,7 +17,14 @@ export default function Shop() {
     const params = useParams();
 
     const getShop = async (shopId) => {
-        message.success(shopId);
+        await axios.get(api.GET_SHOP({ shop: shopId }))
+        .then(res => {
+            setShop(res.data.metadata);
+        })
+        .catch(err => {
+            console.log(err);
+            message.error(err.response.data.message);
+        })
     }
 
     const getCategory = async (shopId) => {
@@ -50,6 +61,8 @@ export default function Shop() {
                 style={{
                     padding: '2rem',
                     backgroundColor: 'whitesmoke',
+                    display: 'flex',
+                    justifyContent: 'space-between',
                 }}
             >
                 <div
@@ -89,6 +102,40 @@ export default function Shop() {
                         </div>
                     </div>
                 </div>
+
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        gap: '0.5rem',
+                        alignItems: 'center',
+                        fontSize: '1.2rem',
+                    }}>
+                        <MdOutlineMarkEmailRead />
+                        <span>{shop?.email}</span>
+                    </div>
+                    <div style={{
+                        display: 'flex',
+                        gap: '0.5rem',
+                        alignItems: 'center',
+                        fontSize: '1.2rem',
+                    }}>
+                        <MdPhone />
+                        <span>{shop?.phone}</span>
+                    </div>
+                    <div style={{
+                        display: 'flex',
+                        gap: '0.5rem',
+                        alignItems: 'center',
+                        fontSize: '1.2rem',
+                    }}>
+                        <MdRadioButtonChecked />
+                        <span>{shop?.address}</span>
+                    </div>
+                </div>
             </div>
             <div
                 style={{
@@ -107,6 +154,7 @@ export default function Shop() {
                             color: 'white',
                             borderRadius: '20px',
                             fontWeight: 600,
+                            cursor: 'pointer',
                         }} key={index}>
                             {category.name}
                         </div>
@@ -120,13 +168,7 @@ export default function Shop() {
                     marginTop: '1rem',
                 }}
             >
-                {products && products.map((product, index) => {
-                    return (
-                        <div key={index}>
-                            {product.name}
-                        </div>
-                    )
-                })}
+                {products && <ProductList products={products} />}
             </div>
         </div>
     );

@@ -370,7 +370,7 @@ export default function Product() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                            }} onClick={() => navigate(`/shop/${product._id}`)}>
+                            }} onClick={() => navigate(`/shop/${product.shop._id}`)}>
                                 <span style={{
                                     color: 'white',
                                     textTransform: 'capitalize',
