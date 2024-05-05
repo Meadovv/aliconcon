@@ -105,13 +105,10 @@ function Menu() {
     // Dispatch setAuth() only if shop data is not already set
     if(!shop){
         dispatch(setAuth({
-            shop : {
-                _id : 'shop test id',
-                name : 'Shop test name',
-                userId : 'User test id',
-                role : 1,
-            },
-            token : 'testToken',
+            _id : 'shop test id',
+            name : 'Shop test name',
+            userId : 'User test id',
+            role : 1,
         }));
         console.log("222");
     }

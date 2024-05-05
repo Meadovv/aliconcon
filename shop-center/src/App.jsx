@@ -2,13 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Error from './pages/Error';
 import CONFIG from './configs';
-import Products from './pages/Products/Product_by_Cate';
 
 import Private from './components/Private';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
-import Categories from './pages/Category';
+import Categories from './pages/Category/Category';
 import Menu from './pages/Menu';
 import Settings from './pages/Setting';
 
@@ -35,12 +34,6 @@ function App() {
                 <Route path="/" element={
                     <Private>
                         <Menu />
-                    </Private>
-                } />
-
-                <Route path="/products" element={
-                    <Private>
-                        <Products />
                     </Private>
                 } />
 

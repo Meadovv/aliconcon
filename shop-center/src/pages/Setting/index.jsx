@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Form, Modal, Input, Button, Select, message, Popconfirm } from 'antd';
+import { Form, Modal, Input, Button, message, Popconfirm } from 'antd';
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
 import CONFIG from '../../configs';
@@ -107,6 +107,7 @@ function Settings() {
                         }}
                     >
                         <div><b>Shop name: {shop.name}</b></div>
+                        <br/>
                         <div>User: {shop.userId}</div>
                     </div>
                 </div>

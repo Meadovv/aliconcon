@@ -30,11 +30,16 @@ function Private({ children }) {
     }
 
     useEffect(() => {
-        if(!shop) getUser();
-        else console.log(shop);
+        if(localStorage.getItem('x-client-id') && localStorage.getItem('x-token-id')){
+            if(!shop) getUser();
+            else {
+                console.log(shop);
+                return children;
+            }
+        }
+        
     }, [shop])
 
-    if(shop) return children;
     return <Error error={CONFIG.ERROR.NEED_LOGIN}/>
 }
 

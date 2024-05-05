@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useNavigate } from 'react-redux';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import {Checkbox, Radio, Form, Modal, Input, Button, message } from 'antd';
 import CONFIG from '../../configs';
