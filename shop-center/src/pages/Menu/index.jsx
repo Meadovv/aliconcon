@@ -12,7 +12,7 @@ import {
   } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Categories from '../Category';
+import Categories from '../Category/Category';
 import Analyst from '../Analyst';
 import Products from '../Products/Products';
 import Orders from '../Orders';

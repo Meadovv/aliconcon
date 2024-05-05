@@ -5,7 +5,7 @@ import CONFIG from '../../configs';
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
 
-function Product (categoryId) {
+function Product_by_Cate (categoryId) {
     const { shop } = useSelector(selectShop);
     const [productList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
@@ -17,17 +17,56 @@ function Product (categoryId) {
     const [formMode, setFormMode] = useState({
         open: false,
         mode: 'add',
+        productId: null,
     });
 
+    const addProduct = async (data) => {
+        await axios
+            .post(CONFIG.API + '/shop/create-product'
+                , data 
+                , {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    };
+
     const deleteProduct = async (productId) => {
-        message.success('Product delete successfully ' + productId);
+        await axios
+            .post(CONFIG.API + '/shop/delete-product', 
+                {
+                    productId : productId,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     };
 
     const getProductList = async () => {
         await axios
             .post(CONFIG.API + '/shop/get-products', {
                 shopId: shop._id,
-                category: categoryId
+                categoryId: categoryId,
             })
             .then((res) => {
                 message.success(res.data.message);
@@ -48,27 +87,22 @@ function Product (categoryId) {
         } else setProductFilter(productList.filter((product) => product.status === filter));
     }, [filter, productList]);
 
-    const handleForm = () => {
-        form.validateFields().then(async (formValues) => {
-            await axios
-                .post(CONFIG.API + '/shop/create-product'
-                    , formValues
-                    , {
-                        headers: {
-                            'x-client-id': localStorage.getItem('x-client-id'),
-                            'x-token-id': localStorage.getItem('x-token-id'),
-                        },
-                    }
-                )
-                .then((res) => {
-                    message.success(res.data.message);
-                    form.resetFields();
-                    setReload((prev) => prev + 1);
-                })
-                .catch((err) => {
-                    message.error(err.message);
-                });
-        });
+    const handleForm = async () => {
+        try {
+            const formValues = await form.validateFields();
+            if (formMode.mode === 'edit') {
+                deleteProduct(formMode.productId);
+                addProduct(formValues);
+            }
+            else if(formMode.mode === 'add'){
+                addProduct(formValues);
+            }
+            form.resetFields();
+            setReload((prev) => prev + 1);
+        } catch (error) {
+            message.error(error.message);
+        }
+
         setFormMode({
             ...formMode,
             open: false,
@@ -98,58 +132,89 @@ function Product (categoryId) {
                     }}
                     width={1000}
                 >
-                    <Form layout="vertical" form={form}>
-                        <Form.Item
-                            label="Product Name"
-                            name="name"
-                            rules={[{ required: true, message: 'Please enter product name!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Description"
-                            name="description"
-                            rules={[{ required: true, message: 'Please enter product description!' }]}
-                        >
-                            <Input.TextArea />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Price"
-                            name="price"
-                            rules={[{ required: true, message: 'Please enter product price!' }]}
-                        >
-                            <Input type="number" />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Thumbnail"
-                            name="thumbnail"
-                            rules={[{ required: true, message: 'Please enter product thumbnail URL!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Status"
-                            name="status"
-                            initialValue="draft"
-                            rules={[{ required: true, message: 'Please select product status!' }]}
-                        >
-                            <Select>
-                                <Option value="draft">Draft</Option>
-                                <Option value="published">Published</Option>
-                                <Option value="unpublished">Unpublished</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">
-                                Add Product
-                            </Button>
-                        </Form.Item>
-                    </Form>
+                <Form layout="vertical" form={form}>
+                    <Form.Item
+                        label="Product Name" name="name"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input product name!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Product Description" name="description"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input product description!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Product Description" name="short_description"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input a short description!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Product Categories"  name="category" 
+                        rules={[
+                            { 
+                                required: true, 
+                                message: 'Please select product category!' 
+                            }
+                        ]}
+                    >
+                        <Checkbox.Group>
+                            {categoryList.map(category => (
+                                <Checkbox key={category._id} value={category._id}>{category.name}</Checkbox>
+                            ))}
+                        </Checkbox.Group>
+                    </Form.Item>
+                    <Form.Item 
+                        label="Product Price" name="price"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input product price!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" type="number" />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Product Thumbnail" name="thumbnail"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input product thumbnail!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Product Variations" name="variations"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input product variations!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                </Form>
                 </Modal>
 
                 <div
@@ -179,6 +244,7 @@ function Product (categoryId) {
                             setFormMode({
                                 open: true,
                                 mode: 'add',
+                                productId: null,
                             });
                         }}
                     >
@@ -242,6 +308,7 @@ function Product (categoryId) {
                                                     setFormMode({
                                                         open: true,
                                                         mode: 'edit',
+                                                        productId: product._id,
                                                     });
                                                 }}
                                             >
@@ -266,4 +333,4 @@ function Product (categoryId) {
 }
 
 
-export default Product;
+export default Product_by_Cate;

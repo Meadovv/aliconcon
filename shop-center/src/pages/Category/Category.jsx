@@ -5,6 +5,8 @@ import CONFIG from '../../configs';
 import Layout from '../../components/Layout';
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
+import Product from './Product_by_Cate';
+import Product_by_Cate from './Product_by_Cate';
 
 function Categories() {
     const shop = useSelector(selectShop);
@@ -19,6 +21,11 @@ function Categories() {
     const [formMode, setFormMode] = useState({
         open: false,
         mode: 'add',
+        categoryId: null,
+    });
+
+    const [productMode, setProductMode] = useState({
+        open: false,
         categoryId: null,
     });
 
@@ -132,7 +139,7 @@ function Categories() {
     };
 
     return (
-        <div>
+        <div title='Category'>
             <Modal
                 forceRender
                 title={formMode.mode === 'add' ? 'Add Category' : 'Edit Category'}
@@ -182,6 +189,20 @@ function Categories() {
                 </Form>
             </Modal>
 
+            <Modal
+                title='Product in this category'
+                open={productMode.open}
+                onCancel={() =>
+                    setProductMode({
+                        ...productMode,
+                        open: false,
+                    })
+                }
+            >
+                <Product_by_Cate 
+                    categoryId={productMode.categoryId} 
+                />
+            </Modal>
 
             <div
                 style={{
@@ -293,6 +314,18 @@ function Categories() {
                                             disabled={shop.role > 1}
                                         >
                                             Delete
+                                        </Button>
+                                        <Button
+                                            danger
+                                            onClick={() => {
+                                                setProductMode({
+                                                    open: true,
+                                                    categoryId: category._id,
+                                                });
+                                            }}
+                                            style={{ flex: '1' }}
+                                        >
+                                            Show products of this Category
                                         </Button>
                                     </div>
                                 </div>

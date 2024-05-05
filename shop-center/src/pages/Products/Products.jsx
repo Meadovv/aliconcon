@@ -4,7 +4,7 @@ import axios from 'axios';
 import {Checkbox, Radio, Form, Modal, Input, Button, message } from 'antd';
 import CONFIG from '../../configs';
 import { selectShop } from '../../reducer/actions/auth.slice';
-import VariationSetting from '../Variation';
+import VariationSetting from './Variation';
 
 function Products() {
     const shop = useSelector(selectShop);
@@ -28,13 +28,6 @@ function Products() {
         productId: null,
         variationTierIdx: null,
     });
-
-    const getProducts = async () => {
-        await getCategoryList()
-        .then(categoryList.map((category) => {
-            getProductList(category._id);
-        }))
-    };
 
     const addProduct = async (data) => {
         await axios
@@ -111,6 +104,13 @@ function Products() {
             });
     };
 
+    const getProducts = async () => {
+        await getCategoryList()
+        .then(categoryList.map((category) => {
+            getProductList(category._id);
+        }))
+    };
+
     useEffect(() => {
         getProducts();
     }, [reload]);
@@ -137,7 +137,6 @@ function Products() {
         } catch (error) {
             message.error(error.message);
         }
-
 
         setFormMode({
             ...formMode,
@@ -181,6 +180,17 @@ function Products() {
                             {
                                 required: true,
                                 message: 'Please input product description!',
+                            },
+                        ]}
+                    >
+                        <Input size="large" />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Product Description" name="short_description"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input a short description!',
                             },
                         ]}
                     >

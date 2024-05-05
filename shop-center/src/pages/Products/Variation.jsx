@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Modal, Input, Button, message } from 'antd';
-import CONFIG from '../../configs';
+import CONFIG from '../../../configs';
 
 function VariationSetting ( {productId, variation_tier_idx} ) {
     const [variationList, setVariationList] = useState([]);
