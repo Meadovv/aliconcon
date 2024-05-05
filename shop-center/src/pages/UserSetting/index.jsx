@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Modal, Input, Button, Select, message } from 'antd';
-import Layout from '../../components/Layout';
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
 import CONFIG from '../../configs';
