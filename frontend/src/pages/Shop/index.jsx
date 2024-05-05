@@ -142,6 +142,7 @@ export default function Shop() {
                     padding: '0.5rem',
                     marginTop: '1rem',
                     display: 'flex',
+                    justifyContent: 'space-around',
                     flexWrap: 'wrap',
                     gap: '1rem',
                 }}
@@ -168,7 +169,7 @@ export default function Shop() {
                     marginTop: '1rem',
                 }}
             >
-                {products && <ProductList products={products} />}
+                {products && <ProductList products={products} showFilter categories={categories}/>}
             </div>
         </div>
     );

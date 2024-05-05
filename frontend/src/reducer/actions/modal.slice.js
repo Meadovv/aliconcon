@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     login: false,
-    payment: false
+    payment: false,
+    filter: false,
 }
 
 const modalSlice = createSlice({
