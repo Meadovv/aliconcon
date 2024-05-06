@@ -24,6 +24,8 @@ const api = {
     GET_SHOP: ({ shop }) => {
         return BACKEND_API + 'shop/get-shop?shopId=' + shop;
     },
+    CHANGE_PASSWORD: BACKEND_API + 'access/change-password',
+    GET_INFORMATION: BACKEND_API + 'user/information',
     REMOVE_FROM_CART: BACKEND_API + 'shop/remove-from-cart',
     CLEAR_CART: BACKEND_API + 'shop/clear-cart',
     TOGGLE_CART: BACKEND_API + 'shop/toggle-cart',

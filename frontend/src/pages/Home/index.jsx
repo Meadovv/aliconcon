@@ -45,7 +45,7 @@ const HomePage = () => {
                             <div className="title-md">
                                 <h4>See our products</h4>
                             </div>
-                            {loading ? <Loader /> : <ProductList products={products} />}
+                            {loading ? <Loader /> : <ProductList products={products} showFilter/>}
                         </div>
                     </div>
                 </div>
