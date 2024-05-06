@@ -43,6 +43,7 @@ export default function Checkout() {
                                     marginBottom: '1rem',
                                     padding: '1rem',
                                 }}
+                                key={index}
                             >
                                 <div
                                     key={index}
