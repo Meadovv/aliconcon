@@ -16,6 +16,8 @@ import { BsShop } from 'react-icons/bs';
 
 import { useNavigate } from 'react-router-dom';
 
+import ProductList from '../../components/ProductList';
+
 export default function Product() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -401,6 +403,22 @@ export default function Product() {
                         }}
                     >
                         <div>Comments</div>
+                    </div>
+                </div>
+
+                <div className="container my-3">
+                    <div style={{
+                        marginBottom: '1rem',
+                        fontSize: '1.5rem',
+                        fontWeight: 600,
+                    }}>Related Products</div>
+                    <div
+                        className="product-single-content bg-white"
+                        style={{
+                            display: 'flex',
+                        }}
+                    >
+                        {product && <ProductList products={product.relatedProducts}/>}
                     </div>
                 </div>
             </div>

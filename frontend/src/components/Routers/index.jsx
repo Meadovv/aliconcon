@@ -1,6 +1,6 @@
 // import { Home, Product, Cart, Search } from '../../pages';
 
-import { Home, Product, Cart, Logout, Shop, Checkout } from '../../pages';
+import { Home, Product, Cart, Logout, Shop, Setting, Checkout } from '../../pages';
 
 const routers = [
     {
@@ -31,19 +31,25 @@ const routers = [
         path: '/cart',
         component: <Cart />,
         middleware: false,
-        layout: true
+        layout: true,
     },
     {
         path: '/checkout',
         component: <Checkout />,
         middleware: false,
-        layout: true
+        layout: true,
+    },
+    {
+        path: '/setting',
+        component: <Setting />,
+        middleware: true,
+        layout: true,
     },
     // {
     //     path: '/search/:searchTerm',
     //     component: <Search />,
     //     middleware: false,
     // }
-]
+];
 
 export default routers;

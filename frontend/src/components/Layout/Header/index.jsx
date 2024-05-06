@@ -30,17 +30,11 @@ const Header = () => {
                                             Seller Center
                                         </p>
                                     </li>
-                                    <li className="vert-line"></li>
-                                    <li>
-                                        <p className="link" onClick={() => navigate('/alipay')}>
-                                            Alipay
-                                        </p>
-                                    </li>
                                 </ul>
                             </div>
                             <div className="header-cnt-top-r">
                                 {user?.name ? (
-                                    <p className="link" onClick={() => navigate('/logout')}>
+                                    <p className="link" onClick={() => navigate('/setting')}>
                                         {user.name}
                                     </p>
                                 ) : (
