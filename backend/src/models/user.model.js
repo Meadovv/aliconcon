@@ -1,21 +1,9 @@
 'use strict'
 
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 
 const DOCUMENT_NAME = 'aliconcon_users';
 const COLLECTION_NAME = 'users';
-
-const addressSchema = new Schema({
-    value: {
-        type: String,
-        trim: true,
-        required: true
-    },
-    default: {
-        type: Boolean,
-        required: true
-    }
-})
 
 const userSchema = new Schema({
     name:{
@@ -38,8 +26,12 @@ const userSchema = new Schema({
         required:true,
     },
     address: {
-        type: [addressSchema],
+        type: [String],
         default: []
+    },
+    default_address: {
+        type: Number,
+        default: 0
     },
     active: {
         type: Boolean,

@@ -1,12 +1,11 @@
+const categoryModel = require('../models/category.model');
 const productModel = require('../models/product.model');
-const shopModel = require('../models/shop.model');
+
 const {
-    BAD_REQUEST_ERROR,
-    UNAUTHENTICATED_ERROR,
+    BAD_REQUEST_ERROR, UNAUTHENTICATED_ERROR
 } = require('../core/error.response');
 
 const VariationService = require('./variation.service');
-const categoryModel = require('../models/category.model');
 class ProductService {
     static createProduct = async ({
         shopId,
@@ -17,7 +16,7 @@ class ProductService {
         category,
         price,
         thumbnail,
-        variations
+        variations,
     }) => {
         if (!shopId) throw new BAD_REQUEST_ERROR('Shop not found!')
         const foundShop = await shopModel.findById(shopId);
@@ -48,17 +47,17 @@ class ProductService {
         const product = await productModel.findById(id)
             .populate({
                 path: 'category',
-                select: '_id name',
-                populate: {
-                    path: 'parent',
-                    select: '_id name'
-                }
+                select: '_id name'
             })
             .populate('shop', '_id name')
             .lean();
-        product.isLike = product.likes.includes(user);
+        product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
         return product;
+    }
+
+    static deleteProduct = async ({ productId }) => {
+        
     }
 }
 

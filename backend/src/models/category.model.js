@@ -11,17 +11,13 @@ var categorySchema = new Schema({
         ref: 'aliconcon_shops',
         default: null
     },
-    parent: {
-        type: Schema.Types.ObjectId,
-        ref: 'aliconcon_categories',
-        default: null
-    },
     name: {
         type: String,
         required: true
     },
     addBy: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_users',
         default: null
     },
     status: {
