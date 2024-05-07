@@ -30,6 +30,12 @@ const Header = () => {
                                             Seller Center
                                         </p>
                                     </li>
+                                    <li className="vert-line"></li>
+                                    <li>
+                                        <p className="link" onClick={() => navigate('/tracking')}>
+                                            Tracking
+                                        </p>
+                                    </li>
                                 </ul>
                             </div>
                             <div className="header-cnt-top-r">
@@ -40,7 +46,7 @@ const Header = () => {
                                 ) : (
                                     <ul className="top-links flex align-center">
                                         <li>
-                                            <p className="link" onClick={() => navigate('/register')}>
+                                            <p className="link" onClick={() => navigate('/authentication')}>
                                                 Register
                                             </p>
                                         </li>

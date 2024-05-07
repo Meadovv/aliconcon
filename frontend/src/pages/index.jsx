@@ -5,9 +5,9 @@ import Checkout from "./Checkout";
 import Shop from "./Shop";
 import Setting from './Setting';
 // import Search from "./Search";
-// import Authentication from "./Authentication";
+import Authentication from "./Authentication";
 import Logout from "./Logout";
 
 // export { Home, Product, Cart, Search, Authentication };
 
-export { Home, Product, Cart, Logout, Shop, Setting, Checkout };
+export { Home, Product, Cart, Logout, Shop, Setting, Authentication, Checkout };

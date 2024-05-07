@@ -1,6 +1,6 @@
 // import { Home, Product, Cart, Search } from '../../pages';
 
-import { Home, Product, Cart, Logout, Shop, Setting, Checkout } from '../../pages';
+import { Home, Product, Cart, Logout, Shop, Setting, Authentication, Checkout } from '../../pages';
 
 const routers = [
     {
@@ -44,6 +44,12 @@ const routers = [
         component: <Setting />,
         middleware: true,
         layout: true,
+    },
+    {
+        path: '/authentication',
+        component: <Authentication />,
+        middleware: false,
+        layout: false,
     },
     // {
     //     path: '/search/:searchTerm',
