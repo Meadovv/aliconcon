@@ -82,7 +82,22 @@ export default function Product() {
             message.error('Not enough quantity in stock');
             return;
         }
-        dispatch(addToCart({ product, variation, quantity }));
+        dispatch(
+            addToCart({
+                product: {
+                    _id: product._id,
+                    name: product.name,
+                    thumbnail: product.thumbnail,
+                    sale: product.sale,
+                },
+                variation: {
+                    _id: variation._id,
+                    name: variation.name,
+                    price: variation.price,
+                },
+                quantity,
+            }),
+        );
         if (user) {
             await axios
                 .post(
@@ -329,10 +344,12 @@ export default function Product() {
                             alignItems: 'center',
                         }}
                     >
-                        <div style={{
-                            display: 'flex',
-                            gap: '2rem',
-                        }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                gap: '2rem',
+                            }}
+                        >
                             <div
                                 style={{
                                     display: 'flex',
@@ -366,19 +383,27 @@ export default function Product() {
                         </div>
 
                         <div>
-                            <button type="button" style={{
-                                backgroundColor: '#F94E30',
-                                padding: '5px 10px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }} onClick={() => navigate(`/shop/${product.shop._id}`)}>
-                                <span style={{
-                                    color: 'white',
-                                    textTransform: 'capitalize',
-                                    fontSize: '1rem',
-                                    fontWeight: 500,
-                                }}>view shop</span>
+                            <button
+                                type="button"
+                                style={{
+                                    backgroundColor: '#F94E30',
+                                    padding: '5px 10px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                onClick={() => navigate(`/shop/${product.shop._id}`)}
+                            >
+                                <span
+                                    style={{
+                                        color: 'white',
+                                        textTransform: 'capitalize',
+                                        fontSize: '1rem',
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    view shop
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -407,18 +432,22 @@ export default function Product() {
                 </div>
 
                 <div className="container my-3">
-                    <div style={{
-                        marginBottom: '1rem',
-                        fontSize: '1.5rem',
-                        fontWeight: 600,
-                    }}>Related Products</div>
+                    <div
+                        style={{
+                            marginBottom: '1rem',
+                            fontSize: '1.5rem',
+                            fontWeight: 600,
+                        }}
+                    >
+                        Related Products
+                    </div>
                     <div
                         className="product-single-content bg-white"
                         style={{
                             display: 'flex',
                         }}
                     >
-                        {product && <ProductList products={product.relatedProducts}/>}
+                        {product && <ProductList products={product.relatedProducts} />}
                     </div>
                 </div>
             </div>

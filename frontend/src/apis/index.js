@@ -25,7 +25,7 @@ const api = {
         return BACKEND_API + 'shop/get-shop?shopId=' + shop;
     },
     REGISTER: BACKEND_API + 'user/register',
-    CHECKOUT: BACKEND_API + 'shop/checkout',
+    CHECKOUT: BACKEND_API + 'user/checkout',
     CHANGE_PASSWORD: BACKEND_API + 'access/change-password',
     GET_INFORMATION: BACKEND_API + 'user/information',
     REMOVE_FROM_CART: BACKEND_API + 'user/remove-from-cart',

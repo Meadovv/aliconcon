@@ -17,12 +17,15 @@ import {
 } from '@chakra-ui/react';
 import { message } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { FaCheckCircle } from "react-icons/fa";
 
 import { closeModal } from '../../../reducer/actions/modal.slice';
 import axios from 'axios';
 import api from '../../../apis';
+
+import { clearCart } from '../../../reducer/actions/cart.slice';
 
 function ForUser({ information, setInformation }) {
     const [user, setUser] = React.useState(null);
@@ -123,6 +126,7 @@ function PaymentModal() {
     const { onClose } = useDisclosure();
     const modal = useSelector((state) => state.modal);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [loading, setLoading] = React.useState(false);
     const { user } = useSelector((state) => state.auth);
 
@@ -140,21 +144,25 @@ function PaymentModal() {
             message.error('Please fill in all information');
             return;
         }
+        setLoading(true);
         await axios
             .post(api.CHECKOUT, {
                 information: information,
-                cart: JSON.parse(localStorage.getItem('carts')),
+                carts: JSON.parse(localStorage.getItem('carts')),
                 method: paymentMethod,
             })
             .then((res) => {
                 message.success(res.data.message);
                 dispatch(closeModal({ modal: 'payment' }));
+                if(!information.userId) dispatch(clearCart());
                 onClose();
+                navigate('/cart');
             })
             .catch((err) => {
                 console.log(err);
                 message.error(err.response.data.message);
             });
+        setLoading(false);
     };
 
     const onCloseModal = () => {
