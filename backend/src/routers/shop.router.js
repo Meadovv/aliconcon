@@ -34,4 +34,7 @@ router.post('/delete-product', ErrorMiddleware.asyncHandler(ShopController.delet
 router.post('/create-category', ErrorMiddleware.asyncHandler(ShopController.createCategory));
 router.post('/delete-category', ErrorMiddleware.asyncHandler(ShopController.deleteCategory));
 
+router.post('/upload-image', ErrorMiddleware.asyncHandler(ShopController.uploadImage));
+router.post('/delete-image', ErrorMiddleware.asyncHandler(ShopController.deleteImage));
+
 module.exports = router;

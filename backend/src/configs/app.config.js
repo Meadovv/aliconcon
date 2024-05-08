@@ -11,6 +11,9 @@ const development = {
     },
     jwt: {
         expired: process.env.DEV_JWT_EXPIRED,
+    },
+    imgur: {
+        token: process.env.DEV_IMGUR_TOKEN
     }
 };
 
@@ -25,6 +28,9 @@ const production = {
     },
     jwt: {
         expired: process.env.PRO_JWT_EXPIRED,
+    },
+    imgur: {
+        token: process.env.PRO_IMGUR_TOKEN
     }
 };
 

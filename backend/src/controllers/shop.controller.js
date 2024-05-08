@@ -4,9 +4,10 @@ const {
 const { getFields } = require('../utils/other.utils');
 const ShopService = require('../services/shop.service');
 
-const ProductService = require('../services/product.service')
-const CategoryService = require('../services/category.service')
-const VariationService = require('../services/variation.service')
+const ProductService = require('../services/product.service');
+const CategoryService = require('../services/category.service');
+const VariationService = require('../services/variation.service');
+const ImageService = require('../services/image.service');
 
 class ShopController {
 
@@ -77,7 +78,7 @@ class ShopController {
             })
         }).send(res);
     }
-    
+
     static createCategory = async (req, res) => {
         new CREATED({
             message: 'Category created successfully',
@@ -107,10 +108,12 @@ class ShopController {
     static createProduct = async (req, res) => {
         new CREATED({
             message: 'Product created successfully',
-            metadata: await ProductService.createProduct({ ...getFields({
-                fields: ['name', 'description', 'short_description', 'price', 'category', 'thumbnail', 'variations'],
-                object: req.body
-            }), ...req.jwt_decode })
+            metadata: await ProductService.createProduct({
+                ...getFields({
+                    fields: ['name', 'description', 'short_description', 'price', 'category', 'thumbnail', 'variations'],
+                    object: req.body
+                }), ...req.jwt_decode
+            })
         }).send(res);
     }
 
@@ -129,10 +132,12 @@ class ShopController {
     static deleteProduct = async (req, res) => {
         new SUCCESS({
             message: 'Product deleted successfully',
-            metadata: await ProductService.deleteProduct({ ...getFields({
-                fields: ['productId'],
-                object: req.body
-            }), ...req.jwt_decode })
+            metadata: await ProductService.deleteProduct({
+                ...getFields({
+                    fields: ['productId'],
+                    object: req.body
+                }), ...req.jwt_decode
+            })
         }).send(res);
     }
 
@@ -180,6 +185,50 @@ class ShopController {
                     fields: ['productId', 'variation_tier_idx'],
                     object: req.body
                 })
+            })
+        }).send(res);
+    }
+
+    static uploadImage = async (req, res) => {
+        new CREATED({
+            message: 'Image uploaded successfully',
+            metadata: await ImageService.upload({
+                ...getFields({
+                    fields: ['data'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getImage = async (req, res) => {
+        const imageUrl = await ImageService.get({
+            ...getFields({
+                fields: ['id'],
+                object: req.query
+            })
+        });
+        
+        if (!imageUrl) {
+            return res.status(404).json({
+                err: 'No file exists'
+            });
+        }
+        
+        // Send the image URL
+        res.redirect(imageUrl);
+    }
+
+    static deleteImage = async (req, res) => {
+        new SUCCESS({
+            message: 'Image deleted successfully',
+            metadata: await ImageService.delete({
+                ...getFields({
+                    fields: ['id'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
             })
         }).send(res);
     }

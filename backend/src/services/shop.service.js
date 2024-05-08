@@ -52,6 +52,10 @@ class ShopService {
             throw new NOT_FOUND_ERROR('Shop not registered!');
         }
 
+        if (!foundShop.active) {
+            throw new FORBIDDEN_ERROR('Shop is banned!');
+        }
+
         const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
         if (!userInShop) {
             throw new NOT_FOUND_ERROR('User not in shop!');
