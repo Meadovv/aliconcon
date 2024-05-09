@@ -1,4 +1,4 @@
-const image_host = 'http://image.aliconcon.xyz/'
+const image_host = 'http://localhost:9000/'
 
 export const IMAGE_HOST = {
     THUMBNAIL: (name) => {
@@ -9,7 +9,7 @@ export const IMAGE_HOST = {
     }
 }
 
-export const BACKEND_API = 'http://api.aliconcon.xyz/v1/';
+export const BACKEND_API = 'http://localhost:3055/v1/';
 
 const api = {
     GET_PRODUCTS: ({ shop, category, low_price, high_price }) => {

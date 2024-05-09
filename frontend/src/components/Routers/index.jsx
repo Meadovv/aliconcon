@@ -1,6 +1,6 @@
 // import { Home, Product, Cart, Search } from '../../pages';
 
-import { Home, Product, Cart, Logout, Shop, Setting, Authentication, Checkout } from '../../pages';
+import { Home, Product, Cart, Logout, Shop, Setting, Authentication, Checkout, Tracking } from '../../pages';
 
 const routers = [
     {
@@ -50,6 +50,12 @@ const routers = [
         component: <Authentication />,
         middleware: false,
         layout: false,
+    },
+    {
+        path: '/tracking',
+        component: <Tracking />,
+        middleware: false,
+        layout: true,
     },
     // {
     //     path: '/search/:searchTerm',

@@ -130,8 +130,6 @@ function PaymentModal() {
     const [loading, setLoading] = React.useState(false);
     const { user } = useSelector((state) => state.auth);
 
-    const [paymentMethod, setPaymentMethod] = React.useState(0);
-
     const [information, setInformation] = React.useState({
         userId: '',
         name: '',
@@ -148,8 +146,7 @@ function PaymentModal() {
         await axios
             .post(api.CHECKOUT, {
                 information: information,
-                carts: JSON.parse(localStorage.getItem('carts')),
-                method: paymentMethod,
+                carts: JSON.parse(localStorage.getItem('carts'))
             })
             .then((res) => {
                 message.success(res.data.message);
@@ -184,58 +181,6 @@ function PaymentModal() {
                     <ModalCloseButton />
                     <ModalBody>
                         {renderPayment()}
-                        <FormControl id="address" style={{
-                            marginTop: '10px'
-                        }}>
-                            <FormLabel>Payment Method</FormLabel>{' '}
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    gap: '10px'
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        padding: '10px',
-                                        width: '50%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        border: '1px solid #e2e8f0',
-                                        borderRadius: '5px',
-                                        cursor: 'pointer'
-                                    }}
-                                    onClick={() => setPaymentMethod(0)}
-                                >
-                                    Bank Transfer
-                                    <FaCheckCircle style={{
-                                        display: paymentMethod === 0 ? 'block' : 'none',
-                                        marginLeft: '10px',
-                                        color: '#F94E30'
-                                    }} size={28}/>
-                                </div>
-                                <div
-                                    style={{
-                                        padding: '10px',
-                                        width: '50%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        border: '1px solid #e2e8f0',
-                                        borderRadius: '5px',
-                                        cursor: 'pointer'
-                                    }}
-                                    onClick={() => setPaymentMethod(1)}
-                                >
-                                    Cash on Delivery
-                                    <FaCheckCircle style={{
-                                        display: paymentMethod === 1 ? 'block' : 'none',
-                                        marginLeft: '10px',
-                                        color: '#F94E30'
-                                    }} size={28}/>
-                                </div>
-                            </div>
-                        </FormControl>
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="red" mr={3} onClick={onConfirm} isLoading={loading}>
