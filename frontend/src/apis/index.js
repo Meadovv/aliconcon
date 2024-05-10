@@ -24,6 +24,9 @@ const api = {
     GET_SHOP: ({ shop }) => {
         return BACKEND_API + 'shop/get-shop?shopId=' + shop;
     },
+    GET_TRACKING: ({ id }) => {
+        return BACKEND_API + 'user/get-order?orderId=' + id;
+    },
     REGISTER: BACKEND_API + 'user/register',
     CHECKOUT: BACKEND_API + 'user/checkout',
     CHANGE_PASSWORD: BACKEND_API + 'access/change-password',
