@@ -29,6 +29,7 @@ import { clearCart } from '../../../reducer/actions/cart.slice';
 
 function ForUser({ information, setInformation }) {
     const [user, setUser] = React.useState(null);
+    const [address, setAddress] = React.useState(0);
     const [loading, setLoading] = React.useState(false);
 
     const getUser = async () => {
@@ -50,8 +51,9 @@ function ForUser({ information, setInformation }) {
                     userId: res.data.metadata._id,
                     name: res.data.metadata.name,
                     phone: res.data.metadata.phone,
-                    address: res.data.metadata.default_address,
+                    address: res.data.metadata.address[res.data.metadata.default_address],
                 });
+                setAddress(res.data.metadata.default_address);
             })
             .catch((err) => {
                 console.log(err);
@@ -80,8 +82,14 @@ function ForUser({ information, setInformation }) {
                 <FormLabel>Address</FormLabel>
                 <Select
                     placeholder="Select address"
-                    value={information.address}
-                    onChange={(e) => setInformation({ ...information, address: e.target.value })}
+                    value={address}
+                    onChange={(e) => {
+                        setAddress(e.target.value);
+                        setInformation({
+                            ...information,
+                            address: user?.address[e.target.value],
+                        });
+                    }}
                 >
                     {user?.address.map((address, index) => (
                         <option key={index} value={index}>
