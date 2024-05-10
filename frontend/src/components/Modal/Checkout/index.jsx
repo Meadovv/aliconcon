@@ -159,7 +159,7 @@ function PaymentModal() {
             .then((res) => {
                 message.success(res.data.message);
                 dispatch(closeModal({ modal: 'payment' }));
-                if(!information.userId) dispatch(clearCart());
+                dispatch(clearCart());
                 onClose();
                 navigate('/cart');
             })

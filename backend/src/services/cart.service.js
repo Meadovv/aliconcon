@@ -268,6 +268,7 @@ class CartService {
             await variationModel.findByIdAndUpdate(foundVariation._id, { quantity: foundVariation.quantity - item.quantity });
 
             // xóa sản phẩm khỏi giỏ hàng
+            console.log(information.userId, foundProduct._id, foundVariation._id);
             if (information.userId) await cartModel.findOneAndDelete({ product: foundProduct._id, variation: foundVariation._id, user: information.userId });
         }));
 
