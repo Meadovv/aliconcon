@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input, Button, VStack, Text, Box } from '@chakra-ui/react';
 import { formatPrice } from '../../utils/helpers';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 import Loader from '../../components/Loader';
 
@@ -15,6 +16,8 @@ export default function Tracking() {
     const [orderID, setOrderID] = React.useState('');
     const [order, setOrder] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [searchParams, setSearchParams] = useSearchParams('');
+    const navigate = useNavigate();
 
     const shippingFee = 30000;
 
@@ -37,6 +40,20 @@ export default function Tracking() {
     const handleInputChange = (event) => {
         setOrderID(event.target.value);
     };
+
+    React.useEffect(() => {
+        const tempOrderID = searchParams.get('orderId');
+        console.log(tempOrderID);
+        if (tempOrderID) {
+            setOrderID(tempOrderID);
+            getTracking();
+        }
+    }, [])
+
+    React.useEffect(() => {
+        if(order?._id) navigate('/tracking?orderId=' + order?._id);
+        else navigate('/tracking');
+    }, [order])
 
     return (
         <div className="container my-5">
