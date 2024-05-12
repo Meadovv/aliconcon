@@ -11,6 +11,8 @@ export const IMAGE_HOST = {
 
 export const BACKEND_API = 'http://localhost:3055/v1/';
 
+export const PAYMENT_GATE = 'http://localhost:3055/pay';
+
 const api = {
     GET_PRODUCTS: ({ shop, category, low_price, high_price }) => {
         return BACKEND_API + 'shop/get-products?shop=' + shop + '&category=' + category + '&low_price=' + low_price + '&high_price=' + high_price;
@@ -26,6 +28,9 @@ const api = {
     },
     GET_TRACKING: ({ id }) => {
         return BACKEND_API + 'user/get-order?orderId=' + id;
+    },
+    PAYMENT_GATE: ({ id }) => {
+        return PAYMENT_GATE + '/' + id;
     },
     REGISTER: BACKEND_API + 'user/register',
     CHECKOUT: BACKEND_API + 'user/checkout',

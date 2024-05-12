@@ -22,6 +22,7 @@ export default function Tracking() {
     const shippingFee = 30000;
 
     const getTracking = async () => {
+        if (!orderID) return;
         setLoading(true);
         await axios
             .get(api.GET_TRACKING({ id: orderID }))
@@ -43,17 +44,11 @@ export default function Tracking() {
 
     React.useEffect(() => {
         const tempOrderID = searchParams.get('orderId');
-        console.log(tempOrderID);
         if (tempOrderID) {
             setOrderID(tempOrderID);
             getTracking();
         }
-    }, [])
-
-    React.useEffect(() => {
-        if(order?._id) navigate('/tracking?orderId=' + order?._id);
-        else navigate('/tracking');
-    }, [order])
+    }, []);
 
     return (
         <div className="container my-5">
@@ -192,6 +187,21 @@ export default function Tracking() {
                             })}
                     </VStack>
 
+                    <div className="_Tracking_header">Shipping</div>
+
+                    <VStack>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                            }}
+                        >
+                            <div>Status</div>
+                            <div>{order?.status ? 'Received' : 'Shipping'}</div>
+                        </div>
+                    </VStack>
+
                     <div className="_Tracking_header">Payment Information</div>
 
                     <VStack align="end">
@@ -278,7 +288,12 @@ export default function Tracking() {
                             </div>
                         </div>
                         {order?.paid !== 1 && (
-                            <Button colorScheme="red" onClick={() => dispatch(openModal({ modal: 'payment' }))}>
+                            <Button
+                                colorScheme="red"
+                                onClick={() => {
+                                    window.location.href = api.PAYMENT_GATE({ id: orderID });
+                                }}
+                            >
                                 Pay Now
                             </Button>
                         )}
