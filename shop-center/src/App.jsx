@@ -32,9 +32,9 @@ function App() {
                 } />
 
                 <Route path="/" element={
-                    <Private>
+             
                         <Menu />
-                    </Private>
+              
                 } />
 
                 <Route path="/categories" element={

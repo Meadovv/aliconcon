@@ -139,46 +139,71 @@ function Menu() {
 
     return (
         <CustomLayout>
-            <div style={{ display: 'flex' }}> {/* Ensure side-by-side layout */}
+            <div style={{ display: 'flex', height: '100%', width: '100%'}}> {/* Ensure side-by-side layout */}
                 <Sider 
                     collapsible 
                     collapsed={collapsed} 
                     onCollapse={toggleCollapsed}
+                    style={{ marginLeft: '5px' }}
                 >
-                    <div className="avatar-field">
-                        <Avatar size={50} icon={<UserOutlined />} />
+                    <div 
+                        className="avatar-field" 
+                        style={{ 
+                              marginTop: '20px'
+                            , height: '150px'
+                            , backgroundColor: 'white'
+                            , boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)'
+                            , padding: '10px'
+                            , borderRadius: '10px'
+                        }}
+                    >
+                        <Avatar size={70} icon={<ShopOutlined />} style={{backgroundColor: 'blue'}}/>
                         {!collapsed && (
                             <div>
-                                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff', marginTop: '5px' }}>
-                                    Shop name: {shop?.name}
+                                <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'black', marginTop: '15px' }}>
+                                    Shop 
+                                </div>
+                                <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'black', marginTop: '5px' }}>
+                                    {shop?.name}
                                 </div>
                             </div>
                         )}    
                     </div>
-                    <AntMenu
-                        theme="dark"
-                        mode="inline"
-                        selectedKeys={[currentMenu.link]}
-                        defaultOpenKeys={['sub1']}
-                    >
-                        {menus.map((menu) =>
-                            menu.subMenus ? (
-                                <SubMenu key={menu.link} title={menu.label} icon={menu.icon}>
-                                    {menu.subMenus.map((subMenu) => (
-                                        <AntMenu.Item key={subMenu.link} onClick={() => handleMenuClick(subMenu)}>
-                                            {subMenu.label}
-                                        </AntMenu.Item>
-                                    ))}
-                                </SubMenu>
-                            ) : (
-                                <AntMenu.Item key={menu.link} icon={menu.icon} onClick={() => handleMenuClick(menu)}>
-                                    {menu.label}
-                                </AntMenu.Item>
-                            )
-                        )}
-                    </AntMenu>
+                    <div className="menu-field" >
+                        <AntMenu
+                            mode="inline"
+                            selectedKeys={[currentMenu.link]}
+                            defaultOpenKeys={['sub1']}
+                            style={{ 
+                                  borderRadius: '10px'
+                                , backgroundColor: 'white'
+                                , boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)'
+                                , marginTop: '20px'
+                                , padding: '3px'
+                            }}
+                        >
+                            {menus.map((menu) =>
+                                (
+                                    <AntMenu.Item key={menu.link} icon={menu.icon} 
+                                        onClick={() => handleMenuClick(menu)}
+                                        style={{color: 'white', backgroundColor: currentMenu === menu ? 'blue' : 'skyblue' }}
+                                    >
+                                        {menu.label}
+                                    </AntMenu.Item>
+                                )
+                            )}
+                        </AntMenu>
+                    </div>
                 </Sider>
-                <Content style={{ marginLeft: collapsed ? 80 : 200, padding: '20px' }}>
+                <Content 
+                    style={{ 
+                        marginLeft: collapsed ? 20 : 10
+                        , padding: '20px'
+                        , borderRadius:'5px'                                
+                        , backgroundColor: 'white'
+                        , boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)'
+                        , marginTop: '20px'
+                    }}>
                     {currentMenu.content}
                 </Content>
             </div>
