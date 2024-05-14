@@ -1,4 +1,4 @@
-const image_host = 'https://image.aliconcon.xyz/'
+const image_host = 'http://localhost:9000/'
 
 export const IMAGE_HOST = {
     THUMBNAIL: (name) => {
@@ -9,7 +9,7 @@ export const IMAGE_HOST = {
     }
 }
 
-export const BACKEND_API = 'https://api.aliconcon.xyz/v1/';
+export const BACKEND_API = 'http://localhost:3055/v1/';
 
 export const PAYMENT_GATE = 'http://20.2.158.32/pay/';
 
@@ -46,6 +46,7 @@ const api = {
     METADATA: BACKEND_API + 'user/metadata',
     LOGOUT: BACKEND_API + 'access/logout',
     SWITCH_PRODUCT_LIKE: BACKEND_API + 'user/switch-product-like',
+    LEAVE_COMMENT: BACKEND_API + 'user/leave-comment',
 }
 
 export default api;

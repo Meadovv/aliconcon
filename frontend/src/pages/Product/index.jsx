@@ -29,6 +29,7 @@ export default function Product() {
     const [variantTierIdx, setVariantTierIdx] = React.useState([]);
     const [variation, setVariant] = React.useState(null);
     const params = useParams();
+    const [comment, setComment] = React.useState('');
 
     const [quantity, setQuantity] = React.useState(1);
     const increaseQuantity = () => {
@@ -76,6 +77,36 @@ export default function Product() {
             }
         }
     }, [product, variantTierIdx]);
+
+    const submitComment = async () => {
+        if (!comment) {
+            message.error('Please enter a comment');
+            return;
+        }
+        await axios
+            .post(
+                api.LEAVE_COMMENT,
+                {
+                    productId: product._id,
+                    comment: comment,
+                },
+                {
+                    headers: {
+                        'x-token-id': localStorage.getItem('token'),
+                        'x-client-id': localStorage.getItem('client'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                getProduct(params.productId);
+                setComment('');
+            })
+            .catch((err) => {
+                console.error(err);
+                message.error(err.response.data.message);
+            });
+    };
 
     const likeSwitch = async (productId) => {
         if (!user) {
@@ -454,9 +485,85 @@ export default function Product() {
                         className="product-single-content bg-white"
                         style={{
                             display: 'flex',
+                            flexDirection: 'column',
                         }}
                     >
-                        <div>Comments</div>
+                        <div>Comments ({product?.comments.length})</div>
+                        <div
+                            style={{
+                                display: user ? 'block' : 'none',
+                            }}
+                        >
+                            <input
+                                style={{
+                                    width: '100%',
+                                    padding: '10px',
+                                    borderRadius: '5px',
+                                    border: '1px solid #ccc',
+                                    marginBottom: '10px',
+                                    fontSize: '1rem',
+                                }}
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                style={{
+                                    backgroundColor: '#F94E30',
+                                    padding: '5px 10px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                onClick={() => submitComment()}
+                            >
+                                <span
+                                    style={{
+                                        color: 'white',
+                                        textTransform: 'capitalize',
+                                        fontSize: '1rem',
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    comment
+                                </span>
+                            </button>
+                        </div>
+                        {product?.comments.map((comment, index) => {
+                            return (
+                                <div style={{
+                                    padding: '10px',
+                                    borderRadius: '5px',
+                                    border: '1px solid #ccc',
+                                }}>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            gap: '10px',
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                fontSize: '1rem',
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            {comment.user.name}
+                                        </div>
+                                        <div
+                                            style={{
+                                                fontSize: '0.8rem',
+                                                color: 'gray',
+                                            }}
+                                        >
+                                            at {new Date(comment.createdAt).toLocaleDateString()}
+                                        </div>
+                                    </div>
+                                    <div>{comment.comment}</div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 
