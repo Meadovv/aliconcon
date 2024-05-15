@@ -1,6 +1,6 @@
 // import { Home, Product, Cart, Search } from '../../pages';
 
-import { Home, Product, Cart, Logout, Shop, Setting, Authentication, Checkout, Tracking } from '../../pages';
+import { Home, Product, Cart, Logout, Shop, Setting, Authentication, Checkout, Tracking, Forgot, Reset } from '../../pages';
 
 const routers = [
     {
@@ -56,6 +56,18 @@ const routers = [
         component: <Tracking />,
         middleware: false,
         layout: true,
+    },
+    {
+        path: '/forgot-password',
+        component: <Forgot />,
+        middleware: false,
+        layout: false,
+    },
+    {
+        path: '/reset-password',
+        component: <Reset />,
+        middleware: false,
+        layout: false,
     },
     // {
     //     path: '/search/:searchTerm',

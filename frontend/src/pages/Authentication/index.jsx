@@ -87,6 +87,15 @@ export default function Authentication() {
                     onChange={handleLoginChange}
                 />
             </FormControl>
+            <FormControl id="password">
+                <div style={{
+                    fontSize: '14px',
+                    color: 'blue',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    cursor: 'pointer',
+                }} onClick={() => navigate('/forgot-password')}>Forgot Password</div>
+            </FormControl>
             <Button colorScheme="blue" width="full" onClick={handleLogin}>
                 Login
             </Button>
