@@ -37,6 +37,8 @@ router.post('/delete-category', ErrorMiddleware.asyncHandler(ShopController.dele
 router.post('/upload-image', ErrorMiddleware.asyncHandler(ShopController.uploadImage));
 router.post('/delete-image', ErrorMiddleware.asyncHandler(ShopController.deleteImage));
 
+router.post('/get-category', ErrorMiddleware.asyncHandler(ShopController.getCategoryByAdmin));
+
 router.post('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCategoriesByAdmin));
 
 router.post('/switch-category-status', ErrorMiddleware.asyncHandler(ShopController.switchCategoryStatus));

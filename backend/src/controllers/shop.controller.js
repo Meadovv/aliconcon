@@ -165,6 +165,19 @@ class ShopController {
         }).send(res);
     }
 
+    static getCategoryByAdmin = async (req, res) => {
+        new SUCCESS({
+            message: 'Get category successfully',
+            metadata: await CategoryService.getCategoryByAdmin({
+                ...getFields({
+                    fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static getProducts = async (req, res) => {
         new SUCCESS({
             message: 'Get products successfully',
@@ -236,7 +249,7 @@ class ShopController {
     static getCategoriesByAdmin = async (req, res) => {
         new SUCCESS({
             message: 'Get categories successfully',
-            metadata: await ShopService.getCategories({
+            metadata: await CategoryService.getCategoriesByAdmin({
                 ...req.jwt_decode
             })
         }).send(res);
@@ -246,6 +259,19 @@ class ShopController {
         new SUCCESS({
             message: 'Switch category status successfully',
             metadata: await CategoryService.switchCategoryStatus({
+                ...getFields({
+                    fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static deleteCategory = async (req, res) => {
+        new SUCCESS({
+            message: 'Category deleted successfully',
+            metadata: await CategoryService.deleteCategory({
                 ...getFields({
                     fields: ['categoryId'],
                     object: req.body

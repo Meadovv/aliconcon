@@ -272,18 +272,6 @@ class ShopService {
             }));
         return shop.users;
     }
-
-    static getCategories = async ({ shopId, userId }) => {
-        if (!shopId) {
-            throw new BAD_REQUEST_ERROR('Shop ID not found!');
-        }
-        const categories = await categoryModel
-            .find({shop: shopId})
-            .populate('shop', '_id name email')
-            .populate('addBy', '_id name email')
-            .lean();
-        return categories;
-    }
 }
 
 module.exports = ShopService;
