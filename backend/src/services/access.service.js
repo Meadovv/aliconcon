@@ -10,18 +10,6 @@ const {
 } = require('../core/error.response');
 
 class AccessService {
-    static getMetadata = async (userId) => {
-        const foundUser = await UserService.findById(userId);
-        if (!foundUser) {
-            throw new BAD_REQUEST_ERROR('User not found!');
-        }
-
-        return Utils.OtherUtils.getInfoData({
-            fields: ['_id', 'name', 'email', 'role', 'phone', 'address'],
-            object: foundUser
-        });
-    }
-
     static changePassword = async ({ userId, oldPassword, newPassword }) => {
         const foundUser = await userModel.findById(userId).lean();
         if (!foundUser) {
@@ -41,6 +29,12 @@ class AccessService {
 
     static logout = async ({ userId }) => {
         return await KeyTokenService.deleteByUserId(userId);
+    }
+
+    static checkMail = async ({ email }) => {
+        const foundUser = await userModel.findOne({ email }).lean();
+        if(foundUser) return false;
+        return true;
     }
 }
 

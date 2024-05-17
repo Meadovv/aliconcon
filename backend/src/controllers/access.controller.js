@@ -33,10 +33,22 @@ class AccessController {
     }
 
     static logout = async (req, res) => {
-        new SUCCESS({
+        return new SUCCESS({
             message: 'Logout successfully',
             metadata: await AccessService.logout({
                 ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static checkMail = async (req, res) => {
+        return new SUCCESS({
+            message: 'Check mail successfully!',
+            metadata: await AccessService.checkMail({
+                ...getFields({
+                    fields: ['email'],
+                    object: req.query
+                })
             })
         }).send(res);
     }

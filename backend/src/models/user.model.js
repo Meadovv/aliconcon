@@ -1,6 +1,6 @@
 'use strict'
 
-const { model, Schema, Types } = require('mongoose');
+const { model, Schema } = require('mongoose');
 
 const DOCUMENT_NAME = 'aliconcon_users';
 const COLLECTION_NAME = 'users';
@@ -13,7 +13,6 @@ const userSchema = new Schema({
     },
     email:{
         type:String,
-        unique:true,
         trim: true
     },
     password:{

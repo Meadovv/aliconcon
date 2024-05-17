@@ -232,6 +232,28 @@ class ShopController {
             })
         }).send(res);
     }
+    
+    static getCategoriesByAdmin = async (req, res) => {
+        new SUCCESS({
+            message: 'Get categories successfully',
+            metadata: await ShopService.getCategories({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static switchCategoryStatus = async (req, res) => {
+        new SUCCESS({
+            message: 'Switch category status successfully',
+            metadata: await CategoryService.switchCategoryStatus({
+                ...getFields({
+                    fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
 }
 
 module.exports = ShopController;
