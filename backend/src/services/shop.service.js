@@ -277,6 +277,37 @@ class ShopService {
         return shop.users;
     }
 
+    static getUser = async ({ shopId, userId, targetId }) => {
+        const foundShop = await shopModel
+            .findById(shopId)
+            .populate('users._id', '_id name email')
+            .populate('users.addBy', '_id name email')
+            .lean();
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!');
+        }
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        const userInShop = foundShop.users.find(user => user._id._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new NOT_FOUND_ERROR('User not in shop!');
+        }
+        if (userInShop.role > ROLES.SHOP_ADMIN) {
+            throw new FORBIDDEN_ERROR('You are not authorized to do this action!');
+        }
+        const targetUserInShop = foundShop.users.find(user => user._id._id.toString() === targetId)
+        if (!targetUserInShop) {
+            throw new BAD_REQUEST_ERROR('Target user is not in user list!');
+        }
+        if (userInShop.role >= targetUserInShop.role) {
+            throw new FORBIDDEN_ERROR('You are not authorized to view this user!')
+        }
+
+        return targetUserInShop;
+    }
+
     static switchUserStatus = async ({ shopId, userId, targetId }) => {
         const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) {
@@ -293,11 +324,7 @@ class ShopService {
         if (userInShop.role > ROLES.SHOP_ADMIN) {
             throw new FORBIDDEN_ERROR('You are not authorized to do this action!');
         }
-        const foundTargetUser = await userModel.findById({ _id: targetId }).lean();
-        if (!foundTargetUser) {
-            throw new NOT_FOUND_ERROR('Target user not found!');
-        }
-        const targetUserInShop = foundShop.users.find(user => user._id.toString() === foundTargetUser._id.toString())
+        const targetUserInShop = foundShop.users.find(user => user._id.toString() === targetId)
         if (!targetUserInShop) {
             throw new BAD_REQUEST_ERROR('Target user is not in user list!');
         }
@@ -308,6 +335,52 @@ class ShopService {
         await shopModel.findByIdAndUpdate({
             _id: foundShop._id
         }, foundShop)
+        const shop = await shopModel
+            .findById(foundShop._id)
+            .populate('users._id', '_id name email')
+            .populate('users.addBy', '_id name email')
+            .lean();
+        shop.users = shop.users
+            .filter(user => user.role > userInShop.role)
+            .map(user => ({
+                user: user._id,
+                role: user.role,
+                addBy: user.addBy,
+                createdAt: user.createdAt,
+                active: user.active
+            }));
+        return shop.users;
+    }
+
+    static changeUserRole = async ({ shopId, userId, targetUser }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!');
+        }
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new NOT_FOUND_ERROR('User not in shop!');
+        }
+        if (userInShop.role > ROLES.SHOP_ADMIN) {
+            throw new FORBIDDEN_ERROR('You are not authorized to do this action!');
+        }
+        const targetUserInShop = foundShop.users.find(user => user._id.toString() === targetUser._id._id);
+        if (!targetUserInShop) {
+            throw new BAD_REQUEST_ERROR('Target user is not in user list!');
+        }
+        if (userInShop.role >= targetUserInShop.role) {
+            throw new FORBIDDEN_ERROR('You are not authorized to change this user role!')
+        }
+
+        targetUserInShop.role = targetUser.role;
+        await shopModel.findByIdAndUpdate({
+            _id: foundShop._id
+        }, foundShop)
+
         const shop = await shopModel
             .findById(foundShop._id)
             .populate('users._id', '_id name email')

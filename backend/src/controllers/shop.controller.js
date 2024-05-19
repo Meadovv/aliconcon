@@ -79,12 +79,38 @@ class ShopController {
         }).send(res);
     }
 
+    static getUser = async (req, res) => {
+        new SUCCESS({
+            message: 'Get user successfully!',
+            metadata: await ShopService.getUser({
+                ...getFields({
+                    fields: ['targetId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static switchUserStatus = async (req, res) => {
         new SUCCESS({
             message: 'Switch user status successfully!',
             metadata: await ShopService.switchUserStatus({
                 ...getFields({
                     fields: ['targetId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static changeUserRole = async (req, res) => {
+        new SUCCESS({
+            message: 'Change user role successfully!',
+            metadata: await ShopService.changeUserRole({
+                ...getFields({
+                    fields: ['targetUser'],
                     object: req.body
                 }),
                 ...req.jwt_decode

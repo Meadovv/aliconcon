@@ -47,4 +47,8 @@ router.post('/update-category', ErrorMiddleware.asyncHandler(ShopController.upda
 
 router.post('/switch-user-status', ErrorMiddleware.asyncHandler(ShopController.switchUserStatus));
 
+router.post('/get-user', ErrorMiddleware.asyncHandler(ShopController.getUser));
+
+router.post('/change-user-role', ErrorMiddleware.asyncHandler(ShopController.changeUserRole));
+
 module.exports = router;
