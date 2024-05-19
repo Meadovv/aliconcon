@@ -43,4 +43,8 @@ router.post('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCa
 
 router.post('/switch-category-status', ErrorMiddleware.asyncHandler(ShopController.switchCategoryStatus));
 
+router.post('/update-category', ErrorMiddleware.asyncHandler(ShopController.updateCategory));
+
+router.post('/switch-user-status', ErrorMiddleware.asyncHandler(ShopController.switchUserStatus));
+
 module.exports = router;

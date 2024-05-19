@@ -121,7 +121,6 @@ class CategoryService {
 
         return await categoryModel
             .find({ shop: shopId })
-            .populate('shop', '_id name email')
             .populate('addBy', '_id name email')
             .lean();
     }
@@ -132,7 +131,6 @@ class CategoryService {
         }
         const categories = await categoryModel
             .find({shop: shopId})
-            .populate('shop', '_id name email')
             .populate('addBy', '_id name email')
             .lean();
         return categories;
@@ -161,10 +159,34 @@ class CategoryService {
         await categoryModel.findByIdAndDelete(categoryId);
         const categories = await categoryModel
             .find({shop: shopId})
-            .populate('shop', '_id name email')
             .populate('addBy', '_id name email')
             .lean();
         return categories;
+    }
+
+    static updateCategory = async ({ shopId, userId, category }) => {
+        const foundShop = await shopModel.findById(shopId);
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!')
+        }
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) {
+            throw new FORBIDDEN_ERROR('You are not authorized to update category!')
+        }
+        if(userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
+            throw new FORBIDDEN_ERROR('You are not authorized to update category!')
+        }
+        const foundCategory = await categoryModel.findById(category._id);
+        if (!foundCategory) {
+            throw new NOT_FOUND_ERROR('Category not found!')
+        }
+        await categoryModel.findByIdAndUpdate({
+            _id: category._id
+        }, category)
+        return await categoryModel
+            .find({ shop: shopId })
+            .populate('addBy', '_id name email')
+            .lean();
     }
 }
 

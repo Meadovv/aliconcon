@@ -79,6 +79,19 @@ class ShopController {
         }).send(res);
     }
 
+    static switchUserStatus = async (req, res) => {
+        new SUCCESS({
+            message: 'Switch user status successfully!',
+            metadata: await ShopService.switchUserStatus({
+                ...getFields({
+                    fields: ['targetId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static createCategory = async (req, res) => {
         new CREATED({
             message: 'Category created successfully',
@@ -98,6 +111,19 @@ class ShopController {
             metadata: await CategoryService.deleteCategory({
                 ...getFields({
                     fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static updateCategory = async (req, res) => {
+        new SUCCESS({
+            message: 'Category updated successfully',
+            metadata: await CategoryService.updateCategory({
+                ...getFields({
+                    fields: ['category'],
                     object: req.body
                 }),
                 ...req.jwt_decode
