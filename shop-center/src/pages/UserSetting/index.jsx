@@ -160,9 +160,12 @@ function UserSetting() {
                                 placeholder="Select a role"
                                 allowClear
                                 options={[
-                                    {value: 1, label: 'Admin'},
-                                    {value: 2, label: 'EDITOR'},
-                                    {value: 3, label: 'MOD'},
+                                    {label:"SUPER_USER", value : 0,},
+                                    {label:"SHOP_OWNER", value : 1,},
+                                    {label:"SHOP_ADMIN", value : 2,},
+                                    {label:"SHOP_PRODUCT_MODERATOR", value : 3,},
+                                    {label:"SHOP_PRODUCT_EDITOR", value : 4,},
+                                    {label:"USER", value : 5},
                                 ]}
                             />
                         </Form.Item>

@@ -109,6 +109,8 @@ function Settings() {
                         <div><b>Shop name: {shop.name}</b></div>
                         <br/>
                         <div>User: {shop.userId}</div>
+                        <br/>
+                        <div>Shop ID: {shop._id}</div>
                     </div>
                 </div>
 

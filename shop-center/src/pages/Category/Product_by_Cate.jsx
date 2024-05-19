@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
+import { Radio, Card, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
 import CONFIG from '../../configs';
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
 
-function Product_by_Cate (categoryId) {
+function Product_by_Cate (categoryId, categoryName) {
     const { shop } = useSelector(selectShop);
     const [productList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
@@ -168,18 +168,9 @@ function Product_by_Cate (categoryId) {
                     </Form.Item>
                     <Form.Item 
                         label="Product Categories"  name="category" 
-                        rules={[
-                            { 
-                                required: true, 
-                                message: 'Please select product category!' 
-                            }
-                        ]}
+                        hidden
+                        value={categoryName}
                     >
-                        <Checkbox.Group>
-                            {categoryList.map(category => (
-                                <Checkbox key={category._id} value={category._id}>{category.name}</Checkbox>
-                            ))}
-                        </Checkbox.Group>
                     </Form.Item>
                     <Form.Item 
                         label="Product Price" name="price"

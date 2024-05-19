@@ -38,7 +38,7 @@ function MyInformation() {
     return (
         <div>
             <div>Shop name: {shop.name}</div>
-            <div>Role: {shop.role}</div>
+            <div>Role: {role(shop.role)}</div>
         </div>
     );
 }
@@ -102,7 +102,8 @@ function Menu() {
     console.log("aaa");
 
     const dispatch = useDispatch();
-    // Dispatch setAuth() only if shop data is not already set
+
+    // Dispatch setAuth() only if shop data is not already set in testing
     if(!shop){
         dispatch(setAuth({
             _id : 'shop test id',
@@ -112,20 +113,18 @@ function Menu() {
         }));
         console.log("222");
     }
+    // Testing ----------------------------------------------------------
 
     let menuLink = searchParams.get('menu');
 
     useEffect(() => {
-        //menuLink = searchParams.get('menu');
-        if (shop && menuLink) {
+        if (menuLink) {
           setCurrentMenu(menus.find((item) => item.link === menuLink));
         } else {
           setCurrentMenu(menus[0]);
         }
     }, [menuLink]); 
 
-    
-    
     console.log(shop);
     
     const handleMenuClick = (menu) => {
