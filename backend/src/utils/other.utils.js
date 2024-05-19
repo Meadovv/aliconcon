@@ -8,16 +8,26 @@ class OtherUtils {
     }
 
     static getFields = ({ fields, object }) => {
-        const pickedObject = _.pick(object, fields);
-        const extraFields = _.difference(_.keys(object), fields);
-        const missingFields = _.difference(fields, _.keys(object));
+    const pickedObject = _.pick(object, fields);
+    const extraFields = _.difference(_.keys(object), fields);
+    const missingFields = _.difference(fields, _.keys(object));
 
-        if (extraFields.length > 0 || missingFields.length > 0) {
-            throw new BAD_REQUEST_ERROR('Object contains extra fields or missing fields!');
+    if (extraFields.length > 0 || missingFields.length > 0) {
+        let errorMessage = 'Object contains extra fields or missing fields!';
+
+        if (extraFields.length > 0) {
+            errorMessage += ` Extra fields: ${extraFields.join(', ')}.`;
         }
 
-        return pickedObject;
+        if (missingFields.length > 0) {
+            errorMessage += ` Missing fields: ${missingFields.join(', ')}.`;
+        }
+
+        throw new BAD_REQUEST_ERROR(errorMessage);
     }
+
+    return pickedObject;
+}
 }
 
 module.exports = OtherUtils;

@@ -2,26 +2,26 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_comment';
-const COLLECTION_NAME = 'comments';
+const DOCUMENT_NAME = 'aliconcon_image';
+const COLLECTION_NAME = 'images';
 
 const schema = new Schema({
-    product:{
+    shop:{
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_product',
+        ref: 'aliconcon_shop',
         required: true
     },
-    user:{
-        type: Schema.Types.ObjectId,
-        ref: 'aliconcon_user',
+    type: {
+        type: String,
+        enum: ['imgur', 'another'],
         required: true
     },
-    comment:{
+    hash: {
         type: String,
         required: true
     },
-    rating:{
-        type: Number,
+    link: {
+        type: String,
         required: true
     }
 }, {

@@ -11,7 +11,7 @@ app.use(morgan('dev')); // Logger
 app.use(helmet()); // Security
 app.use(compression()); // Compression
 app.use(express.json({
-    limit: '2mb'
+    limit: '10mb'
 })); // Body parser
 app.use(express.urlencoded({ 
     extended: true 

@@ -1,134 +1,288 @@
 const shopModel = require('../models/shop.model');
-const ROLES = require('../constants/ROLES');
+const userModel = require('../models/user.model');
+
 const {
-    BAD_REQUEST_ERROR
+    BAD_REQUEST_ERROR, UNAUTHENTICATED_ERROR, NOT_FOUND_ERROR, FORBIDDEN_ERROR
 } = require('../core/error.response');
 const Utils = require('../utils');
+const ROLES = require('../constants/ROLES');
+
+const KeyTokenService = require('./keyToken.service');
+const categoryModel = require('../models/category.model');
 
 class ShopService {
-    static findByEmail = async (email) => {
-        return await shopModel.findOne({ email }).lean();
+
+    static metadata = async ({ shopId, userId }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!');
+        }
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new UNAUTHENTICATED_ERROR('User not in shop!');
+        }
+        return {
+            shop: Utils.OtherUtils.getInfoData({
+                fields: ['_id', 'name', 'email'],
+                object: foundShop
+            }),
+            user: {
+                ...Utils.OtherUtils.getInfoData({
+                    fields: ['_id', 'name', 'email'],
+                    object: foundUser
+                }),
+                role: userInShop.role
+            }
+        }
     }
 
-    static findById = async (id) => {
-        return await shopModel.findById({ _id: id }).lean();
+    static login = async ({ email, shopEmail, password }) => {
+        const foundUser = await userModel.findOne({ email }).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not registered!');
+        }
+        if (!foundUser.active) {
+            throw new FORBIDDEN_ERROR('Account is banned!');
+        }
+        const foundShop = await shopModel.findOne({ email: shopEmail }).lean();
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not registered!');
+        }
+
+        if (!foundShop.active) {
+            throw new FORBIDDEN_ERROR('Shop is banned!');
+        }
+
+        const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new NOT_FOUND_ERROR('User not in shop!');
+        }
+
+        const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundUser.password);
+        if (!passwordMatch) {
+            throw new UNAUTHENTICATED_ERROR('Password incorrect!');
+        }
+        const key = Utils.AuthUtils.createKey(64);
+        await KeyTokenService.createKeyToken({
+            userId: foundUser._id,
+            key: key
+        });
+        const token = await Utils.AuthUtils.createToken({
+            payload: { shopId: foundShop._id, userId: foundUser._id, role: userInShop.role },
+            key: key
+        });
+
+        return {
+            shop: Utils.OtherUtils.getInfoData({
+                fields: ['_id', 'name', 'email'],
+                object: foundShop
+            }),
+            user: {
+                ...Utils.OtherUtils.getInfoData({
+                    fields: ['_id', 'name', 'email'],
+                    object: foundUser
+                }),
+                role: userInShop.role
+            },
+            token: token
+        }
     }
 
-    static createShop = async ({ name, email, password, phone, address }) => {
-        return await shopModel.create({
+    static register = async ({ name, email, password, address, phone, shopName, shopEmail, shopAddress }) => {
+        const foundUser = await userModel.findOne({ email: email }).lean();
+        if (foundUser) {
+            throw new BAD_REQUEST_ERROR('User already registered!');
+        }
+        const foundShop = await shopModel.findOne({ email: shopEmail }).lean();
+        if (foundShop) {
+            throw new BAD_REQUEST_ERROR('Shop Email already registered!');
+        }
+        const hashPassword = await Utils.AuthUtils.createHashPassword(password);
+        const newUser = await userModel.create({
             name,
             email,
+            password: hashPassword,
+            address: [address],
+            phone
+        });
+        const newShop = await shopModel.create({
+            name: shopName,
+            email: shopEmail,
+            address: shopAddress,
             phone,
-            address,
-            users: [
-                {
-                    email: email,
-                    password: password,
-                    role: ROLES.OWNER,
-                    active: true,
-                    addBy: null
-                }
-            ]
+            users: [{ _id: newUser._id, role: ROLES.SHOP_OWNER }]
         });
+        const key = Utils.AuthUtils.createKey(64);
+        await KeyTokenService.createKeyToken({
+            userId: newUser._id,
+            key
+        });
+        const token = await Utils.AuthUtils.createToken({
+            payload: { shopId: newShop._id, userId: newUser._id, role: newUser.role },
+            key
+        });
+        return {
+            shop: Utils.OtherUtils.getInfoData({
+                fields: ['_id', 'name', 'email'],
+                object: newShop
+            }),
+            user: {
+                ...Utils.OtherUtils.getInfoData({
+                    fields: ['_id', 'name', 'email'],
+                    object: newUser
+                }),
+                role: ROLES.SHOP_OWNER
+            },
+            token: token
+        }
     }
 
-    static addUser = async ({ shopId, userId, target_email, target_password, target_role }) => {
-        const foundShop = await shopModel.findById({ _id: shopId }).lean();
+    static addUser = async ({ shopId, userId, targetEmail, targetRole }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) {
-            throw new BAD_REQUEST_ERROR('Shop not found!');
+            throw new NOT_FOUND_ERROR('Shop not found!');
         }
-        const user = foundShop.users.find(user => user._id == userId);
-        if(!user) {
-            throw new BAD_REQUEST_ERROR('You are not in shop account list!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
         }
-        if(user.role >= target_role) {
-            throw new BAD_REQUEST_ERROR('You are not authorized to add user!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new NOT_FOUND_ERROR('User not in shop!');
         }
-        const foundUser = foundShop.users.find(user => user.email === target_email);
-        if (foundUser) {
-            throw new BAD_REQUEST_ERROR('User already exists!');
+        if (userInShop.role > ROLES.SHOP_ADMIN) {
+            throw new FORBIDDEN_ERROR('You are not authorized to do this action!');
         }
-        const passwordHash = await Utils.AuthUtils.createHashPassword(target_password);
-        const newUser = {
-            email: target_email,
-            password: passwordHash,
-            role: target_role,
-            active: true,
-            addBy: user._id
+        if (targetRole <= userInShop.role) {
+            throw new FORBIDDEN_ERROR('You are not authorized to add this role');
         }
-        foundShop.users.push(newUser);
-
-        await shopModel.updateOne({ _id: shopId }, { users: foundShop.users });
-
-        return Utils.OtherUtils.getInfoData({
-            fields: ['_id', 'email', 'role'],
-            object: newUser
+        const foundTargetUser = await userModel.findOne({ email: targetEmail }).lean();
+        if (!foundTargetUser) {
+            throw new NOT_FOUND_ERROR('Target user not found!');
+        }
+        if (foundShop.users.find(user => user._id.toString() === foundTargetUser._id.toString())) {
+            throw new BAD_REQUEST_ERROR('Target user is already in user list!');
+        }
+        foundShop.users.push({
+            _id: foundTargetUser._id,
+            role: targetRole,
+            addBy: userId
         });
+        await shopModel.findByIdAndUpdate({
+            _id: foundShop._id
+        }, foundShop)
+        const shop = await shopModel
+            .findById(foundShop._id)
+            .populate('users._id', '_id name email')
+            .populate('users.addBy', '_id name email')
+            .lean();
+        shop.users = shop.users
+            .filter(user => user.role > userInShop.role)
+            .map(user => ({
+                user: user._id,
+                role: user.role,
+                addBy: user.addBy,
+                createdAt: user.createdAt,
+                active: user.active
+            }));
+        return shop.users;
     }
 
-    static deleteUser = async ({ shopId, userId, target_email }) => {
-        const foundShop = await shopModel.findById({ _id: shopId }).lean();
+    static deleteUser = async ({ shopId, userId, targetEmail }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) {
-            throw new BAD_REQUEST_ERROR('Shop not found!');
+            throw new NOT_FOUND_ERROR('Shop not found!');
         }
-        const user = foundShop.users.find(user => user._id == userId);
-        if(!user) {
-            throw new BAD_REQUEST_ERROR('You are not in shop account list!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
         }
-        const targetUser = foundShop.users.find(user => user.email === target_email);
-        if (!targetUser) {
-            throw new BAD_REQUEST_ERROR('User not found!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new NOT_FOUND_ERROR('User not in shop!');
         }
-        if(user.role >= targetUser.role) {
-            throw new BAD_REQUEST_ERROR('You are not authorized to delete user!');
+        if (userInShop.role > ROLES.SHOP_ADMIN) {
+            throw new FORBIDDEN_ERROR('You are not authorized to do this action!');
         }
-        foundShop.users = foundShop.users.filter(user => user.email !== target_email);
-
-        await shopModel.updateOne({ _id: shopId }, { users: foundShop.users });
-
-        return Utils.OtherUtils.getInfoData({
-            fields: ['_id', 'email', 'role'],
-            object: targetUser
-        });
+        const foundTargetUser = await userModel.findOne({ email: targetEmail }).lean();
+        if (!foundTargetUser) {
+            throw new NOT_FOUND_ERROR('Target user not found!');
+        }
+        const targetUserInShop = foundShop.users.find(user => user._id.toString() === foundTargetUser._id.toString())
+        if (!targetUserInShop) {
+            throw new BAD_REQUEST_ERROR('Target user is not in user list!');
+        }
+        if (userInShop.role >= targetUserInShop.role) {
+            throw new FORBIDDEN_ERROR('You are not authorized to delete this user!')
+        }
+        foundShop.users = foundShop.users.filter(user => user._id.toString() !== foundTargetUser._id.toString());
+        await shopModel.findByIdAndUpdate({
+            _id: foundShop._id
+        }, foundShop)
+        const shop = await shopModel
+            .findById(foundShop._id)
+            .populate('users._id', '_id name email')
+            .populate('users.addBy', '_id name email')
+            .lean();
+        shop.users = shop.users
+            .filter(user => user.role > userInShop.role)
+            .map(user => ({
+                user: user._id,
+                role: user.role,
+                addBy: user.addBy,
+                createdAt: user.createdAt,
+                active: user.active
+            }));
+        return shop.users;
     }
 
     static getUserList = async ({ shopId, userId }) => {
-        const foundShop = await shopModel.findById({ _id: shopId }).lean();
+        const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) {
-            throw new BAD_REQUEST_ERROR('Shop not found!');
+            throw new NOT_FOUND_ERROR('Shop not found!');
         }
-        const foundUser = foundShop.users.find(user => user._id == userId);
-        console.log(foundUser);
-        if(!foundUser) {
-            throw new BAD_REQUEST_ERROR('You are not in shop account list!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
         }
-        const userList = []
-        foundShop.users.forEach(user => {
-            if(user.role > foundUser.role) userList.push(Utils.OtherUtils.getInfoData({
-                fields: ['_id', 'email', 'role'],
-                object: user
+        const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new NOT_FOUND_ERROR('User not in shop!');
+        }
+        if (userInShop.role > ROLES.SHOP_ADMIN) {
+            throw new FORBIDDEN_ERROR('You are not authorized to do this action!');
+        }
+        const shop = await shopModel
+            .findById(foundShop._id)
+            .populate('users._id', '_id name email')
+            .populate('users.addBy', '_id name email')
+            .lean();
+        shop.users = shop.users
+            .filter(user => user.role > userInShop.role)
+            .map(user => ({
+                user: user._id,
+                role: user.role,
+                addBy: user.addBy,
+                createdAt: user.createdAt,
+                active: user.active
             }));
-        })
-        return userList;
+        return shop.users;
     }
 
-    static changePassword = async ({ shopId, userId, old_password, new_password }) => {
-        const foundShop = await shopModel.findById({ _id: shopId }).lean();
-        if (!foundShop) {
-            throw new BAD_REQUEST_ERROR('Shop not found!');
+    static getCategories = async ({ shopId, userId }) => {
+        if (!shopId) {
+            throw new BAD_REQUEST_ERROR('Shop ID not found!');
         }
-        const user = foundShop.users.find(user => user._id == userId);
-        if(!user) {
-            throw new BAD_REQUEST_ERROR('You are not in shop account list!');
-        }
-        if (!await Utils.AuthUtils.comparePassword(old_password, user.password)) {
-            throw new BAD_REQUEST_ERROR('Old password is incorrect!');
-        }
-        const passwordHash = await Utils.AuthUtils.createHashPassword(new_password);
-        return Utils.OtherUtils.getInfoData({
-            fields: ['_id', 'email', 'role'],
-            object: user
-        })
+        const categories = await categoryModel
+            .find({shop: shopId})
+            .populate('shop', '_id name email')
+            .populate('addBy', '_id name email')
+            .lean();
+        return categories;
     }
 }
 
