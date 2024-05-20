@@ -1,12 +1,11 @@
 */node_modules
 */.env
-<<<<<<< HEAD
 
 frontend
 
+admin
+
 shop
 
-admin
-=======
-backend/src/images/*
->>>>>>> main
+backend/images
+backend/images/*

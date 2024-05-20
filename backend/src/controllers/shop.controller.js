@@ -79,8 +79,6 @@ class ShopController {
         }).send(res);
     }
 
-<<<<<<< HEAD
-=======
     static getUser = async (req, res) => {
         new SUCCESS({
             message: 'Get user successfully!',
@@ -120,7 +118,6 @@ class ShopController {
         }).send(res);
     }
 
->>>>>>> main
     static createCategory = async (req, res) => {
         new CREATED({
             message: 'Category created successfully',
@@ -220,8 +217,6 @@ class ShopController {
         }).send(res);
     }
 
-<<<<<<< HEAD
-=======
     static getCategoryByAdmin = async (req, res) => {
         new SUCCESS({
             message: 'Get category successfully',
@@ -235,7 +230,6 @@ class ShopController {
         }).send(res);
     }
 
->>>>>>> main
     static getProducts = async (req, res) => {
         new SUCCESS({
             message: 'Get products successfully',
@@ -259,62 +253,11 @@ class ShopController {
             })
         }).send(res);
     }
-<<<<<<< HEAD
-
-    static uploadImage = async (req, res) => {
-        new CREATED({
-            message: 'Image uploaded successfully',
-            metadata: await ImageService.upload({
-                ...getFields({
-                    fields: ['data'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static getImage = async (req, res) => {
-        const imageUrl = await ImageService.get({
-            ...getFields({
-                fields: ['id'],
-                object: req.query
-            })
-        });
-        
-        if (!imageUrl) {
-            return res.status(404).json({
-                err: 'No file exists'
-            });
-        }
-        
-        // Send the image URL
-        res.redirect(imageUrl);
-    }
-
-    static deleteImage = async (req, res) => {
-        new SUCCESS({
-            message: 'Image deleted successfully',
-            metadata: await ImageService.delete({
-                ...getFields({
-                    fields: ['id'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-=======
->>>>>>> main
     
     static getCategoriesByAdmin = async (req, res) => {
         new SUCCESS({
             message: 'Get categories successfully',
-<<<<<<< HEAD
-            metadata: await ShopService.getCategories({
-=======
             metadata: await CategoryService.getCategoriesByAdmin({
->>>>>>> main
                 ...req.jwt_decode
             })
         }).send(res);
@@ -332,8 +275,6 @@ class ShopController {
             })
         }).send(res);
     }
-<<<<<<< HEAD
-=======
 
     static deleteCategory = async (req, res) => {
         new SUCCESS({
@@ -347,7 +288,6 @@ class ShopController {
             })
         }).send(res);
     }
->>>>>>> main
 }
 
 module.exports = ShopController;
