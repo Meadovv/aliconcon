@@ -8,21 +8,39 @@ const COLLECTION_NAME = 'products';
 const productSchema = new Schema({
     shop: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_shops',
         required: true
     },
     addBy: {
         type: Schema.Types.ObjectId,
         required: true
     },
-    name:{
+    editBy: {
+        type: [{
+            user: {
+                type: Schema.Types.ObjectId,
+                required: true
+            },
+            action: String
+        }],
+        default: []
+    },
+    name: {
         type:String,
         trim: true,
         maxLength: 150
     },
-    description:{
+    description: {
         type:String,
+        required: true,
         trim: true,
         maxLength: 500
+    },
+    short_description: {
+        type: String,
+        required: true,
+        trim: true,
+        maxLength: 150
     },
     category:{
         type: Schema.Types.ObjectId,
@@ -39,7 +57,14 @@ const productSchema = new Schema({
     },
     rating: {
         type: Number,
-        default: 0
+        default: 0.0
+    },
+    likes: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'aliconcon_users'
+        }],
+        default: []
     },
     status: {
         type: String,
@@ -49,7 +74,11 @@ const productSchema = new Schema({
     variations: {
         type: Array,
         default: []
-    }
+    },
+    sell_count: {
+        type: Number,
+        default: 0
+    },
 }, {
     timestamps: true,
     collection: COLLECTION_NAME

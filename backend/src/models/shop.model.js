@@ -5,31 +5,29 @@ const { model, Schema } = require('mongoose');
 const DOCUMENT_NAME = 'aliconcon_shops';
 const COLLECTION_NAME = 'shops';
 
-const shopUser = new Schema({
-    email: {
-        type:String,
-        trim: true,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    role: {
-        type: Number,
-        required: true
+const userSchema = new Schema({
+    _id: {
+        type: Schema.Types.ObjectId,
+        ref: 'aliconcon_users'
     },
     active: {
         type: Boolean,
         default: true
     },
+    role: {
+        type: Number,
+        required: true
+    },
     addBy: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_users',
+        default: null
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-}, {
-    timestamps: true
-})
-
+});
 
 const shopSchema = new Schema({
     name:{
@@ -57,7 +55,7 @@ const shopSchema = new Schema({
         default: true
     },
     users: {
-        type: [shopUser],
+        type: [userSchema],
         default: []
     }
 }, {

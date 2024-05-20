@@ -11,9 +11,15 @@ function Header() {
     const navigate = useNavigate();
     
     return (
-        <div className="header global-container">
+        <div 
+            className="header global-container" 
+            style={{height : '100px', width: '100%', marginTop : '0px', color:'white', backgroundColor: 'skyblue'}}
+        >
             <div className="logo" onClick={() => navigate('/')}>
-                <img src="/images/logo.png" alt="logo" />
+                <img 
+                    src="/images/logo.png" alt="logo"  
+                    style={{height: '80px', width: '80px', marginTop : '5px'}}
+                />
                 <div className="shop-name">Aliconcon Shop Center</div>
             </div>
 

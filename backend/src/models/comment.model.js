@@ -8,10 +8,12 @@ const COLLECTION_NAME = 'comments';
 const schema = new Schema({
     product:{
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_product',
         required: true
     },
     user:{
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_user',
         required: true
     },
     comment:{

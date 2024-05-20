@@ -18,14 +18,35 @@ function Orders() {
     const [form] = Form.useForm();
     const [formMode, setFormMode] = useState({
         open: false,
-        index: -1
+        index: null,
+        orderId: null,
     });
 
     const [totalPrice, setTotalPrice] = useState(0);
 
+    const addOrder = async (data) => {
+        await axios
+            .post(CONFIG.API + '/shop/create-order'
+                , data 
+                , {
+                    headers: {
+                        'x-client-id': localStorage.getItem('x-client-id'),
+                        'x-token-id': localStorage.getItem('x-token-id'),
+                    },
+                }
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setReload((prev) => prev + 1);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    };
+
     const deleteOrder = async (orderId) => {
         await axios
-            .post(CONFIG.API + '/shop/delete-user', 
+            .post(CONFIG.API + '/shop/delete-order', 
                 {
                     orderId : orderId,
                 },
@@ -45,22 +66,22 @@ function Orders() {
             });
     };
 
-    // const getOrderList = async () => {
-    //     await axios
-    //         .post(CONFIG.API + '/shop/get-order-list', {
-    //             shopId: shop._id,
-    //         })
-    //         .then((res) => {
-    //             message.success(res.data.message);
-    //             setOrderList(res.data.metadata);
-    //         })
-    //         .catch((err) => {
-    //             message.error(err.message);
-    //         });
-    // };
+    const getOrderList = async () => {
+        await axios
+            .post(CONFIG.API + '/shop/get-order-list', {
+                shopId: shop._id,
+            })
+            .then((res) => {
+                message.success(res.data.message);
+                setOrderList(res.data.metadata);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    };
 
     useEffect(() => {
-        // getOrderList();
+        getOrderList();
         
     }, [reload]);
 
@@ -71,24 +92,23 @@ function Orders() {
         else setOrderFilter(orderList.filter((order) => order.status === filter));
     }, [filter, orderList]);
 
-    const handleForm = () => {
-        form.validateFields().then(async (formValues) => {
-            await axios
-                .post(CONFIG.API + '/order/create', formValues, {
-                    headers: {
-                        'x-client-id': localStorage.getItem('x-client-id'),
-                        'x-token-id': localStorage.getItem('x-token-id'),
-                    },
-                })
-                .then((res) => {
-                    message.success(res.data.message);
-                    form.resetFields();
-                    setReload((prev) => prev + 1);
-                })
-                .catch((err) => {
-                    message.error(err.message);
-                });
-        });
+    const handleForm = async () => {
+        try {
+            const formValues = await form.validateFields();
+            if (formMode.mode === 'edit') {
+                deleteOrder(formMode.orderId);
+                addOrder(formValues);
+            }
+            else if(formMode.mode === 'add'){
+                addOrder(formValues);
+            }
+            form.resetFields();
+            setReload((prev) => prev + 1);
+        } catch (error) {
+            message.error(error.message);
+        }
+
+
         setFormMode({
             ...formMode,
             open: false,
@@ -212,8 +232,8 @@ function Orders() {
                             <p><b>Products:</b></p>
                             <ul>
                                 {order.products.map(product => (
-                                    <li key={product.productId}>
-                                        {product.productId}: {product.quantity}
+                                    <li key={product._id}>
+                                        {product._id}: {product.quantity}
                                     </li>
                                 ))}
                             </ul>
@@ -222,7 +242,7 @@ function Orders() {
                             <p><b>Create date:</b> {order.createAt}</p>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Button type="primary" onClick={() => setFormMode({index: index, open: true})}>
+                                <Button type="primary" onClick={() => setFormMode({index: index, open: true, orderId: order._id})}>
                                     Edit 
                                 </Button>
                                 <Button danger onClick={() => deleteOrder(order._id)} disabled={shop.role > 1}>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Form, Modal, Input, Button, message } from 'antd';
-import Layout from '../../components/Layout';
+import { Form, Modal, Input, Button, Select, message } from 'antd';
 import { useSelector } from 'react-redux';
 import { selectShop } from '../../reducer/actions/auth.slice';
+import CONFIG from '../../configs';
 
 function UserSetting() {
     const shop = useSelector(selectShop);
@@ -20,7 +20,7 @@ function UserSetting() {
 
     const getUserList = async () => {
         await axios
-            .post(CONFIG.API + '/shop/get-user-list', {
+            .post(CONFIG.API + '/shop/get-user-list', {}, {
                 headers: {
                     'x-client-id': localStorage.getItem('x-client-id'),
                     'x-token-id': localStorage.getItem('x-token-id'),
@@ -146,8 +146,8 @@ function UserSetting() {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            label="user"
-                            name="target_Password"
+                            label="Role"
+                            name="target_role"
                             rules={[
                                 {
                                     required: true,
@@ -155,7 +155,19 @@ function UserSetting() {
                                 },
                             ]}
                         >
-                            <Input />
+                            <Select
+                                size='large'
+                                placeholder="Select a role"
+                                allowClear
+                                options={[
+                                    {label:"SUPER_USER", value : 0,},
+                                    {label:"SHOP_OWNER", value : 1,},
+                                    {label:"SHOP_ADMIN", value : 2,},
+                                    {label:"SHOP_PRODUCT_MODERATOR", value : 3,},
+                                    {label:"SHOP_PRODUCT_EDITOR", value : 4,},
+                                    {label:"USER", value : 5},
+                                ]}
+                            />
                         </Form.Item>
                     </Form>
                 </Modal>

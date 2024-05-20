@@ -5,18 +5,6 @@ const { model, Schema } = require('mongoose');
 const DOCUMENT_NAME = 'aliconcon_users';
 const COLLECTION_NAME = 'users';
 
-const addressSchema = new Schema({
-    value: {
-        type: String,
-        trim: true,
-        required: true
-    },
-    default: {
-        type: Boolean,
-        required: true
-    }
-})
-
 const userSchema = new Schema({
     name:{
         type:String,
@@ -25,7 +13,6 @@ const userSchema = new Schema({
     },
     email:{
         type:String,
-        unique:true,
         trim: true
     },
     password:{
@@ -38,8 +25,12 @@ const userSchema = new Schema({
         required:true,
     },
     address: {
-        type: [addressSchema],
+        type: [String],
         default: []
+    },
+    default_address: {
+        type: Number,
+        default: 0
     },
     active: {
         type: Boolean,
