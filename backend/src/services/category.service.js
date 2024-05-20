@@ -1,19 +1,10 @@
 const categoryModel = require('../models/category.model')
 const shopModel = require('../models/shop.model')
-<<<<<<< HEAD
-const { getInfoData } = require('../utils/other.utils');
-const ROLES = require('../constants/ROLES');
-
-const {
-    BAD_REQUEST_ERROR,
-    UNAUTHENTICATED_ERROR,
-=======
 const ROLES = require('../constants/ROLES');
 const Utils = require('../utils');
 
 const {
     BAD_REQUEST_ERROR,
->>>>>>> main
     FORBIDDEN_ERROR,
     NOT_FOUND_ERROR
 } = require('../core/error.response');
@@ -74,8 +65,6 @@ class CategoryService {
         if (!category) {
             throw new NOT_FOUND_ERROR('Category not found!')
         }
-<<<<<<< HEAD
-=======
         if(category.status === 'draft') {
             throw new FORBIDDEN_ERROR('Category is not published!')
         }
@@ -101,7 +90,6 @@ class CategoryService {
         if (!category) {
             throw new NOT_FOUND_ERROR('Category not found!')
         }
->>>>>>> main
         return category;
     }
 
@@ -133,9 +121,6 @@ class CategoryService {
 
         return await categoryModel
             .find({ shop: shopId })
-<<<<<<< HEAD
-            .populate('shop', '_id name email')
-=======
             .populate('addBy', '_id name email')
             .lean();
     }
@@ -200,7 +185,6 @@ class CategoryService {
         }, category)
         return await categoryModel
             .find({ shop: shopId })
->>>>>>> main
             .populate('addBy', '_id name email')
             .lean();
     }

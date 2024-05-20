@@ -62,13 +62,10 @@ class ShopService {
             throw new NOT_FOUND_ERROR('User not in shop!');
         }
 
-<<<<<<< HEAD
-=======
         if (!userInShop.active) {
             throw new FORBIDDEN_ERROR('User is banned!');
         }
 
->>>>>>> main
         const passwordMatch = await Utils.AuthUtils.comparePassword(password, foundUser.password);
         if (!passwordMatch) {
             throw new UNAUTHENTICATED_ERROR('Password incorrect!');
@@ -280,18 +277,6 @@ class ShopService {
         return shop.users;
     }
 
-<<<<<<< HEAD
-    static getCategories = async ({ shopId, userId }) => {
-        if (!shopId) {
-            throw new BAD_REQUEST_ERROR('Shop ID not found!');
-        }
-        const categories = await categoryModel
-            .find({shop: shopId})
-            .populate('shop', '_id name email')
-            .populate('addBy', '_id name email')
-            .lean();
-        return categories;
-=======
     static getUser = async ({ shopId, userId, targetId }) => {
         const foundShop = await shopModel
             .findById(shopId)
@@ -411,7 +396,6 @@ class ShopService {
                 active: user.active
             }));
         return shop.users;
->>>>>>> main
     }
 }
 

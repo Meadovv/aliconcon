@@ -11,21 +11,6 @@ const schema = new Schema({
         ref: 'aliconcon_shop',
         required: true
     },
-<<<<<<< HEAD
-    type: {
-        type: String,
-        enum: ['imgur', 'another'],
-        required: true
-    },
-    hash: {
-        type: String,
-        required: true
-    },
-    link: {
-        type: String,
-        required: true
-    }
-=======
     addBy: {
         type: Schema.Types.ObjectId,
         ref: 'aliconcon_user',
@@ -35,7 +20,6 @@ const schema = new Schema({
         type: String,
         required: true
     },
->>>>>>> main
 }, {
     timestamps: true,
     collection: COLLECTION_NAME
