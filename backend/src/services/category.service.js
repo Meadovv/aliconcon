@@ -39,18 +39,12 @@ class CategoryService {
         if (!shopId) {
             throw new BAD_REQUEST_ERROR('Shop ID not found!')
         }
-        if (shopId === 'all') {
-            return await categoryModel.find({
-                status: 'draft',
-                shop: null,
-                parent: null
-            }).lean();
-        }
-        const categories = await categoryModel.find({
-            shop: shopId,
-            status: 'published',
-        }).populate('parent', '_id name shop').lean();
-        return categories.filter(category => category.parent.shop === null);
+        const categories = await categoryModel
+            .find({ shop: shopId })
+            .select('_id name')
+            .lean();
+        
+        return categories;
     }
 
     static getProducts = async ({ shopId }) => {
