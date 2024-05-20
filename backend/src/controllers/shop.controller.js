@@ -79,6 +79,48 @@ class ShopController {
         }).send(res);
     }
 
+<<<<<<< HEAD
+=======
+    static getUser = async (req, res) => {
+        new SUCCESS({
+            message: 'Get user successfully!',
+            metadata: await ShopService.getUser({
+                ...getFields({
+                    fields: ['targetId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static switchUserStatus = async (req, res) => {
+        new SUCCESS({
+            message: 'Switch user status successfully!',
+            metadata: await ShopService.switchUserStatus({
+                ...getFields({
+                    fields: ['targetId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static changeUserRole = async (req, res) => {
+        new SUCCESS({
+            message: 'Change user role successfully!',
+            metadata: await ShopService.changeUserRole({
+                ...getFields({
+                    fields: ['targetUser'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+>>>>>>> main
     static createCategory = async (req, res) => {
         new CREATED({
             message: 'Category created successfully',
@@ -98,6 +140,19 @@ class ShopController {
             metadata: await CategoryService.deleteCategory({
                 ...getFields({
                     fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static updateCategory = async (req, res) => {
+        new SUCCESS({
+            message: 'Category updated successfully',
+            metadata: await CategoryService.updateCategory({
+                ...getFields({
+                    fields: ['category'],
                     object: req.body
                 }),
                 ...req.jwt_decode
@@ -165,6 +220,22 @@ class ShopController {
         }).send(res);
     }
 
+<<<<<<< HEAD
+=======
+    static getCategoryByAdmin = async (req, res) => {
+        new SUCCESS({
+            message: 'Get category successfully',
+            metadata: await CategoryService.getCategoryByAdmin({
+                ...getFields({
+                    fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+>>>>>>> main
     static getProducts = async (req, res) => {
         new SUCCESS({
             message: 'Get products successfully',
@@ -188,6 +259,7 @@ class ShopController {
             })
         }).send(res);
     }
+<<<<<<< HEAD
 
     static uploadImage = async (req, res) => {
         new CREATED({
@@ -232,11 +304,17 @@ class ShopController {
             })
         }).send(res);
     }
+=======
+>>>>>>> main
     
     static getCategoriesByAdmin = async (req, res) => {
         new SUCCESS({
             message: 'Get categories successfully',
+<<<<<<< HEAD
             metadata: await ShopService.getCategories({
+=======
+            metadata: await CategoryService.getCategoriesByAdmin({
+>>>>>>> main
                 ...req.jwt_decode
             })
         }).send(res);
@@ -254,6 +332,22 @@ class ShopController {
             })
         }).send(res);
     }
+<<<<<<< HEAD
+=======
+
+    static deleteCategory = async (req, res) => {
+        new SUCCESS({
+            message: 'Category deleted successfully',
+            metadata: await CategoryService.deleteCategory({
+                ...getFields({
+                    fields: ['categoryId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+>>>>>>> main
 }
 
 module.exports = ShopController;

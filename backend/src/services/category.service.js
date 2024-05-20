@@ -1,11 +1,19 @@
 const categoryModel = require('../models/category.model')
 const shopModel = require('../models/shop.model')
+<<<<<<< HEAD
 const { getInfoData } = require('../utils/other.utils');
 const ROLES = require('../constants/ROLES');
 
 const {
     BAD_REQUEST_ERROR,
     UNAUTHENTICATED_ERROR,
+=======
+const ROLES = require('../constants/ROLES');
+const Utils = require('../utils');
+
+const {
+    BAD_REQUEST_ERROR,
+>>>>>>> main
     FORBIDDEN_ERROR,
     NOT_FOUND_ERROR
 } = require('../core/error.response');
@@ -66,6 +74,34 @@ class CategoryService {
         if (!category) {
             throw new NOT_FOUND_ERROR('Category not found!')
         }
+<<<<<<< HEAD
+=======
+        if(category.status === 'draft') {
+            throw new FORBIDDEN_ERROR('Category is not published!')
+        }
+        return Utils.OtherUtils.getInfoData({
+            fields: ['_id', 'name', 'shop'],
+            object: category
+        });
+    }
+    
+    static getCategoryByAdmin = async ({ shopId, userId, categoryId }) => {
+        const foundShop = await shopModel.findById(shopId);
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!')
+        }
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) {
+            throw new FORBIDDEN_ERROR('You are not authorized to get category!')
+        }
+        const category = await categoryModel
+            .findById(categoryId)
+            .populate('addBy', '_id name email')
+            .lean();
+        if (!category) {
+            throw new NOT_FOUND_ERROR('Category not found!')
+        }
+>>>>>>> main
         return category;
     }
 
@@ -97,7 +133,74 @@ class CategoryService {
 
         return await categoryModel
             .find({ shop: shopId })
+<<<<<<< HEAD
             .populate('shop', '_id name email')
+=======
+            .populate('addBy', '_id name email')
+            .lean();
+    }
+
+    static getCategoriesByAdmin = async ({ shopId, userId }) => {
+        if (!shopId) {
+            throw new BAD_REQUEST_ERROR('Shop ID not found!');
+        }
+        const categories = await categoryModel
+            .find({shop: shopId})
+            .populate('addBy', '_id name email')
+            .lean();
+        return categories;
+    }
+
+    static deleteCategory = async ({ shopId, userId, categoryId }) => {
+        const foundShop = await shopModel.findById(shopId);
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!')
+        }
+
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) {
+            throw new FORBIDDEN_ERROR('You are not authorized to switch category status!')
+        }
+
+        if(userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
+            throw new FORBIDDEN_ERROR('You are not authorized to delete category!')
+        }
+
+        const foundCategory = await categoryModel.findById(categoryId).lean();
+        if(foundCategory.status === 'published') {
+            throw new FORBIDDEN_ERROR('You are not authorized to delete published category!')
+        }
+
+        await categoryModel.findByIdAndDelete(categoryId);
+        const categories = await categoryModel
+            .find({shop: shopId})
+            .populate('addBy', '_id name email')
+            .lean();
+        return categories;
+    }
+
+    static updateCategory = async ({ shopId, userId, category }) => {
+        const foundShop = await shopModel.findById(shopId);
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!')
+        }
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) {
+            throw new FORBIDDEN_ERROR('You are not authorized to update category!')
+        }
+        if(userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
+            throw new FORBIDDEN_ERROR('You are not authorized to update category!')
+        }
+        const foundCategory = await categoryModel.findById(category._id);
+        if (!foundCategory) {
+            throw new NOT_FOUND_ERROR('Category not found!')
+        }
+        await categoryModel.findByIdAndUpdate({
+            _id: category._id
+        }, category)
+        return await categoryModel
+            .find({ shop: shopId })
+>>>>>>> main
             .populate('addBy', '_id name email')
             .lean();
     }

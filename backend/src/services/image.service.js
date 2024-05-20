@@ -2,13 +2,17 @@ const shopModel = require('../models/shop.model');
 const imageModel = require('../models/image.model');
 const config = require('../configs/app.config');
 const axios = require('axios');
+<<<<<<< HEAD
 const FormData = require('form-data');
+=======
+>>>>>>> main
 
 const {
     BAD_REQUEST_ERROR, UNAUTHENTICATED_ERROR, NOT_FOUND_ERROR, FORBIDDEN_ERROR
 } = require('../core/error.response');
 const Utils = require('../utils');
 
+<<<<<<< HEAD
 class ImageService {
     static upload = async({ shopId, data }) => {
         const foundShop = await shopModel.findById(shopId);
@@ -74,6 +78,15 @@ class ImageService {
             fields: ['_id', 'createdAt'],
             object: foundImage
         });
+=======
+class ImageService {    
+    static upload = async({ shopId, userId, file }) => {
+
+    }
+
+    static delete = async () => {
+
+>>>>>>> main
     }
 }
 
