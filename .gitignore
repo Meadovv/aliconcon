@@ -1,11 +1,5 @@
 */node_modules
 */.env
 
-frontend
-
-admin
-
-shop
-
 backend/images
 backend/images/*
