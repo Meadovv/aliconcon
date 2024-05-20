@@ -57,6 +57,7 @@ const api = {
     REMOVE_ADDRESS: BACKEND_API + 'user/remove-address',
     SET_DEFAULT_ADDRESS: BACKEND_API + 'user/set-default-address',
     GET_ORDERS: BACKEND_API + 'user/get-orders',
+    GET_WISHLIST: BACKEND_API + 'user/get-wishlist',
 }
 
 export default api;
