@@ -1,5 +1,6 @@
 const categoryModel = require('../models/category.model');
 const productModel = require('../models/product.model');
+const shopModel = require('../models/shop.model');
 
 const {
     BAD_REQUEST_ERROR, UNAUTHENTICATED_ERROR
