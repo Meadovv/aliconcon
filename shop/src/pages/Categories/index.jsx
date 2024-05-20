@@ -1,5 +1,5 @@
 import { HStack, Button, Flex } from '@chakra-ui/react';
-import { AddIcon, ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
