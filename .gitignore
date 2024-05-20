@@ -5,4 +5,5 @@ frontend
 
 shop
 
-admin
+backend/images
+backend/images/*

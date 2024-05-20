@@ -253,50 +253,6 @@ class ShopController {
             })
         }).send(res);
     }
-
-    static uploadImage = async (req, res) => {
-        new CREATED({
-            message: 'Image uploaded successfully',
-            metadata: await ImageService.upload({
-                ...getFields({
-                    fields: ['data'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static getImage = async (req, res) => {
-        const imageUrl = await ImageService.get({
-            ...getFields({
-                fields: ['id'],
-                object: req.query
-            })
-        });
-        
-        if (!imageUrl) {
-            return res.status(404).json({
-                err: 'No file exists'
-            });
-        }
-        
-        // Send the image URL
-        res.redirect(imageUrl);
-    }
-
-    static deleteImage = async (req, res) => {
-        new SUCCESS({
-            message: 'Image deleted successfully',
-            metadata: await ImageService.delete({
-                ...getFields({
-                    fields: ['id'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
     
     static getCategoriesByAdmin = async (req, res) => {
         new SUCCESS({
