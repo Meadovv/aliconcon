@@ -1,6 +1,6 @@
 'use strict'
 
-const { UNAUTHORIZED_ERROR, TOKEN_EXPIRED_ERROR } = require("../core/error.response");
+const { UNAUTHORIZED_ERROR, TOKEN_EXPIRED_ERROR, BAD_REQUEST_ERROR } = require("../core/error.response");
 const KeyTokenService = require("../services/keyToken.service");
 const Utils = require("../utils");
 
@@ -25,7 +25,13 @@ class AuthenticationMiddleware {
             req.jwt_decode = decodedUser;
             return next();
         } catch (error) {
-            throw new TOKEN_EXPIRED_ERROR(error.message);
+            if (error.name === 'TokenExpiredError') {
+                throw new TOKEN_EXPIRED_ERROR('Token has expired');
+            } else if (error.name === 'JsonWebTokenError') {
+                throw new UNAUTHORIZED_ERROR('Invalid token');
+            } else {
+                throw new BAD_REQUEST_ERROR(error.message);
+            }
         }
     }
 }
