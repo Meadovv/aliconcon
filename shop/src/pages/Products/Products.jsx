@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import api from '../../apis';
 import {Checkbox, Radio, Form, Modal, Input, Button, message } from 'antd';
-import CONFIG from '../../../../../aliconcon - Copy/shop-center/src/configs';
-import { selectShop } '/src/reducer/actions/auth.slice';
 import VariationSetting from './Variation';
 
 function Products() {
-    const shop = useSelector(selectShop);
+    const shop = useSelector((state) => state.auth.shop);
 
     const [productList, setProductList] = useState([]);
     const [productFilter, setProductFilter] = useState([]);
@@ -95,7 +94,7 @@ function Products() {
 
     const getProductList = async (categoryId) => {
         await axios
-            .get(CONFIG.API + '/shop/get-products'
+            .get( api.GET_PRODUCTS
                 , {
                     shopId: shop._id,
                     categoryId: categoryId,

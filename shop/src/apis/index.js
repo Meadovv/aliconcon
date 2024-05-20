@@ -17,6 +17,7 @@ const api = {
     GET_CATEGORIES: host + 'shop/get-categories',
     SWITCH_CATEGORY_STATUS: host + 'shop/switch-category-status',
     UPDATE_CATEGORY: host + 'shop/update-category',
+    GET_PRODUCTS: host + 'shop/get-products',
 }
 
 export default api;
