@@ -25,6 +25,8 @@ import { useSelector } from 'react-redux';
 import api from '../../../apis';
 import { useNavigate } from 'react-router-dom';
 
+import MediaViewModal from '../MediaView';
+
 export default function AddProductModal() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
@@ -110,7 +112,7 @@ export default function AddProductModal() {
 
                         <FormControl mt={4}>
                             <FormLabel>Thumbnail</FormLabel>
-                            <Input type="text" placeholder="Thumbnail URL" />
+                            <MediaViewModal />
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
