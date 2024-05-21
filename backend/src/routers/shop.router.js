@@ -35,5 +35,8 @@ router.post('/update-category', ErrorMiddleware.asyncHandler(ShopController.upda
 router.post('/switch-user-status', ErrorMiddleware.asyncHandler(ShopController.switchUserStatus));
 router.post('/get-user', ErrorMiddleware.asyncHandler(ShopController.getUser));
 router.post('/change-user-role', ErrorMiddleware.asyncHandler(ShopController.changeUserRole));
+router.post('/create-group', ErrorMiddleware.asyncHandler(ShopController.createGroup));
+router.post('/update-group', ErrorMiddleware.asyncHandler(ShopController.updateGroup));
+router.post('/delete-group', ErrorMiddleware.asyncHandler(ShopController.deleteGroup));
 
 module.exports = router;
