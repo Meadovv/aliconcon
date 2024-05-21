@@ -6,6 +6,8 @@ import Settings from '../../pages/Settings';
 import Vouchers from '../../pages/Vouchers';
 import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
+import Orders from '../../pages/Orders';
+import Media from '../../pages/Media';
 
 const routers = [
     {
@@ -41,6 +43,18 @@ const routers = [
     {
         path: '/vouchers',
         children: <Vouchers />,
+        layout: true,
+        middleware: 'private'
+    },
+    {
+        path: '/medias',
+        children: <Media />,
+        layout: true,
+        middleware: 'private'
+    },
+    {
+        path: '/orders',
+        children: <Orders />,
         layout: true,
         middleware: 'private'
     },

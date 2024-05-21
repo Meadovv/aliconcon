@@ -45,7 +45,12 @@ function MediaViewModal() {
                 <ModalContent>
                     <ModalHeader>Media View</ModalHeader>
                     <ModalBody>
-                        <Grid templateColumns="repeat(6, 1fr)" gap={3}>
+                        <Grid
+                            templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(6, 1fr)' }}
+                            gap={3}
+                            justifyItems="center"
+                            alignItems="center"
+                        >
                             <Box
                                 as="label"
                                 htmlFor="file-upload"
