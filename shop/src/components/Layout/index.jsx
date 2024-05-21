@@ -68,6 +68,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         { name: 'Categories', icon: FiTrendingUp, link: '/categories', disabled: false },
         { name: 'Products', icon: FiCompass, link: '/products', disabled: false },
         { name: 'Vouchers', icon: FiStar, link: '/vouchers', disabled: false },
+        { name: 'Orders', icon: FiStar, link: '/orders', disabled: false },
         { name: 'Users', icon: FiUser, link: '/users', disabled: user?.role > 2 },
         { name: 'Settings', icon: FiSettings, link: '/settings', disabled: user?.role > 1 },
     ];
