@@ -38,7 +38,8 @@ const upload = multer({
 });
 router.use(ErrorMiddleware.asyncHandler(AuthenticationMiddleware.authentication));
 
+router.post('/get', ErrorMiddleware.asyncHandler(ImageController.get));
 router.post('/upload', upload.single('file'), ErrorMiddleware.asyncHandler(ImageController.upload));
-router.post('/delete/:imageId', ErrorMiddleware.asyncHandler(ImageController.delete));
+router.post('/delete', ErrorMiddleware.asyncHandler(ImageController.delete));
 
 module.exports = router;

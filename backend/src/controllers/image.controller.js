@@ -25,8 +25,17 @@ class ImageController {
             metadata: await ImageService.delete({
                 ...getFields({
                     fields: ['imageId'],
-                    object: req.params
+                    object: req.body
                 }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static get = async (req, res) => {
+        return new SUCCESS({
+            message: 'Get Image Successfully!',
+            metadata: await ImageService.get({
                 ...req.jwt_decode
             })
         }).send(res);
