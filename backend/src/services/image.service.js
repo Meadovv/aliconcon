@@ -29,7 +29,7 @@ class ImageService {
             addBy: userId,
             name: file.filename
         });
-        const images = await imageModel.find({ shop: shopId }).select('name').lean();
+        const images = await imageModel.find({ shop: shopId }).select('name addBy createdAt').populate('addBy', '_id name email').lean();
         return images;
     }
 
@@ -51,7 +51,7 @@ class ImageService {
         }
         await unlinkFile(path.join(__dirname, '../images/' + foundImage.name));
         await imageModel.findByIdAndDelete(imageId);
-        const images = await imageModel.find({ shop: shopId }).select('name').lean();
+        const images = await imageModel.find({ shop: shopId }).select('name addBy createdAt').populate('addBy', '_id name email').lean();
         return images;
     }
     
