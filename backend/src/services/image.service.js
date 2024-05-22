@@ -43,7 +43,7 @@ class ImageService {
             throw new FORBIDDEN_ERROR('User is not in shop');
         }
         const foundImage = await imageModel.findById(imageId).lean();
-        if(foundImage.addBy.toString() !== userId && userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
+        if(userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
             throw new FORBIDDEN_ERROR('You are not authorized to delete this image');
         }
         if(!foundImage) {
