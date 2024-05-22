@@ -126,8 +126,8 @@ export default function Media() {
                     <ModalBody>
                         <Image src={IMAGE_HOST.ORIGINAL(selectedImage?.name)} objectFit="contain" />
                         <Flex mt={3} justifyContent={'space-between'} alignItems={'center'}>
-                            <Text>Add By: {selectedImage?.addedBy}</Text>
-                            <Text>Create Date: {selectedImage?.addedDate}</Text>
+                            <Text>Add By: {selectedImage?.addBy}</Text>
+                            <Text>Created At: {selectedImage?.createdAt}</Text>
                         </Flex>
                     </ModalBody>
                     <ModalFooter>
