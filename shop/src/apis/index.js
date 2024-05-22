@@ -1,4 +1,5 @@
 const host = 'http://localhost:3055/api/v1/'
+const image_host = 'http://localhost:9000/'
 const api = {
     LOGIN: host + 'shop/login',
     REGISTER: host + 'shop/register',
@@ -17,14 +18,15 @@ const api = {
     GET_CATEGORIES: host + 'shop/get-categories',
     SWITCH_CATEGORY_STATUS: host + 'shop/switch-category-status',
     UPDATE_CATEGORY: host + 'shop/update-category',
+    GET_IMAGE: host + 'image/get',
 }
 
 export const IMAGE_HOST = {
     THUMBNAIL: (name) => {
-        return 'http://localhost:9000/thumbnail?file=' + name + '&width=150&height=150';
+        return image_host + 'thumbnail?file=' + name + '&width=150&height=150&type=webp';
     },
     ORIGINAL: (name) => {
-
+        return image_host + 'enlarge?file=' + name + '&width=1920&height=1080&type=webp';
     }
 }
 
