@@ -19,4 +19,13 @@ const api = {
     UPDATE_CATEGORY: host + 'shop/update-category',
 }
 
+export const IMAGE_HOST = {
+    THUMBNAIL: (name) => {
+        return 'http://localhost:9000/thumbnail?file=' + name + '&width=150&height=150';
+    },
+    ORIGINAL: (name) => {
+
+    }
+}
+
 export default api;
