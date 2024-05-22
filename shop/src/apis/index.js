@@ -21,6 +21,7 @@ const api = {
     UPLOAD_IMAGE: host + 'image/upload',
     GET_IMAGE: host + 'image/get',
     DELETE_IMAGE: host + 'image/delete',
+    ADD_PRODUCT: host + 'shop/create-product',
 }
 
 export const IMAGE_HOST = {

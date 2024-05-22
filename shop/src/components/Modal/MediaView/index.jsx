@@ -18,7 +18,7 @@ import axios from 'axios';
 import api, { IMAGE_HOST } from '../../../apis';
 import { message } from 'antd';
 
-function MediaViewModal() {
+function MediaViewModal({ setImage }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [images, setImages] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
@@ -68,6 +68,11 @@ function MediaViewModal() {
         });
     };
 
+    const setProductImage = (image) => {
+        setImage(image);
+        onClose();
+    }
+
     React.useEffect(() => {
         getImages();
     }, []);
@@ -114,7 +119,7 @@ function MediaViewModal() {
                                     />
                                 </Box>
                                 {images.map((image, index) => (
-                                    <Box key={index} _hover={{ transform: 'scale(1.05)' }}>
+                                    <Box key={index} _hover={{ transform: 'scale(1.05)' }} onClick={() => setProductImage(image)}>
                                         <Image src={IMAGE_HOST.THUMBNAIL(image.name)} alt={`Media content ${index + 1}`} />
                                     </Box>
                                 ))}
