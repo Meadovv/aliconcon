@@ -29,7 +29,7 @@ class ImageService {
             addBy: userId,
             name: file.filename
         });
-        const images = await imageModel.find({ shop: shopId }).select('name').lean();
+        const images = await imageModel.find({ shop: shopId }).select('name addBy createdAt').populate('addBy', '_id name email').lean();
         return images;
     }
 
@@ -43,7 +43,7 @@ class ImageService {
             throw new FORBIDDEN_ERROR('User is not in shop');
         }
         const foundImage = await imageModel.findById(imageId).lean();
-        if(foundImage.addBy.toString() !== userId && userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
+        if(userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
             throw new FORBIDDEN_ERROR('You are not authorized to delete this image');
         }
         if(!foundImage) {
@@ -51,7 +51,7 @@ class ImageService {
         }
         await unlinkFile(path.join(__dirname, '../images/' + foundImage.name));
         await imageModel.findByIdAndDelete(imageId);
-        const images = await imageModel.find({ shop: shopId }).select('name').lean();
+        const images = await imageModel.find({ shop: shopId }).select('name addBy createdAt').populate('addBy', '_id name email').lean();
         return images;
     }
     
