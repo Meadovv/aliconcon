@@ -15,10 +15,10 @@ import {
     Flex,
     Button,
     Spinner,
-    Text
+    Text,
 } from '@chakra-ui/react';
 import { Pagination, message } from 'antd';
-import React from 'react';
+import React, { useRef } from 'react';
 
 import axios from 'axios';
 import api, { IMAGE_HOST } from '../../apis';
@@ -29,6 +29,7 @@ export default function Media() {
     const [images, setImages] = React.useState([]);
     const [page, setPage] = React.useState(5);
     const [loading, setLoading] = React.useState(false);
+    const fileInput = useRef();
 
     const handleOpen = (image) => {
         setSelectedImage(image);
@@ -59,8 +60,52 @@ export default function Media() {
     };
 
     const handleDelete = async () => {
+        await axios
+            .post(
+                api.DELETE_IMAGE,
+                {
+                    imageId: selectedImage._id,
+                },
+                {
+                    headers: {
+                        'x-token-id': localStorage.getItem('token'),
+                        'x-client-id': localStorage.getItem('client'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setImages(images.filter((image) => image._id !== selectedImage._id));
+                onClose();
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+    };
 
-    }
+    const handleFileChange = (e) => {
+        let formData = new FormData();
+        formData.append('file', e.target.files[0]);
+
+        // Send a POST request with the form data
+        axios
+            .post(api.UPLOAD_IMAGE, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'x-token-id': localStorage.getItem('token'),
+                    'x-client-id': localStorage.getItem('client'),
+                },
+            })
+            .then((res) => {
+                message.success(res.data.message);
+                setImages(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+    };
 
     React.useEffect(() => {
         getImages();
@@ -68,11 +113,14 @@ export default function Media() {
 
     return (
         <>
+            <input type="file" ref={fileInput} style={{ display: 'none' }} onChange={handleFileChange} />
             <Flex justifyContent={'space-between'} alignItems={'center'}>
                 <Heading as="h1" mb={4}>
                     Library
                 </Heading>
-                <Button colorScheme="green">Add</Button>
+                <Button colorScheme="green" onClick={() => fileInput.current.click()}>
+                    Add
+                </Button>
             </Flex>
             <Flex justifyContent="center">
                 <Pagination
@@ -124,9 +172,9 @@ export default function Media() {
                     <ModalHeader>View Image</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Image src={IMAGE_HOST.ORIGINAL(selectedImage?.name)} objectFit="contain" />
+                        <Image src={IMAGE_HOST.ORIGINAL(selectedImage?.name)} objectFit="fit" />
                         <Flex mt={3} justifyContent={'space-between'} alignItems={'center'}>
-                            <Text>Add By: {selectedImage?.addBy}</Text>
+                            <Text>Add By: {selectedImage?.addBy.email}</Text>
                             <Text>Created At: {selectedImage?.createdAt}</Text>
                         </Flex>
                     </ModalBody>

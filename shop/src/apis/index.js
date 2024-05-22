@@ -18,7 +18,9 @@ const api = {
     GET_CATEGORIES: host + 'shop/get-categories',
     SWITCH_CATEGORY_STATUS: host + 'shop/switch-category-status',
     UPDATE_CATEGORY: host + 'shop/update-category',
+    UPLOAD_IMAGE: host + 'image/upload',
     GET_IMAGE: host + 'image/get',
+    DELETE_IMAGE: host + 'image/delete',
 }
 
 export const IMAGE_HOST = {
@@ -26,7 +28,7 @@ export const IMAGE_HOST = {
         return image_host + 'thumbnail?file=' + name + '&width=150&height=150&type=webp';
     },
     ORIGINAL: (name) => {
-        return image_host + 'enlarge?file=' + name + '&width=1920&height=1080&type=webp';
+        return image_host + 'crop?file=' + name + '&width=1920&height=1080&type=webp';
     }
 }
 
