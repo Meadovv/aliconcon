@@ -1,63 +1,58 @@
-import React, { useEffect } from 'react';
-import './index.scss';
-import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { STATUS } from '../../utils/status';
-import Loader from '../../components/Loader';
-import ProductList from '../../components/ProductList';
-import {
-    fetchAsyncSearchProduct,
-    getSearchProducts,
-    setSearchTerm,
-    getSearchProductsStatus,
-    clearSearch,
-} from '../../reducer/actions/search.slice';
+import ProductList from "../../components/ProductList";
+import Loader from "../../components/Loader";
+import React from 'react';
 
-const SearchPage = () => {
-    const dispatch = useDispatch();
-    const { searchTerm } = useParams();
-    const searchProducts = useSelector(getSearchProducts);
-    const searchProductsStatus = useSelector(getSearchProductsStatus);
+import { useSearchParams } from "react-router-dom";
 
-    useEffect(() => {
-        dispatch(clearSearch());
-        dispatch(fetchAsyncSearchProduct(searchTerm));
-    }, [searchTerm]);
+import axios from "axios";
+import api from "../../apis";
 
-    if (searchProducts.length === 0) {
-        return (
-            <div
-                className="container"
-                style={{
-                    minHeight: '70vh',
-                }}
-            >
-                <div className="fw-5 text-danger py-5">
-                    <h3>No Products found.</h3>
-                </div>
-            </div>
-        );
+import { message } from 'antd'
+
+export default function Search() {
+
+    const [products, setProducts] = React.useState([])
+    const [loading, setLoading] = React.useState(false)
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    const getProducts = async (key) => {
+        setLoading(true);
+        await axios.post(api.SEARCH_PRODUCT, {
+            key: key
+        }, {
+            headers: {
+                'x-token-id': localStorage.getItem('token'),
+                'x-client-id': localStorage.getItem('client'),
+            }
+        })
+        .then(res => {
+            setProducts(res.data.data)
+        })
+        .catch(err => {
+            console.error(err)
+            message.error(err.response.data.message);
+        })
+        setLoading(false);
     }
+
+    React.useEffect(() => {
+        getProducts(searchParams.get('key'));
+    }, [searchParams.get('key')])
 
     return (
         <main>
-            <div className="search-content bg-whitesmoke">
+            <div className="main-content bg-whitesmoke">
                 <div className="container">
-                    <div className="py-5">
-                        <div className="title-md">
-                            <h3>Search results:</h3>
+                    <div className="categories py-5">
+                        <div className="categories-item">
+                            <div className="title-md">
+                                <h4>See our products</h4>
+                            </div>
+                            {loading ? <Loader /> : <ProductList products={products} showFilter/>}
                         </div>
-                        <br />
-                        {searchProductsStatus === STATUS.LOADING ? (
-                            <Loader />
-                        ) : (
-                            <ProductList products={searchProducts} />
-                        )}
                     </div>
                 </div>
             </div>
         </main>
     );
-};
-
-export default SearchPage;
+}

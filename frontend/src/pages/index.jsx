@@ -9,6 +9,6 @@ import Tracking from "./Tracking";
 import Logout from "./Logout";
 import Forgot from "./Forgot";
 import Reset from "./Reset";
-// import Search from "./Search";
+import Search from "./Search";
 
-export { Home, Product, Cart, Logout, Shop, Setting, Authentication, Tracking, Checkout, Forgot, Reset };
+export { Home, Product, Cart, Logout, Shop, Setting, Authentication, Tracking, Checkout, Forgot, Reset, Search };

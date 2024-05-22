@@ -5,7 +5,7 @@ export default function Home() {
 
     const navigate = useNavigate();
     React.useEffect(() => {
-        navigate('/products');
+        navigate('/profile');
     }, [])
 
     return (

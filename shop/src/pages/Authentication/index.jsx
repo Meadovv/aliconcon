@@ -169,7 +169,7 @@ export default function Authentication() {
                         <h3>One of us ?</h3>
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum laboriosam ad deleniti.</p>
                         <button className="btn transparent" onClick={() => changeMode()}>
-                            Sign up
+                            Sign in
                         </button>
                     </div>
                     <img src="/images/register.svg" className="image" alt="register" />

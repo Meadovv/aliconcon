@@ -50,7 +50,7 @@ function ForUser({ information, setInformation }) {
                 setInformation({
                     userId: res.data.metadata._id,
                     name: res.data.metadata.name,
-                    phone: res.data.metadata.phone,
+                    phone: res.data.metadata.email,
                     address: res.data.metadata.address[res.data.metadata.default_address],
                 });
                 setAddress(res.data.metadata.default_address);
@@ -75,7 +75,7 @@ function ForUser({ information, setInformation }) {
                 <Input value={information?.name} isReadOnly />
             </FormControl>
             <FormControl id="phone">
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <Input value={information?.phone} isReadOnly />
             </FormControl>
             <FormControl id="address">

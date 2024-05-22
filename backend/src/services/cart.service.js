@@ -9,6 +9,7 @@ const shopOrderModel = require("../models/shopOrder.model");
 const {
     BAD_REQUEST_ERROR, NOT_FOUND_ERROR
 } = require('../core/error.response');
+const MailerService = require("./mail.service");
 
 class CartService {
 
@@ -197,8 +198,6 @@ class CartService {
             shopItems.push(item);
         }));
 
-        console.log(shopMap.keys(), shopMap.values());
-
         await Promise.all(Array.from(shopMap.keys()).map(async (shopId) => {
             await shopOrderModel.create({
                 shop: shopId,
@@ -211,7 +210,7 @@ class CartService {
                 }, 0)
             })
         }));
-
+        MailerService.sendOrderEmail({ to: information.phone, name: information.name, order: order._id });
         return order;
     }
 }

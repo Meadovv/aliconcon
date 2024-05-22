@@ -1,5 +1,9 @@
-const image_host = 'https://image.aliconcon.xyz/'
-// const image_host = 'http://localhost:9000/'
+// const image_host = 'https://image.aliconcon.xyz/'
+// export const BACKEND_API = 'https://api.aliconcon.xyz/v1/';
+
+
+const image_host = 'http://localhost:9000/'
+export const BACKEND_API = 'http://localhost:3055/v1/';
 
 export const IMAGE_HOST = {
     THUMBNAIL: (name) => {
@@ -9,9 +13,6 @@ export const IMAGE_HOST = {
         return image_host + 'crop?file=' + name + '&width=1000&height=1000&type=webp';
     }
 }
-
-export const BACKEND_API = 'https://api.aliconcon.xyz/v1/';
-// export const BACKEND_API = 'http://localhost:3055/v1/';
 
 export const PAYMENT_GATE = 'http://20.2.158.32/pay/';
 
@@ -58,6 +59,7 @@ const api = {
     SET_DEFAULT_ADDRESS: BACKEND_API + 'user/set-default-address',
     GET_ORDERS: BACKEND_API + 'user/get-orders',
     GET_WISHLIST: BACKEND_API + 'user/get-wishlist',
+    SEARCH_PRODUCT: BACKEND_API + 'shop/search-product',
 }
 
 export default api;

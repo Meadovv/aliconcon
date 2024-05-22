@@ -79,6 +79,10 @@ export default function Product() {
     }, [product, variantTierIdx]);
 
     const submitComment = async () => {
+        if(!user) {
+            dispatch(openModal({ modal: 'login' }));
+            return;
+        }
         if (!comment) {
             message.error('Please enter a comment');
             return;
@@ -484,11 +488,7 @@ export default function Product() {
                         }}
                     >
                         <div>Comments ({product?.comments.length})</div>
-                        <div
-                            style={{
-                                display: user ? 'block' : 'none',
-                            }}
-                        >
+                        <div>
                             <input
                                 style={{
                                     width: '100%',

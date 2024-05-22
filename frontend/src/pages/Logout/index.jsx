@@ -30,7 +30,7 @@ export default function Logout() {
                 dispatch(setUser(null));
                 dispatch(clearCart());
                 localStorage.clear();
-                navigate('/');
+                window.location.reload();
             })
             .catch((error) => {
                 console.error(error);

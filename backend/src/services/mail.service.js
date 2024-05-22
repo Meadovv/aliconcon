@@ -29,7 +29,32 @@ class MailerService {
             html: htmlContent
         }
 
-        return this.transporter.sendMail(options);
+        try {
+            return this.transporter.sendMail(options);
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    }
+
+    static sendOrderEmail = ({ to, name, order }) => {
+        const htmlContent = Utils.OtherUtils.generateOrderHTMLContent({ name, order });
+        const options = {
+            from: {
+                name: process.env.MAILER_FROM_NAME,
+                address: process.env.MAILER_FROM_ADDRESS
+            },
+            to: to,
+            subject: 'Order Confirmation',
+            html: htmlContent
+        }
+
+        try {
+            return this.transporter.sendMail(options);
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
 
 }

@@ -3,14 +3,16 @@ import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import CartModal from "../../Modal/Cart";
 import { useSelector } from 'react-redux';
+import { message } from 'antd';
 
 const Navbar = () => {
 
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleSearchTerm = (e) => {
-
+    setSearchTerm(e.target.value)
   }
 
   useEffect(() => {
@@ -37,7 +39,14 @@ const Navbar = () => {
           <div className='navbar-search bg-white'>
             <div className='flex align-center'>
               <input type = "text" className='form-control fs-14' placeholder='Search your preferred items here' onChange={(e) => handleSearchTerm(e)} />
-              <div className='text-white search-btn flex align-center justify-center' onClick={() => navigate('/abc')}>
+              <div className='text-white search-btn flex align-center justify-center' onClick={() => {
+                if(!searchTerm) {
+                  return message.error('Please enter a search value');
+                }
+                navigate(`/search?key=${searchTerm}`)
+              }} style={{
+                cursor: 'pointer'
+              }}>
                   <i className='fa-solid fa-magnifying-glass'></i>
                 </div>
             </div>
