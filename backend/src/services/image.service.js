@@ -60,7 +60,7 @@ class ImageService {
         if(!foundShop) {
             throw new NOT_FOUND_ERROR('Shop not found');
         }
-        const images = await imageModel.find({ shop: shopId }).select('name').lean();
+        const images = await imageModel.find({ shop: shopId }).lean();
         return images;
     }
 }
