@@ -54,6 +54,15 @@ class ImageService {
         const images = await imageModel.find({ shop: shopId }).select('name').lean();
         return images;
     }
+    
+    static get = async ({ shopId }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if(!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found');
+        }
+        const images = await imageModel.find({ shop: shopId }).select('name').lean();
+        return images;
+    }
 }
 
 module.exports = ImageService;
