@@ -2,7 +2,7 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_product_variation';
+const DOCUMENT_NAME = 'aliconcon_product_variations';
 const COLLECTION_NAME = 'variations';
 
 const schema = new Schema({

@@ -2,7 +2,7 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_image';
+const DOCUMENT_NAME = 'aliconcon_images';
 const COLLECTION_NAME = 'images';
 
 const schema = new Schema({

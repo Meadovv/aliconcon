@@ -2,18 +2,18 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_comment';
+const DOCUMENT_NAME = 'aliconcon_comments';
 const COLLECTION_NAME = 'comments';
 
 const schema = new Schema({
     product:{
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_product',
+        ref: 'aliconcon_products',
         required: true
     },
     user:{
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_user',
+        ref: 'aliconcon_users',
         required: true
     },
     comment:{

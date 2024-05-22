@@ -2,18 +2,18 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_group';
+const DOCUMENT_NAME = 'aliconcon_groups';
 const COLLECTION_NAME = 'groups';
 
 const schema = new Schema({
     shop:{
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_shop',
+        ref: 'aliconcon_shops',
         required: true
     },
-    createdBy: {
+    addBy: {
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_user',
+        ref: 'aliconcon_users',
         required: true
     },
     name: {
