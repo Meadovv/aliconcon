@@ -13,6 +13,7 @@ import api from '../../apis';
 import ViewCategoryModal from '../../components/Modal/ViewCategory';
 
 export default function Categories() {
+
     const user = useSelector((state) => state.auth.user);
 
     const [viewCategoryId, setViewCategoryId] = React.useState(null);
@@ -83,6 +84,8 @@ export default function Categories() {
         });
     }
 
+    // States
+
     const [recordPerPage, setRecordPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [dataList, setDataList] = React.useState([]);
@@ -132,6 +135,7 @@ export default function Categories() {
                 },
             )
             .then((res) => {
+                message.success(res.data.message);
                 setCategories(res.data.metadata);
             })
             .catch((err) => {
@@ -158,7 +162,7 @@ export default function Categories() {
             )
             .then((res) => {
                 message.success(res.data.message);
-                setCategories(res.data.metadata);
+                getCategories();
             })
             .catch((err) => {
                 console.log(err);

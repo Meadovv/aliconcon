@@ -9,7 +9,9 @@ import PublicMiddleware from './components/Middlewares/Public';
 import PrivateMiddleware from './components/Middlewares/Private';
 
 function App() {
+    
     const loader = useSelector((state) => state.loader);
+
     return loader ? (
         <Spinner />
     ) : (
