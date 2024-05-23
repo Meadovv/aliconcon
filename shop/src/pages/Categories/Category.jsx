@@ -1,5 +1,6 @@
-import { HStack, Button, Flex } from '@chakra-ui/react';
-import { AddIcon, ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { HStack, Button, Flex, Box } from '@chakra-ui/react';
+import { AddIcon, ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -179,8 +180,21 @@ export default function Categories() {
         createDataList();
     }, [categories, filter]);
 
+    // Pagination control functions
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
     return (
-        <Flex direction="column" gap={5}>
+        <Flex direction="column" gap={15}>
             <ViewCategoryModal id={viewCategoryId} setId={setViewCategoryId} setCategories={setCategories} />
             <HStack justify="flex-end">
                 <AddCategoryModal setCategories={setCategories} />
@@ -206,7 +220,7 @@ export default function Categories() {
                 </Button>
             </HStack>
             <Table
-                loading={loading}
+                loading={false}
                 columns={columns}
                 dataSource={dataList}
                 pagination={{
@@ -215,36 +229,67 @@ export default function Categories() {
                     onChange: (page) => setCurrentPage(page),
                 }}
                 footer={() => (
-                    <HStack justify="flex-start">
-                        <Select
-                            defaultValue={filter.mode}
-                            style={{ minWidth: 110 }}
-                            onChange={(value) => setFilter({ ...filter, mode: value })}
-                        >
-                            <Select.Option value="all">All</Select.Option>
-                            <Select.Option value="draft">Draft</Select.Option>
-                            <Select.Option value="published">Published</Select.Option>
-                        </Select>
-                        <Select
-                            defaultValue={recordPerPage}
-                            style={{ width: 120 }}
-                            onChange={(value) => setRecordPerPage(value)}
-                        >
-                            <Select.Option value={5}>5 / Page</Select.Option>
-                            <Select.Option value={10}>10 / Page</Select.Option>
-                            <Select.Option value={15}>15 / Page</Select.Option>
-                        </Select>
-                        <Input
-                            placeholder="Name"
-                            onChange={(e) => setFilter({ ...filter, name: e.target.value })}
-                            value={filter.name}
-                        />
-                        <Input
-                            placeholder="Email"
-                            onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                            value={filter.email}
-                        />
-                    </HStack>
+                    <Flex gap={250}>
+                        <HStack justify="flex-start">
+                            <Select
+                                defaultValue={filter.mode}
+                                style={{ minWidth: 110 }}
+                                onChange={(value) => setFilter({ ...filter, mode: value })}
+                            >
+                                <Select.Option value="all">All</Select.Option>
+                                <Select.Option value="draft">Draft</Select.Option>
+                                <Select.Option value="published">Published</Select.Option>
+                            </Select>
+                            <Select
+                                defaultValue={recordPerPage}
+                                style={{ width: 120 }}
+                                onChange={(value) => setRecordPerPage(value)}
+                            >
+                                <Select.Option value={5}>5 / Page</Select.Option>
+                                <Select.Option value={10}>10 / Page</Select.Option>
+                                <Select.Option value={15}>15 / Page</Select.Option>
+                            </Select>
+                            <Input
+                                placeholder="Name"
+                                onChange={(e) => setFilter({ ...filter, name: e.target.value })}
+                                value={filter.name}
+                            />
+                            <Input
+                                placeholder="Email"
+                                onChange={(e) => setFilter({ ...filter, email: e.target.value })}
+                                value={filter.email}
+                            />
+                        </HStack>
+                        
+                        {/* Pagination controls */}
+                        <Flex justify="space-between" alignItems="center" gap={2}>
+                            <IconButton
+                                icon={<ChevronLeftIcon />}
+                                onClick={handlePreviousPage}
+                                isDisabled={currentPage === 1}
+                                color={"gray.800"}
+                                backgroundColor={"cyan.400"}
+                                _hover={{ backgroundColor: "cyan.600" }}
+                            />
+                            <Box
+                                borderWidth="10px"
+                                borderRadius="md"
+                                backgroundColor={"cyan.400"}
+                                borderColor={"cyan.400"}
+                                color="gray.800"
+                            >
+                                {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
+                            </Box>
+                            <IconButton
+                                icon={<ChevronRightIcon />}
+                                onClick={handleNextPage}
+                                isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
+                                color={"gray.800"}
+                                backgroundColor={"cyan.400"}
+                                _hover={{ backgroundColor: "cyan.600" }}
+                            />
+                        </Flex>
+                    </Flex>                 
                 )}
             />
         </Flex>

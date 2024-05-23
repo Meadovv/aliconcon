@@ -18,7 +18,7 @@ const routers = [
         path: '/',
         children: <Home />,
         layout: true,
-        middleware: 'private'
+        middleware: 'public'
     },
     {
         path: '/logout',
@@ -36,7 +36,7 @@ const routers = [
         path: '/categories',
         children: <Categories />,
         layout: true,
-        middleware: 'private'
+        middleware: 'public'
     },
     {
         path: '/vouchers',
