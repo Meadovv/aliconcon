@@ -1,4 +1,4 @@
-@import "../../App.scss";
+@import "../../../App.scss";
 
 .header{
     background: rgb(249,78,48);
@@ -15,6 +15,14 @@
                 margin-bottom: 4px;
             }
         }
+    }
+
+    .link {
+        color: white;
+        text-decoration: none;
+        font-size: 1.3rem;
+        font-weight: 500;
+        cursor: pointer;
     }
     
 }

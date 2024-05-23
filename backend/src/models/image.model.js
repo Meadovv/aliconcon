@@ -2,18 +2,18 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_image';
+const DOCUMENT_NAME = 'aliconcon_images';
 const COLLECTION_NAME = 'images';
 
 const schema = new Schema({
     shop:{
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_shop',
+        ref: 'aliconcon_shops',
         required: true
     },
     addBy: {
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_user',
+        ref: 'aliconcon_users',
         required: true
     },
     name: {

@@ -1,8 +1,8 @@
-import {createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const fetchFromLocalStorage = () => {
     let cart = localStorage.getItem('cart');
-    if(cart){
+    if (cart) {
         return JSON.parse(localStorage.getItem('cart'));
     } else {
         return [];
@@ -27,9 +27,9 @@ const cartSlice = createSlice({
         addToCart: (state, action) => {
             const isItemInCart = state.carts.find(item => item.id === action.payload.id);
 
-            if(isItemInCart){
+            if (isItemInCart) {
                 const tempCart = state.carts.map(item => {
-                    if(item.id === action.payload.id){
+                    if (item.id === action.payload.id) {
                         let tempQty = item.quantity + action.payload.quantity;
                         let tempTotalPrice = tempQty * item.price;
 
@@ -70,23 +70,23 @@ const cartSlice = createSlice({
 
         toggleCartQty: (state, action) => {
             const tempCart = state.carts.map(item => {
-                if(item.id === action.payload.id){
+                if (item.id === action.payload.id) {
                     let tempQty = item.quantity;
                     let tempTotalPrice = item.totalPrice;
 
-                    if(action.payload.type === "INC"){
+                    if (action.payload.type === "INC") {
                         tempQty++;
-                        if(tempQty === item.stock) tempQty = item.stock;
+                        if (tempQty === item.stock) tempQty = item.stock;
                         tempTotalPrice = tempQty * item.discountedPrice;
                     }
 
-                    if(action.payload.type === "DEC"){
+                    if (action.payload.type === "DEC") {
                         tempQty--;
-                        if(tempQty < 1) tempQty = 1;
+                        if (tempQty < 1) tempQty = 1;
                         tempTotalPrice = tempQty * item.discountedPrice;
                     }
 
-                    return {...item, quantity: tempQty, totalPrice: tempTotalPrice};
+                    return { ...item, quantity: tempQty, totalPrice: tempTotalPrice };
                 } else {
                     return item;
                 }
@@ -106,7 +106,7 @@ const cartSlice = createSlice({
     }
 });
 
-export const {addToCart, setCartMessageOff, setCartMessageOn, getCartTotal, toggleCartQty, clearCart, removeFromCart} = cartSlice.actions;
+export const { addToCart, setCartMessageOff, setCartMessageOn, getCartTotal, toggleCartQty, clearCart, removeFromCart } = cartSlice.actions;
 export const getAllCarts = (state) => state.cart.carts;
 export const getCartItemsCount = (state) => state.cart.itemsCount;
 export const getCartMessageStatus = (state) => state.cart.isCartMessageOn;

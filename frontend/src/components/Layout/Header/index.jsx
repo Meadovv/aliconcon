@@ -1,9 +1,12 @@
 import React from 'react';
 import './index.scss';
-import { Link } from 'react-router-dom';
-import Navbar from '../Navbar/Navbar';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../Navbar';
 
 const Header = () => {
+
+    const navigate = useNavigate();
+
     return (
         <header className="header text-white">
             <div className="container">
@@ -12,53 +15,22 @@ const Header = () => {
                         <div className="header-cnt-top-l">
                             <ul className="flex top-links align-center">
                                 <li>
-                                    {/* dummy links */}
-                                    <Link to="/seller">Seller Center</Link>
+                                    <p className='link' onClick={() => navigate('/seller')}>Seller Center</p>
                                 </li>
                                 <li className="vert-line"></li>
                                 <li>
-                                    {/* dummy links */}
-                                    <Link to="/download">Download</Link>
-                                </li>
-                                <li className="vert-line"></li>
-                                <li className="flex align-center">
-                                    <span className="fs-13">Follow us on</span>
-                                    <ul className="social-links flex align-center">
-                                        <li className="mx-2">
-                                            <a href="www.facebook.com" className="fs-15">
-                                                <i className="fab fa-facebook"></i>
-                                            </a>
-                                        </li>
-                                        <li className="mx-2">
-                                            <a href="www.instagram.com" className="fs-15">
-                                                <i className="fab fa-instagram"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
+                                <p className='link' onClick={() => navigate('/alipay')}>Alipay</p>
                                 </li>
                             </ul>
                         </div>
                         <div className="header-cnt-top-r">
                             <ul className="top-links flex align-center">
                                 <li>
-                                    <Link to="/" className="top-link-itm">
-                                        <span className="top-link-itm-ico mx-2">
-                                            <i className="fa-solid fa-circle-question"></i>
-                                        </span>
-                                        <span className="top-link-itm-txt">Support</span>
-                                    </Link>
+                                    <p className='link' onClick={() => navigate('/register')}>Register</p>
                                 </li>
                                 <li className="vert-line"></li>
                                 <li>
-                                    <Link to="/">
-                                        <span className="top-link-itm-txt">Register</span>
-                                    </Link>
-                                </li>
-                                <li className="vert-line"></li>
-                                <li>
-                                    <Link to="/">
-                                        <span className="top-link-itm-txt">Log in</span>
-                                    </Link>
+                                    <p className='link' onClick={() => navigate('/login')}>Login</p>
                                 </li>
                             </ul>
                         </div>

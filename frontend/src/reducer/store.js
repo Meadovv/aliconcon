@@ -1,9 +1,9 @@
 import {configureStore} from "@reduxjs/toolkit";
-import sidebarReducer from "./sidebarSlice";
-import categoryReducer from "./categorySlice";
-import productReducer from "./productSlice";
-import cartReducer from "./cartSlice";
-import searchReducer from "./searchSlice";
+import sidebarReducer from "./actions/sidebar.slice";
+import categoryReducer from "./actions/category.slide";
+import productReducer from "./actions/product.slice";
+import cartReducer from "./actions/cart.slice";
+import searchReducer from "./actions/search.slice";
 
 const store = configureStore({
     reducer: {

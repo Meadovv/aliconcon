@@ -26,12 +26,12 @@ const productSchema = new Schema({
         default: []
     },
     name: {
-        type:String,
+        type: String,
         trim: true,
         maxLength: 150
     },
     description: {
-        type:String,
+        type: String,
         required: true,
         trim: true,
         maxLength: 500
@@ -42,7 +42,7 @@ const productSchema = new Schema({
         trim: true,
         maxLength: 150
     },
-    category:{
+    category: {
         type: Schema.Types.ObjectId,
         ref: 'aliconcon_categories',
         required: true
@@ -79,6 +79,19 @@ const productSchema = new Schema({
         type: Number,
         default: 0
     },
+    groups: {
+        type: [{
+            group: {
+                type: Schema.Types.ObjectId,
+                ref: 'aliconcon_groups'
+            },
+            addBy: {
+                type: Schema.Types.ObjectId,
+                ref: 'aliconcon_users'
+            }
+        }],
+        default: []
+    }
 }, {
     timestamps: true,
     collection: COLLECTION_NAME
