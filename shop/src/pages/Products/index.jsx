@@ -67,12 +67,16 @@ export default function Products() {
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
+
+                    {/* View detail modal */}
                     <Button onClick={() => viewProduct(record._id)}>View details</Button>
+
+                    {/* Add, Import, Export buttons */}
                     <Popconfirm
                         title={
                             record.status === 'draft'
-                                ? 'Are you sure you want to publish this category?'
-                                : 'Are you sure you want to unpublish this category?'
+                                ? 'Are you sure you want to publish this product?'
+                                : 'Are you sure you want to unpublish this product?'
                         }
                         onConfirm={() => switchStatus(record._id)}
                         okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
@@ -123,7 +127,7 @@ export default function Products() {
                     name: product.name,
                     status: product.status,
                     createdAt: product.createdAt,
-                    addBy: category.addBy.email,
+                    addBy: product.addBy.email,
                 });
             });
         setDataList(dataList);
@@ -170,7 +174,7 @@ export default function Products() {
             )
             .then((res) => {
                 message.success(res.data.message);
-                getCategories();
+                getProducts();
             })
             .catch((err) => {
                 console.log(err);
@@ -274,41 +278,41 @@ export default function Products() {
                                 value={filter.email}
                             />
                         </HStack>
-                        
-                        {/* Pagination controls */}
-                        <Flex justify="flex-end" alignItems="center" gap={2}>
-                            <IconButton
-                                icon={<ChevronLeftIcon />}
-                                onClick={handlePreviousPage}
-                                isDisabled={currentPage === 1}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                            <Box
-                                borderWidth="1px"
-                                borderRadius="md"
-                                backgroundColor={"cyan.400"}
-                                borderColor={"cyan.400"}
-                                color="gray.800"
-                                p={2}
-                                fontSize="xl"
-                                fontWeight="semibold"
-                            >
-                                {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                            </Box>
-                            <IconButton
-                                icon={<ChevronRightIcon />}
-                                onClick={handleNextPage}
-                                isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                        </Flex>
                     </Flex>
                 )}
             />
+            
+            {/* Pagination controls */}
+            <Flex justify="flex-end" alignItems="center" gap={2}>
+                <IconButton
+                    icon={<ChevronLeftIcon />}
+                    onClick={handlePreviousPage}
+                    isDisabled={currentPage === 1}
+                    color={"gray.800"}
+                    backgroundColor={"cyan.400"}
+                    _hover={{ backgroundColor: "cyan.600" }}
+                />
+                <Box
+                    borderWidth="1px"
+                    borderRadius="md"
+                    backgroundColor={"cyan.400"}
+                    borderColor={"cyan.400"}
+                    color="gray.800"
+                    p={2}
+                    fontSize="xl"
+                    fontWeight="semibold"
+                >
+                    {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
+                </Box>
+                <IconButton
+                    icon={<ChevronRightIcon />}
+                    onClick={handleNextPage}
+                    isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
+                    color={"gray.800"}
+                    backgroundColor={"cyan.400"}
+                    _hover={{ backgroundColor: "cyan.600" }}
+                />
+            </Flex>
         </Flex>
     );
 }

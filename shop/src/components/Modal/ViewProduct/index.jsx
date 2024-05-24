@@ -18,45 +18,47 @@ import axios from 'axios';
 import api from '../../../apis';
 import { message } from 'antd';
 
-export default function ViewCategory({ id, setId, setCategories }) {
+export default function ViewProduct({ id, setId, setProducts }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
-    const [category, setCategory] = React.useState(null);
+    const [product, setProduct] = React.useState(null);
 
-    const getCategory = async () => {
+    const getProduct = async () => {
         onOpen();
-        setLoading(true);
-        await axios.post(api.GET_CATEGORY, { categoryId: id }, {
+        await axios.post( api.GET_PRODUCT
+        , { productId: id }
+        , {
             headers: {
                 'x-client-id': localStorage.getItem('client'),
                 'x-token-id': localStorage.getItem('token')
             }
         }).then(res => {
-            setCategory(res.data.metadata);
+            setProduct(res.data.metadata);
         }).catch(err => {
             console.log(err)
             message.error(err.response.data.message);
         })
-        setLoading(false);
     };
 
     React.useEffect(() => {
         if (!id) return;
-        getCategory();
+        setLoading(true);
+        getProduct();
+        setLoading(false);
     }, [id]);
 
     const onSave = async () => {
         setLoading(true);
-        await axios.post(api.UPDATE_CATEGORY, {
-            category: category
-        }, {
+        await axios.post( api.UPDATE_PRODUCT
+        , { product: product }
+        , {
             headers: {
                 'x-client-id': localStorage.getItem('client'),
                 'x-token-id': localStorage.getItem('token')
             }
         }).then(res => {
             message.success(res.data.message);
-            setCategories(res.data.metadata);
+            setProducts(res.data.metadata);
             onCloseModal();
         }).catch(err => {
             console.log(err)
@@ -67,14 +69,16 @@ export default function ViewCategory({ id, setId, setCategories }) {
 
     const onDelete = async () => {
         setLoading(true);
-        await axios.post(api.DELETE_CATEGORY, { categoryId: id }, {
+        await axios.post( api.DELETE_PRODUCT
+        , { productId: id }
+        , {
             headers: {
                 'x-client-id': localStorage.getItem('client'),
                 'x-token-id': localStorage.getItem('token')
             }
         }).then(res => {
             message.success(res.data.message);
-            setCategories(res.data.metadata);
+            setProducts(res.data.metadata);
         }).catch(err => {
             console.log(err)
             message.error(err.response.data.message);
@@ -85,7 +89,7 @@ export default function ViewCategory({ id, setId, setCategories }) {
 
     const onCloseModal = async () => {
         setId(null);
-        setCategory(null);
+        setProduct(null);
         onClose();  
     }
 
@@ -93,17 +97,17 @@ export default function ViewCategory({ id, setId, setCategories }) {
         <Modal isOpen={isOpen} onClose={onCloseModal}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>View Category</ModalHeader>
+                <ModalHeader>View product</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    {category ? 
+                    {product ? 
                     <Stack>
                         <label>Name</label>
-                        <Input value={category.name} onChange={(e) => {
-                            if(category.status === 'draft') {
-                                setCategory({...category, name: e.target.value})
+                        <Input value={product.name} onChange={(e) => {
+                            if(product.status === 'draft') {
+                                setProduct({...product, name: e.target.value})
                             } else {
-                                message.error('Cannot edit published category');
+                                message.error('Cannot edit published product');
                             }
                         }}/>
                     </Stack>: <Spinner />}
@@ -122,7 +126,7 @@ export default function ViewCategory({ id, setId, setCategories }) {
                         mr={3}
                         onClick={onDelete}
                         isLoading={loading}
-                        isDisabled={category && category.status === 'published'}
+                        isDisabled={product && product.status === 'published'}
                     >
                         Delete
                     </Button>
@@ -132,7 +136,7 @@ export default function ViewCategory({ id, setId, setCategories }) {
                         type="submit"
                         isLoading={loading}
                         loadingText="Saving..."
-                        isDisabled={category && category.status === 'published'}
+                        isDisabled={product && product.status === 'published'}
                     >
                         Save
                     </Button>

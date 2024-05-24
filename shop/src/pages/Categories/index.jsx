@@ -12,15 +12,27 @@ import axios from 'axios';
 import api from '../../apis';
 
 import ViewCategoryModal from '../../components/Modal/ViewCategory';
+import ViewProdByCateModal from '../../components/Modal/ViewProdByCate';
 
 export default function Categories() {
 
     const user = useSelector((state) => state.auth.user);
 
     const [viewCategoryId, setViewCategoryId] = React.useState(null);
+    const [viewProdByCate, setViewProdByCate] = React.useState({
+        name : null,
+        id : null,
+    });
 
     const viewCategory = (id) => {
         setViewCategoryId(id);
+    };
+    
+    const viewProductOfCategory = (id, name) => {
+        setViewProdByCate({
+            name: name,
+            id: id,
+        });
     };
 
     {/* Columns structure */}
@@ -62,6 +74,7 @@ export default function Categories() {
             render: (_, record) => (
                 <Space size="middle">
                     <Button onClick={() => viewCategory(record._id)}>View details</Button>
+                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>View products</Button>
                     <Popconfirm
                         title={
                             record.status === 'draft'
@@ -198,7 +211,7 @@ export default function Categories() {
 
             {/* View detail modal */}
             <ViewCategoryModal id={viewCategoryId} setId={setViewCategoryId} setCategories={setCategories} />
-
+            <ViewProdByCateModal category={viewProdByCate} setCategory={setViewProdByCate} />
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
                 <AddCategoryModal setCategories={setCategories} />
@@ -268,38 +281,37 @@ export default function Categories() {
                                 value={filter.email}
                             />
                         </HStack>
-                        
-                        {/* Pagination controls */}
-                        <Flex justify="space-between" alignItems="center" gap={2}>
-                            <IconButton
-                                icon={<ChevronLeftIcon />}
-                                onClick={handlePreviousPage}
-                                isDisabled={currentPage === 1}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                            <Box
-                                borderWidth="10px"
-                                borderRadius="md"
-                                backgroundColor={"cyan.400"}
-                                borderColor={"cyan.400"}
-                                color="gray.800"
-                            >
-                                {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                            </Box>
-                            <IconButton
-                                icon={<ChevronRightIcon />}
-                                onClick={handleNextPage}
-                                isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                        </Flex>
                     </Flex>                 
                 )}
             />
+            {/* Pagination controls */}
+            <Flex justify="center" alignItems="center" gap={2}>
+                <IconButton
+                    icon={<ChevronLeftIcon />}
+                    onClick={handlePreviousPage}
+                    isDisabled={currentPage === 1}
+                    color={"gray.800"}
+                    backgroundColor={"cyan.400"}
+                    _hover={{ backgroundColor: "cyan.600" }}
+                />
+                <Box
+                    borderWidth="8px"
+                    borderRadius="md"
+                    backgroundColor={"cyan.400"}
+                    borderColor={"cyan.400"} 
+                    color="gray.800"
+                >
+                    {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
+                </Box>
+                <IconButton
+                    icon={<ChevronRightIcon />}
+                    onClick={handleNextPage}
+                    isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
+                    color={"gray.800"}
+                    backgroundColor={"cyan.400"}
+                    _hover={{ backgroundColor: "cyan.600" }}
+                />
+            </Flex>
         </Flex>
     );
 }

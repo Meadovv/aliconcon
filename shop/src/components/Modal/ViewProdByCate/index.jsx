@@ -1,352 +1,319 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Radio, Card, Form, Modal, Input, Button, message } from 'antd'; // Import Form, Input, Button from Ant Design
-import CONFIG from '../../configs';
+import { HStack, Button, Flex, Box, Image } from '@chakra-ui/react';
+import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { IconButton } from '@chakra-ui/react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { selectShop } from '../../reducer/actions/auth.slice';
 
-function Product_by_Cate (categoryId, categoryName) {
-    const { shop } = useSelector(selectShop);
-    const [productList, setProductList] = useState([]);
-    const [productFilter, setProductFilter] = useState([]);
+import { Table, Space, Select, message, Input } from 'antd';
 
-    const [reload, setReload] = useState(true);
-    const [filter, setFilter] = useState('all');
+import AddProductModal from '../../components/Modal/AddProduct';
 
-    const [form] = Form.useForm();
-    const [formMode, setFormMode] = useState({
-        open: false,
-        mode: 'add',
-        productId: null,
+import axios from 'axios';
+import api from '../../apis';
+
+import ViewProductModal from '../../components/Modal/ViewProduct';
+
+export default function ViewProdByCateModal(category, setCategory) {
+    
+    const user = useSelector((state) => state.auth.user);
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [viewProductId, setViewProductId] = React.useState(null);
+
+    const viewProduct = (id) => {
+        setViewProductId(id);
+    };
+
+    {/* Columns structure */}
+    const columns = [
+        {
+            title: 'Thumbnail',
+            dataIndex: 'thumbnail',
+            key: 'thumbnail',
+            render: (thumbnail) => <Image src={thumbnail} boxSize="50px" objectFit="cover" alt="thumbnail" />,
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
+        },
+        {
+            title: 'Created At',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
+            render: (createdAt) => {
+                const date = new Date(createdAt);
+                return date.toLocaleDateString();
+            },
+        },
+        {
+            title: 'Added By',
+            dataIndex: 'addBy',
+            key: 'addedBy',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
+        },
+    ];
+
+    {/* Quick actions columns with view detail and publish button */}
+    if (user && user.role < 4) {
+        columns.push({
+            title: 'Quick Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+
+                    {/* View detail modal */}
+                    <Button onClick={() => viewProduct(record._id)}>View details</Button>
+
+                    {/* Add, Import, Export buttons */}
+                    <Popconfirm
+                        title={
+                            record.status === 'draft'
+                                ? 'Are you sure you want to publish this product?'
+                                : 'Are you sure you want to unpublish this product?'
+                        }
+                        onConfirm={() => switchStatus(record._id)}
+                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        cancelText="No"
+                        okButtonProps={{
+                            size: 'large',
+                        }}
+                        cancelButtonProps={{
+                            size: 'large',
+                        }}
+                    >
+                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
+                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        </Button>
+                    </Popconfirm>
+                </Space>
+            ),
+        });
+    }
+
+    {/* States */}
+    const [recordPerPage, setRecordPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [dataList, setDataList] = React.useState([]);
+
+    const [products, setProducts] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    const [filter, setFilter] = React.useState({
+        mode: 'all',
+        name: null,
+        email: null,
     });
 
-    const addProduct = async (data) => {
+    const createDataList = () => {
+        const dataList = [];
+        products
+            .filter(
+                (product) =>
+                    (filter.email ? product.addBy.email.includes(filter.email) : true) &&
+                    (filter.name ? product.name.includes(filter.name) : true),
+            )
+            .forEach((product, index) => {
+                dataList.push({
+                    key: index,
+                    _id: product._id,
+                    thumbnail: product.thumbnail,
+                    name: product.name,
+                    status: product.status,
+                    createdAt: product.createdAt,
+                    addBy: product.addBy.email,
+                });
+            });
+        setDataList(dataList);
+    };
+
+    const getProducts = async () => {
+        onOpen()
+        setLoading(true);
         await axios
-            .post(CONFIG.API + '/shop/create-product'
-                , data 
-                , {
+            .post(
+                api.GET_PRODUCTS,
+                {},
+                {
                     headers: {
-                        'x-client-id': localStorage.getItem('x-client-id'),
-                        'x-token-id': localStorage.getItem('x-token-id'),
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
                     },
-                }
+                },
             )
             .then((res) => {
                 message.success(res.data.message);
-                setReload((prev) => prev + 1);
+                setProducts(
+                    (res.data.metadata).filter(
+                        (product) => (product.category.includes(category.name)))
+                );
             })
             .catch((err) => {
-                message.error(err.message);
+                console.log(err);
+                message.error(err.response.data.message);
             });
+        setLoading(false);
     };
 
-    const deleteProduct = async (productId) => {
+    const switchStatus = async (id) => {
+        setLoading(true);
         await axios
-            .post(CONFIG.API + '/shop/delete-product', 
+            .post(
+                api.SWITCH_PRODUCT_STATUS,
                 {
-                    productId : productId,
+                    productId: id,
                 },
                 {
                     headers: {
-                        'x-client-id': localStorage.getItem('x-client-id'),
-                        'x-token-id': localStorage.getItem('x-token-id'),
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
                     },
-                }
+                },
             )
             .then((res) => {
                 message.success(res.data.message);
-                setReload((prev) => prev + 1);
+                getProducts();
             })
             .catch((err) => {
-                message.error(err.message);
+                console.log(err);
+                message.error(err.response.data.message);
             });
+        setLoading(false);
     };
 
-    const changeProductStatus = async (productId) => { 
-    await axios
-        .post(CONFIG.API + '/shop/change-product-status', 
-            {
-                productId : productId,
-            },
-            {
-                headers: {
-                    'x-client-id': localStorage.getItem('x-client-id'),
-                    'x-token-id': localStorage.getItem('x-token-id'),
-                },
-            }
-        )
-        .then((res) => {
-            message.success(res.data.message);
-            setReload((prev) => prev + 1);
-        })
-        .catch((err) => {
-            message.error(err.message);
-        });
-    };
+    React.useEffect(() => {
+        getProducts();
+    }, []);
 
-    const getProductList = async () => {
-        await axios
-            .post(CONFIG.API + '/shop/get-products', {
-                shopId: shop._id,
-                categoryId: categoryId,
-            })
-            .then((res) => {
-                message.success(res.data.message);
-                setProductList(res.data.metadata);
-            })
-            .catch((err) => {
-                message.error(err.message);
-            });
-    };
+    React.useEffect(() => {
+        createDataList();
+    }, [products, filter]);
 
-    useEffect(() => {
-        getProductList();
-    }, [reload]);
+    const onCloseModal = async () => {
+        setCategory(null);
+        onClose();
+    }
 
-    useEffect(() => {
-        if (filter === 'all') {
-            setProductFilter(productFilter);
-        } else setProductFilter(productList.filter((product) => product.status === filter));
-    }, [filter, productList]);
-
-    const handleForm = async () => {
-        try {
-            const formValues = await form.validateFields();
-            if (formMode.mode === 'edit') {
-                deleteProduct(formMode.productId);
-                addProduct(formValues);
-            }
-            else if(formMode.mode === 'add'){
-                addProduct(formValues);
-            }
-            form.resetFields();
-            setReload((prev) => prev + 1);
-        } catch (error) {
-            message.error(error.message);
+    {/* Pagination control functions */}
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
         }
-
-        setFormMode({
-            ...formMode,
-            open: false,
-        });
+    };
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
     };
 
     return (
-        <div>
-            <div>
-                <Modal
-                    forceRender
-                    title={formMode.mode === 'add' ? 'Add Product' : 'Edit Product'}
-                    open={formMode.open}
-                    onOk={handleForm}
-                    onCancel={() =>
-                        setFormMode({
-                            ...formMode,
-                            open: false,
-                        })
-                    }
-                    okText="Add"
-                    okButtonProps={{
-                        size: 'large',
-                    }}
-                    cancelButtonProps={{
-                        size: 'large',
-                    }}
-                    width={1000}
-                >
-                <Form layout="vertical" form={form}>
-                    <Form.Item
-                        label="Product Name" name="name"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input product name!',
-                            },
-                        ]}
-                    >
-                        <Input size="large" />
-                    </Form.Item>
-                    <Form.Item 
-                        label="Product Description" name="description"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input product description!',
-                            },
-                        ]}
-                    >
-                        <Input size="large" />
-                    </Form.Item>
-                    <Form.Item 
-                        label="Product Description" name="short_description"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input a short description!',
-                            },
-                        ]}
-                    >
-                        <Input size="large" />
-                    </Form.Item>
-                    <Form.Item 
-                        label="Product Categories"  name="category" 
-                        hidden
-                        value={categoryName}
-                    >
-                    </Form.Item>
-                    <Form.Item 
-                        label="Product Price" name="price"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input product price!',
-                            },
-                        ]}
-                    >
-                        <Input size="large" type="number" />
-                    </Form.Item>
-                    <Form.Item 
-                        label="Product Thumbnail" name="thumbnail"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input product thumbnail!',
-                            },
-                        ]}
-                    >
-                        <Input size="large" />
-                    </Form.Item>
-                    <Form.Item 
-                        label="Product Variations" name="variations"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input product variations!',
-                            },
-                        ]}
-                    >
-                        <Input size="large" />
-                    </Form.Item>
-                </Form>
-                </Modal>
-
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <div
-                        style={{
-                            display: 'flex',
-                            gap: '10px',
-                        }}
-                    >
-                        <div>View Mode</div>
-                        <Radio.Group value={filter} onChange={(e) => setFilter(e.target.value)}>
-                            <Radio value="all">All</Radio>
-                            <Radio value="draft">Draft</Radio>
-                            <Radio value="published">Published</Radio>
-                        </Radio.Group>
-                    </div>
-
+        <Modal isOpen={isOpen} onClose={onCloseModal}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Products of Category: {category.name}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <Flex direction="column" gap={35}>
+                        {/* View detail modal */}
+                        <ViewProductModal id={viewProductId} setId={setViewProductId} setProducts={setProducts} />
+                        {/* The actual table */}
+                        <Table
+                            loading={loading}
+                            columns={columns}
+                            dataSource={dataList}
+                            pagination={{
+                                pageSize: recordPerPage,
+                                current: currentPage,
+                                onChange: (page) => setCurrentPage(page),
+                            }}
+                            footer={() => (
+                                <Flex direction="column" gap={3}>
+                                    {/* Filter controls */}
+                                    <HStack justify="flex-start">
+                                        <Select
+                                            defaultValue={filter.mode}
+                                            style={{ minWidth: 110 }}
+                                            onChange={(value) => setFilter({ ...filter, mode: value })}
+                                        >
+                                            <Select.Option value="all">All</Select.Option>
+                                            <Select.Option value="draft">Draft</Select.Option>
+                                            <Select.Option value="published">Published</Select.Option>
+                                        </Select>
+                                        <Select
+                                            defaultValue={recordPerPage}
+                                            style={{ width: 120 }}
+                                            onChange={(value) => setRecordPerPage(value)}
+                                        >
+                                            <Select.Option value={5}>5 / Page</Select.Option>
+                                            <Select.Option value={10}>10 / Page</Select.Option>
+                                            <Select.Option value={15}>15 / Page</Select.Option>
+                                        </Select>
+                                        <Input
+                                            placeholder="Name"
+                                            onChange={(e) => setFilter({ ...filter, name: e.target.value })}
+                                            value={filter.name}
+                                        />
+                                        <Input
+                                            placeholder="Email"
+                                            onChange={(e) => setFilter({ ...filter, email: e.target.value })}
+                                            value={filter.email}
+                                        />
+                                    </HStack>
+                                </Flex>
+                            )}
+                        />
+                        {/* Pagination controls */}
+                        <Flex justify="flex-end" alignItems="center" gap={2}>
+                            <IconButton
+                                icon={<ChevronLeftIcon />}
+                                onClick={handlePreviousPage}
+                                isDisabled={currentPage === 1}
+                                color={"gray.800"}
+                                backgroundColor={"cyan.400"}
+                                _hover={{ backgroundColor: "cyan.600" }}
+                            />
+                            <Box
+                                borderWidth="1px"
+                                borderRadius="md"
+                                backgroundColor={"cyan.400"}
+                                borderColor={"cyan.400"}
+                                color="gray.800"
+                                p={2}
+                                fontSize="xl"
+                                fontWeight="semibold"
+                            >
+                                {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
+                            </Box>
+                            <IconButton
+                                icon={<ChevronRightIcon />}
+                                onClick={handleNextPage}
+                                isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
+                                color={"gray.800"}
+                                backgroundColor={"cyan.400"}
+                                _hover={{ backgroundColor: "cyan.600" }}
+                            />
+                        </Flex>
+                    </Flex>
+                </ModalBody>
+                <ModalFooter>
                     <Button
-                        type="primary"
-                        ghost
-                        onClick={() => {
-                            setFormMode({
-                                open: true,
-                                mode: 'add',
-                                productId: null,
-                            });
-                        }}
+                        colorScheme="blue"
+                        mr={3}
+                        onClick={onCloseModal}
+                        isLoading={loading}
                     >
-                        Add
+                        Close
                     </Button>
-                </div>
-
-                <div
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '20px',
-                    }}
-                >
-                    {productFilter &&
-                        productFilter.map((product, index) => {
-                            return (
-                                <div
-                                    key={index}
-                                    style={{
-                                        padding: '20px',
-                                        display: 'flex',
-                                        gap: '10px',
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '10px',
-                                        }}
-                                    >
-                                        <Card
-                                            key={product._id}
-                                            hoverable
-                                            style={{ width: 300, marginBottom: 16 }}
-                                            cover={<img alt="thumbnail" src={product.thumbnail} style={{ width: '100%' }} />}
-                                        >
-                                            <Card.Meta title={product.name} />
-                                        </Card>
-
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '10px',
-                                            }}
-                                        >
-                                            <Button
-                                                type="primary"
-                                                ghost
-                                                danger={product.status === 'draft' ? false : true}
-                                                disabled={shop.role > 1}
-                                                onClick={() => {
-                                                    changeProductStatus(product._id);
-                                                }}
-                                            >
-                                                {product.status === 'draft' ? 'Activate' : 'Deactivate'}
-                                            </Button>
-                                            <Button
-                                                type="primary"
-                                                ghost
-                                                onClick={() => {
-                                                    setFormMode({
-                                                        open: true,
-                                                        mode: 'edit',
-                                                        productId: product._id,
-                                                    });
-                                                }}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                danger
-                                                onClick={() => deleteProduct(product._id)}
-                                                disabled={shop.role > 1}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                </div>
-            </div>
-        </div>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
     );
 }
-
-
-export default Product_by_Cate;

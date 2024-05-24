@@ -59,7 +59,7 @@ export default function AddProductModal({ setProducts }) {
                 leftIcon={<AddIcon />}
                 onClick={onOpen}
             >
-                Add
+                Add new product
             </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -70,14 +70,18 @@ export default function AddProductModal({ setProducts }) {
                         <FormControl>
                             <FormLabel>Name</FormLabel>
                             <Input type="text" placeholder="Product Name" onChange={(e) => setForm({...form, name: e.target.value})}/>
-                            <FormLabel>Thumbnail</FormLabel>
-                            <Input type="text" placeholder="Product Thumbnail (link to image)" onChange={(e) => setForm({...form, thumbnail: e.target.value})}/>
-                            <FormLabel>Price</FormLabel>
-                            <Input type="number" placeholder="Product Price" onChange={(e) => setForm({...form, price: e.target.value})}/>
+                            <FormLabel>Long description</FormLabel>
+                            <Input type="text" placeholder="Long description" onChange={(e) => setForm({...form, description: e.target.value})}/>
                             <FormLabel>Short description</FormLabel>
                             <Input type="text" placeholder="Short description" onChange={(e) => setForm({...form, short_description: e.target.value})}/>
                             <FormLabel>Category</FormLabel>
-                            <Input/>
+                
+                            <FormLabel>Price</FormLabel>
+                            <Input type="number" placeholder="Product Price" onChange={(e) => setForm({...form, price: e.target.value})}/>
+                            <FormLabel>Thumbnail</FormLabel>
+                            <Input type="text" placeholder="Product Thumbnail (link to image)" onChange={(e) => setForm({...form, thumbnail: e.target.value})}/>
+                            <FormLabel>Variations</FormLabel>
+                            <Input type="text" placeholder="Product Variations" onChange={(e) => setForm({...form, variations: e.target.value})}/>
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>

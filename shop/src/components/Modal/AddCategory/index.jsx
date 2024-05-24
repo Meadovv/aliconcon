@@ -21,9 +21,9 @@ import { message } from 'antd';
 
 export default function AddCategoryModal({ setCategories }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
+
     const [form, setForm] = React.useState({
         name: null,
-        thumbnail: null
     });
     const [loading, setLoading] = React.useState(false);
 
@@ -56,7 +56,7 @@ export default function AddCategoryModal({ setCategories }) {
                 leftIcon={<AddIcon />}
                 onClick={onOpen}
             >
-                Add
+                Add new Category
             </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -67,21 +67,28 @@ export default function AddCategoryModal({ setCategories }) {
                         <FormControl>
                             <FormLabel>Name</FormLabel>
                             <Input type="text" placeholder="Category Name" onChange={(e) => setForm({...form, name: e.target.value})}/>
-                            <FormLabel>Thumbnail</FormLabel>
-                            <Input type="text" placeholder="Category Thumbnail (link to image)" onChange={(e) => setForm({...form, thumbnail: e.target.value})}/>
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={() => {
-                            setForm({
-                                name: null,
-                                thumbnail:null
-                            });
-                            onClose();
-                        }} isLoading={loading}>
-                            Close
+                        <Button colorScheme="blue" mr={3} 
+                            isLoading={loading}
+                            loadingText='Closing...'
+                            onClick={() => {
+                                setForm({
+                                    name: null,
+                                });
+                                onClose();
+                            }}
+                        > 
+                        Close
                         </Button>
-                        <Button colorScheme="green" onClick={onAdd} type='submit' isLoading={loading} loadingText='Adding...'>Add</Button>
+                        <Button 
+                            colorScheme="green" onClick={onAdd} 
+                            type='submit' 
+                            isLoading={loading} 
+                            loadingText='Adding...'
+                        > Add 
+                        </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

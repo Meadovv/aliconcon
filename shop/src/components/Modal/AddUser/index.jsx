@@ -68,7 +68,7 @@ export default function AddUserModal({ setUsers }) {
                 leftIcon={<AddIcon />}
                 onClick={onOpen}
             >
-                Add
+                Add user
             </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />

@@ -20,6 +20,8 @@ const api = {
     SWITCH_PRODUCT_STATUS: host + 'shop/switch-product-status',
     UPDATE_CATEGORY: host + 'shop/update-category',
     GET_PRODUCTS: host + 'shop/get-products',
+    GET_PRODUCT: host + 'shop/get-product',
+    DELETE_PRODUCT: host + '/shop/delete-product'
 }
 
 export default api;
