@@ -11,11 +11,13 @@ const api = {
     DELETE_USER: host + 'shop/delete-user',
     SWITCH_USER_STATUS: host + 'shop/switch-user-status',
     CHANGE_USER_ROLE: host + 'shop/change-user-role',
+    CREATE_PRODUCT: host + 'shop/create-product',
     CREATE_CATEGORY: host + 'shop/create-category',
     DELETE_CATEGORY: host + 'shop/delete-category',
     GET_CATEGORY: host + 'shop/get-category',
     GET_CATEGORIES: host + 'shop/get-categories',
     SWITCH_CATEGORY_STATUS: host + 'shop/switch-category-status',
+    SWITCH_PRODUCT_STATUS: host + 'shop/switch-product-status',
     UPDATE_CATEGORY: host + 'shop/update-category',
     GET_PRODUCTS: host + 'shop/get-products',
 }

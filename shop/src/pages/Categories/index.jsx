@@ -23,6 +23,7 @@ export default function Categories() {
         setViewCategoryId(id);
     };
 
+    {/* Columns structure */}
     const columns = [
         {
             title: 'Name',
@@ -53,13 +54,14 @@ export default function Categories() {
         },
     ];
 
+    {/* Quick actions columns with view detail and publish button */}
     if (user && user.role < 4) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button onClick={() => viewCategory(record._id)}>View</Button>
+                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
                     <Popconfirm
                         title={
                             record.status === 'draft'
@@ -85,8 +87,7 @@ export default function Categories() {
         });
     }
 
-    // States
-
+    {/* States */}
     const [recordPerPage, setRecordPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [dataList, setDataList] = React.useState([]);
@@ -180,13 +181,12 @@ export default function Categories() {
         createDataList();
     }, [categories, filter]);
 
-    // Pagination control functions
+    {/* Pagination control functions */}
     const handlePreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
     };
-
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -194,8 +194,12 @@ export default function Categories() {
     };
 
     return (
-        <Flex direction="column" gap={15}>
+        <Flex direction="column" gap={35}>
+
+            {/* View detail modal */}
             <ViewCategoryModal id={viewCategoryId} setId={setViewCategoryId} setCategories={setCategories} />
+
+            {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
                 <AddCategoryModal setCategories={setCategories} />
                 <Button
@@ -219,8 +223,10 @@ export default function Categories() {
                     Export
                 </Button>
             </HStack>
+
+            {/* The actual table */}
             <Table
-                loading={false}
+                loading={loading}
                 columns={columns}
                 dataSource={dataList}
                 pagination={{
@@ -230,6 +236,8 @@ export default function Categories() {
                 }}
                 footer={() => (
                     <Flex gap={250}>
+
+                        {/* Filter mode */}
                         <HStack justify="flex-start">
                             <Select
                                 defaultValue={filter.mode}

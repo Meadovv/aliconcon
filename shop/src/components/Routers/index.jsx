@@ -1,4 +1,4 @@
-import Categories from '../../pages/Categories/Category';
+import Categories from '../../pages/Categories';
 import Home from '../../pages/Home';
 import Authentication from '../../pages/Authentication';
 import Products from '../../pages/Products/Products';

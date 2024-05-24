@@ -1,7 +1,15 @@
+import { useSelector } from "react-redux";
+
 export default function Home() {
+
+    const shop = useSelector((state) => state.auth.shop);
+
     return (
         <div>
-            <h1>Home</h1>
+
+            <div>This is your shop</div>
+            <div>Shop name: {shop.name}</div>
+            
         </div>
     );
 }
