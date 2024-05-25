@@ -3,10 +3,11 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-const menus = ['Profile', 'Orders', 'Advantage'];
+const menus = ['Profile', 'Orders', 'Wishlist', 'Advantage'];
 
 import Profile from './Profile';
 import Orders from './Orders';
+import Wishlist from './Wishlist';
 import Advantage from './Advantage';
 
 export default function Setting() {
@@ -21,6 +22,8 @@ export default function Setting() {
             case 1:
                 return <Orders />;
             case 2:
+                return <Wishlist />;
+            case 3:
                 return <Advantage />;
             default:
                 return <Profile />;

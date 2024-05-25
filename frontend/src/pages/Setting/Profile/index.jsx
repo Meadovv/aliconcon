@@ -4,35 +4,9 @@ import axios from 'axios';
 import api from '../../../apis';
 
 import { message, Table, Tag } from 'antd';
-import {
-    Button,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
-    ModalFooter,
-    FormControl,
-    FormLabel,
-    Input,
-    useDisclosure,
-} from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 
-const modalModes = [
-    {
-        title: 'Change Phone Number',
-        field: 'phone',
-        fieldLabel: 'Phone Number',
-        fieldPlaceholder: 'Phone Number',
-    },
-    {
-        title: 'Add Address',
-        field: 'address',
-        fieldLabel: 'Address',
-        fieldPlaceholder: 'Address',
-    },
-];
+import AddAddressModal from '../../../components/Modal/AddAddress';
 
 function AddressTable({ dataSource, onSet, onRemove, defaultAddress }) {
     const columns = [
@@ -49,21 +23,29 @@ function AddressTable({ dataSource, onSet, onRemove, defaultAddress }) {
             render: (text, record) => (
                 <div>
                     {record.address}
-                    <Tag color='blue' style={{ display: defaultAddress === record.key ? '' : 'none', marginLeft: 10 }}>Default</Tag>
+                    <Tag color="blue" style={{ display: defaultAddress === record.key ? '' : 'none', marginLeft: 10 }}>
+                        Default
+                    </Tag>
                 </div>
-            )
+            ),
         },
         {
             title: 'Action',
             key: 'action',
             width: 300,
             render: (text, record) => (
-                <div style={{
-                    display: defaultAddress === record.key ? 'none' : 'flex',
-                    gap: 10
-                }}>
-                    <Button colorScheme='orange' onClick={() => onSet(record.key)}>Default</Button>
-                    <Button colorScheme='red' onClick={() => onRemove(record.key)}>Remove</Button>
+                <div
+                    style={{
+                        display: defaultAddress === record.key ? 'none' : 'flex',
+                        gap: 10,
+                    }}
+                >
+                    <Button colorScheme="orange" onClick={() => onSet(record.key)}>
+                        Default
+                    </Button>
+                    <Button colorScheme="red" onClick={() => onRemove(record.key)}>
+                        Remove
+                    </Button>
                 </div>
             ),
         },
@@ -79,8 +61,6 @@ function AddressTable({ dataSource, onSet, onRemove, defaultAddress }) {
 
 export default function Profile() {
     const [user, setUser] = React.useState(null);
-    const [modalMode, setModalMode] = React.useState(0);
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const getUser = async () => {
         await axios
@@ -104,15 +84,49 @@ export default function Profile() {
     };
 
     const setDefaultAddress = async (index) => {
-
-    }
+        await axios.post(api.SET_DEFAULT_ADDRESS, {
+            index: index,
+        }, {
+            headers: {
+                'x-client-id': localStorage.getItem('client'),
+                'x-token-id': localStorage.getItem('token'),
+            }
+        })
+        .then(res => {
+            message.success(res.data.message);
+            getUser();
+        })
+        .catch(err => {
+            console.log(err);
+            message.error(err.response.data.message);
+        })
+    };
 
     const removeAddress = async (index) => {
+        await axios.post(api.REMOVE_ADDRESS, {
+            index: index,
+        }, {
+            headers: {
+                'x-client-id': localStorage.getItem('client'),
+                'x-token-id': localStorage.getItem('token'),
+            }
+        })
+        .then(res => {
+            message.success(res.data.message);
+            getUser();
+        })
+        .catch(err => {
+            console.log(err);
+            message.error(err.response.data.message);
+        })
+    };
 
-    }
-
-    const updateProfile = async (field) => {
-
+    const setAddressList = ({ addressList, defaultAddress }) => {
+        setUser({
+            ...user,
+            address: addressList,
+            default_address: defaultAddress,
+        })
     }
 
     React.useEffect(() => {
@@ -121,65 +135,23 @@ export default function Profile() {
 
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>{modalModes[modalMode].title}</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <FormControl>
-                            <FormLabel>{modalModes[modalMode].fieldLabel}</FormLabel>
-                            <Input placeholder={modalModes[modalMode].fieldPlaceholder} />
-                        </FormControl>
-                    </ModalBody>
-
-                    <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
-                            Close
-                        </Button>
-                        <Button variant="ghost" onClick={() => updateProfile(modalMode[modalMode].field)}>Save</Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
             <div className="_profile-container">
-                <div className="_profile-item">
-                    <div className="left-side">
-                        <div className="title">Phone:</div>
-                        <div className="content">{user?.phone}</div>
-                    </div>
-
-                    <div className="right-side">
-                        <Button
-                            colorScheme="blue"
-                            onClick={() => {
-                                setModalMode(0);
-                                onOpen();
-                            }}
-                        >
-                            Change
-                        </Button>
-                    </div>
-                </div>
-
                 <div className="_profile-item">
                     <div className="left-side">
                         <div className="title">Address</div>
                     </div>
 
                     <div className="right-side">
-                        <Button
-                            colorScheme="blue"
-                            onClick={() => {
-                                setModalMode(1);
-                                onOpen();
-                            }}
-                        >
-                            Add
-                        </Button>
+                        <AddAddressModal setAddressList={setAddressList}/>
                     </div>
                 </div>
             </div>
-            <AddressTable dataSource={user?.address} defaultAddress={user?.default_address} onSet={setDefaultAddress} onRemove={removeAddress}/>
+            <AddressTable
+                dataSource={user?.address}
+                defaultAddress={user?.default_address}
+                onSet={setDefaultAddress}
+                onRemove={removeAddress}
+            />
         </>
     );
 }

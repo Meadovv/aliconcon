@@ -256,8 +256,6 @@ export default function Product() {
                                         <div>Likes: {formatNumber(product?.likes)}</div>
                                         <div className="vert-line"></div>
                                         <div>Sell: {formatNumber(product?.sell_count)}</div>
-                                        <div className="vert-line"></div>
-                                        <div>Rating: {formatNumber(product?.rating)}</div>
                                     </div>
                                 </div>
                                 <div className="info flex align-center flex-wrap fs-14">
@@ -386,9 +384,6 @@ export default function Product() {
                                         >
                                             add to cart
                                         </span>
-                                    </button>
-                                    <button type="button" className="buy-now btn btn-buy mx-3">
-                                        <span className="btn-text">buy now</span>
                                     </button>
                                 </div>
                             </div>
@@ -535,7 +530,7 @@ export default function Product() {
                                     padding: '10px',
                                     borderRadius: '5px',
                                     border: '1px solid #ccc',
-                                }}>
+                                }} key={index}>
                                     <div
                                         style={{
                                             display: 'flex',
@@ -583,7 +578,7 @@ export default function Product() {
                             display: 'flex',
                         }}
                     >
-                        {product && <ProductList products={product.relatedProducts} emptyBacground />}
+                        {product && <ProductList products={product.relatedProducts} emptyBackground />}
                     </div>
                 </div>
             </div>
