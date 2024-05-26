@@ -29,6 +29,7 @@ router.post('/clear-cart', ErrorMiddleware.asyncHandler(UserController.clearCart
 router.post('/toggle-cart', ErrorMiddleware.asyncHandler(UserController.toggleCart));
 
 router.post('/get-order', ErrorMiddleware.asyncHandler(UserController.getOrderByOwner));
+router.post('/get-orders', ErrorMiddleware.asyncHandler(UserController.getOrdersByOwner));
 
 router.post('/switch-product-like', ErrorMiddleware.asyncHandler(UserController.switchProductLike));
 

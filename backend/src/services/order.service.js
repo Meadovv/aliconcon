@@ -4,6 +4,7 @@ const shopOrder = require("../models/shopOrder.model");
 const {
     BAD_REQUEST_ERROR, NOT_FOUND_ERROR
 } = require('../core/error.response');
+const userModel = require("../models/user.model");
 
 class OrderService {
     static getOrder = async ({ orderId }) => {
@@ -21,9 +22,9 @@ class OrderService {
     }
 
     static getOrdersByOwner = async ({ userId }) => {
-        const foundOrder = await orderModel.findOne({ user: userId, _id: orderId }).lean();
-        if (!foundOrder) throw NOT_FOUND_ERROR('Order not found');
-        return await orderModel.find({ user: foundOrder._id }).lean();
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) throw NOT_FOUND_ERROR('Order not found');
+        return await orderModel.find({ user: foundUser._id }).lean();
     }
 
     static getOrdersByShop = async ({ shopId }) => {
