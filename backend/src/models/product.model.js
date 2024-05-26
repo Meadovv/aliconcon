@@ -53,6 +53,7 @@ const productSchema = new Schema({
     },
     thumbnail: {
         type: String,
+        ref: 'aliconcon_images',
         required: true,
     },
     rating: {

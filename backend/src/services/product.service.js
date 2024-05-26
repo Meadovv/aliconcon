@@ -94,10 +94,8 @@ class ProductService {
         }
         const products = await productModel.find(query)
             .select('_id name price thumbnail category shop')
-            .populate({
-                path: 'category',
-                select: '_id name'
-            })
+            .populate('category', '_id name')
+            .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
             .lean();
         return products;
