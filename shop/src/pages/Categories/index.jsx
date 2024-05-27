@@ -18,6 +18,7 @@ export default function Categories() {
 
     const user = useSelector((state) => state.auth.user);
 
+    {/* View modal functions*/}
     const [viewCategoryId, setViewCategoryId] = React.useState(null);
     const [viewProdByCate, setViewProdByCate] = React.useState({
         name : null,
@@ -35,72 +36,7 @@ export default function Categories() {
         });
     };
 
-    {/* Columns structure */}
-    const columns = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
-        },
-        {
-            title: 'Created At',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
-            render: (createdAt) => {
-                const date = new Date(createdAt);
-                return date.toLocaleDateString();
-            },
-        },
-        {
-            title: 'Added By',
-            dataIndex: 'addBy',
-            key: 'addedBy',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
-        },
-    ];
-
-    {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
-        columns.push({
-            title: 'Quick Actions',
-            key: 'actions',
-            render: (_, record) => (
-                <Space size="middle">
-                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
-                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>View products</Button>
-                    <Popconfirm
-                        title={
-                            record.status === 'draft'
-                                ? 'Are you sure you want to publish this category?'
-                                : 'Are you sure you want to unpublish this category?'
-                        }
-                        onConfirm={() => switchStatus(record._id)}
-                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
-                    >
-                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
-                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        </Button>
-                    </Popconfirm>
-                </Space>
-            ),
-        });
-    }
-
-    {/* States */}
+    {/* States and data functions*/}
     const [recordPerPage, setRecordPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [dataList, setDataList] = React.useState([]);
@@ -186,14 +122,6 @@ export default function Categories() {
         setLoading(false);
     };
 
-    React.useEffect(() => {
-        getCategories();
-    }, []);
-
-    React.useEffect(() => {
-        createDataList();
-    }, [categories, filter]);
-
     {/* Pagination control functions */}
     const handlePreviousPage = () => {
         if (currentPage > 1) {
@@ -206,12 +134,91 @@ export default function Categories() {
         }
     };
 
+    {/* Columns structure */}
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
+        },
+        {
+            title: 'Created At',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
+            render: (createdAt) => {
+                const date = new Date(createdAt);
+                return date.toLocaleDateString();
+            },
+        },
+        {
+            title: 'Added By',
+            dataIndex: 'addBy',
+            key: 'addedBy',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
+        },
+    ];
+
+    {/* Quick actions columns with view detail and publish button */}
+    if (user && user.role < 4) {
+        columns.push({
+            title: 'Quick Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    {/* View detail button */}
+                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
+
+                    {/* View products of this category */}
+                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>View products</Button>
+
+                    {/* Publishing options */}
+                    <Popconfirm
+                        title={
+                            record.status === 'draft'
+                                ? 'Are you sure you want to publish this category?'
+                                : 'Are you sure you want to unpublish this category?'
+                        }
+                        onConfirm={() => switchStatus(record._id)}
+                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        cancelText="No"
+                        okButtonProps={{
+                            size: 'large',
+                        }}
+                        cancelButtonProps={{
+                            size: 'large',
+                        }}
+                    >
+                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
+                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        </Button>
+                    </Popconfirm>
+                </Space>
+            ),
+        });
+    }
+
+    React.useEffect(() => {
+        getCategories();
+    }, []);
+
+    React.useEffect(() => {
+        createDataList();
+    }, [categories, filter]);
+
     return (
         <Flex direction="column" gap={35}>
 
             {/* View detail modal */}
             <ViewCategoryModal id={viewCategoryId} setId={setViewCategoryId} setCategories={setCategories} />
-            <ViewProdByCateModal category={viewProdByCate} setCategory={setViewProdByCate} />
+            <ViewProdByCateModal category={{viewProdByCate}} setCategory={setViewProdByCate} />
+
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
                 <AddCategoryModal setCategories={setCategories} />

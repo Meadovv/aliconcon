@@ -12,7 +12,7 @@ import {
     FormLabel,
     Input,
     Box,
-    IconButton
+    IconButton, Stack, Select
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import React from 'react';
@@ -32,6 +32,32 @@ export default function AddProductModal({ setProducts }) {
         variations: []
     });
     const [loading, setLoading] = React.useState(false);
+    const [categories, setCategories] = React.useState([])
+
+    {/*Get categories*/}
+    const getCategories = async () => {
+        setLoading(true);
+        await axios
+            .post(
+                api.GET_CATEGORIES,
+                {},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setCategories(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
 
     const handleAddVariation = () => {
         setForm(prevForm => ({
@@ -92,8 +118,13 @@ export default function AddProductModal({ setProducts }) {
         setLoading(false);
     };
 
+    React.useEffect(() => {
+        getCategories();
+    }, []);
+
     return (
         <>
+            {/*The add button*/}
             <Button
                 bg={'green.400'}
                 color={'white'}
@@ -105,43 +136,64 @@ export default function AddProductModal({ setProducts }) {
             >
                 Add new product
             </Button>
+
+            {/*The modal shown when isOpen */}
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Add Product</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <FormControl>
-                            <FormLabel>Name</FormLabel>
-                            <Input type="text" placeholder="Product Name" onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                            <FormLabel>Long description</FormLabel>
-                            <Input type="text" placeholder="Long description" onChange={(e) => setForm({ ...form, description: e.target.value })} />
-                            <FormLabel>Short description</FormLabel>
-                            <Input type="text" placeholder="Short description" onChange={(e) => setForm({ ...form, short_description: e.target.value })} />
-                            <FormLabel>Category</FormLabel>
-                            <Input type="text" placeholder="Category" onChange={(e) => setForm({ ...form, category: e.target.value })} />
-                            <FormLabel>Price</FormLabel>
-                            <Input type="number" placeholder="Product Price" onChange={(e) => setForm({ ...form, price: e.target.value })} />
-                            <FormLabel>Thumbnail</FormLabel>
-                            <Input type="text" placeholder="Product Thumbnail (link to image)" onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} />
-                            <FormLabel>Variations</FormLabel>
-                            {form.variations.map((variation, varIndex) => (
-                                <Box key={varIndex} mb={4} border="1px solid #ccc" p={3} borderRadius={5}>
-                                    <FormLabel>Variation {varIndex + 1} Name</FormLabel>
-                                    <Input type="text" placeholder="Variation Name" value={variation.name} onChange={(e) => handleVariationChange(varIndex, 'name', e.target.value)} />
-                                    <FormLabel>Options</FormLabel>
-                                    {variation.options.map((option, optionIndex) => (
-                                        <Box key={optionIndex} mb={2} display="flex" alignItems="center">
-                                            <Input type="text" placeholder="Option" value={option} onChange={(e) => handleOptionChange(varIndex, optionIndex, e.target.value)} />
-                                            <IconButton icon={<DeleteIcon />} colorScheme="red" ml={2} onClick={() => handleRemoveOption(varIndex, optionIndex)} />
-                                        </Box>
+                        <Stack spacing={3}>
+                            <FormControl>
+                                <FormLabel>Name</FormLabel>
+                                <Input type="text" placeholder="Product Name" onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Long description</FormLabel>
+                                <Input type="text" placeholder="Long description" onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Short description</FormLabel>
+                                <Input type="text" placeholder="Short description" onChange={(e) => setForm({ ...form, short_description: e.target.value })} />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Category</FormLabel>
+                                <Select placeholder="Select category" onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                                    {categories.map(category => (
+                                        <option key={category._id} value={category._id}>{category.name}</option>
                                     ))}
-                                    <Button colorScheme="blue" onClick={() => handleAddOption(varIndex)}>Add Option</Button>
-                                    <IconButton icon={<DeleteIcon />} colorScheme="red" ml={2} onClick={() => handleRemoveVariation(varIndex)} />
-                                </Box>
-                            ))}
-                            <Button colorScheme="blue" onClick={handleAddVariation}>Add Variation Tier</Button>
-                        </FormControl>
+                                </Select>
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Price</FormLabel>
+                                <Input type="number" placeholder="Product Price" onChange={(e) => setForm({ ...form, price: e.target.value })} />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Thumbnail</FormLabel>
+                                <Input type="text" placeholder="Product Thumbnail (link to image)" onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} />
+                            </FormControl>
+                            {/* Variations form */}
+                            <FormControl>
+                                <FormLabel>Variations</FormLabel>
+                                {form.variations.map((variation, varIndex) => (
+                                    <Box key={varIndex} mb={4} border="1px solid #ccc" p={3} borderRadius={5}>
+                                        <FormLabel>Variation {varIndex + 1} Name</FormLabel>
+                                        <Input type="text" placeholder="Variation Name" value={variation.name} onChange={(e) => handleVariationChange(varIndex, 'name', e.target.value)} />
+                                        <FormLabel>Options</FormLabel>
+                                        {variation.options.map((option, optionIndex) => (
+                                            <Box key={optionIndex} mb={2} display="flex" alignItems="center">
+                                                <Input type="text" placeholder="Option" value={option} onChange={(e) => handleOptionChange(varIndex, optionIndex, e.target.value)} />
+                                                <IconButton icon={<DeleteIcon />} colorScheme="red" ml={2} onClick={() => handleRemoveOption(varIndex, optionIndex)} />
+                                            </Box>
+                                        ))}
+                                        <Button colorScheme="blue" mt={0} onClick={() => handleAddOption(varIndex)}>Add Option</Button>
+                                        <Button colorScheme="red" ml={24} mt={0} onClick={() => handleRemoveVariation(varIndex)}>Remove Variation</Button>
+                                    </Box>
+                                ))}
+                                <Button colorScheme="blue" onClick={handleAddVariation}>Add Variation</Button>
+                            </FormControl>
+                        </Stack>
                     </ModalBody>
                     <ModalFooter>
                         <Button 
@@ -151,6 +203,7 @@ export default function AddProductModal({ setProducts }) {
                                     name: null,
                                     thumbnail: null,
                                     short_description: null,
+                                    description: null,
                                     price: null,
                                     category: null,
                                     variations: null

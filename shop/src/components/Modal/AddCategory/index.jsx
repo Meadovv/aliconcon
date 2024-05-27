@@ -38,7 +38,7 @@ export default function AddCategoryModal({ setCategories }) {
 
     return (
         <>
-        {/*Always on*/}
+            {/*Always on*/}
             <Button
                 bg={'green.400'}
                 color={'white'}
@@ -50,7 +50,7 @@ export default function AddCategoryModal({ setCategories }) {
             >
                 Add new Category
             </Button>
-        {/*On when isOpen on*/}
+            {/*On when isOpen on*/}
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>

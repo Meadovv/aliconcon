@@ -48,7 +48,7 @@ const routers = [
         path: '/users',
         children: <Users />,
         layout: true,
-        middleware: 'private'
+        middleware: 'public'
     },
     {
         path: '/settings',

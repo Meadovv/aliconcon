@@ -1,8 +1,8 @@
-import { HStack, Button, Flex, Box, Image } from '@chakra-ui/react';
+import { HStack, Button, Flex, Box, Image, useDisclosure, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, ModalHeader, ModalFooter } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector,  } from 'react-redux';
 
 import { Table, Space, Select, message, Input } from 'antd';
 
@@ -11,7 +11,7 @@ import api from '../../../apis';
 import ViewProductModal from '../ViewProduct';
 
 
-export default function ViewProdByCateModal(category, setCategory) {
+export default function ViewProdByCateModal({category, setCategory}) {
     
     const user = useSelector((state) => state.auth.user);
 
@@ -26,15 +26,15 @@ export default function ViewProdByCateModal(category, setCategory) {
     {/* Columns structure */}
     const columns = [
         {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
             title: 'Thumbnail',
             dataIndex: 'thumbnail',
             key: 'thumbnail',
             render: (thumbnail) => <Image src={thumbnail} boxSize="50px" objectFit="cover" alt="thumbnail" />,
-        },
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
         },
         {
             title: 'Status',
@@ -68,10 +68,10 @@ export default function ViewProdByCateModal(category, setCategory) {
             render: (_, record) => (
                 <Space size="middle">
 
-                    {/* View detail modal */}
+                    {/* View detail button */}
                     <Button onClick={() => viewProduct(record._id)}>View details</Button>
 
-                    {/* Add, Import, Export buttons */}
+                    {/* Publishing options */}
                     <Popconfirm
                         title={
                             record.status === 'draft'
@@ -134,7 +134,7 @@ export default function ViewProdByCateModal(category, setCategory) {
     };
 
     const getProducts = async () => {
-        onOpen()
+        onOpen();
         setLoading(true);
         await axios
             .post(
@@ -188,15 +188,19 @@ export default function ViewProdByCateModal(category, setCategory) {
     };
 
     React.useEffect(() => {
+        if(!category.id) return;
         getProducts();
-    }, []);
+    }, [category]);
 
     React.useEffect(() => {
         createDataList();
     }, [products, filter]);
 
     const onCloseModal = async () => {
-        setCategory(null);
+        setCategory({
+            name : null,
+            id : false,
+        });
         onClose();
     }
 

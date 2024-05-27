@@ -40,11 +40,6 @@ export default function ViewCategory({ id, setId, setCategories }) {
         setLoading(false);
     };
 
-    React.useEffect(() => {
-        if (!id) return;
-        getCategory();
-    }, [id]);
-
     const onSave = async () => {
         setLoading(true);
         await axios.post(api.UPDATE_CATEGORY, {
@@ -89,6 +84,11 @@ export default function ViewCategory({ id, setId, setCategories }) {
         onClose();  
     }
 
+    React.useEffect(() => {
+        if (!id) return;
+        getCategory();
+    }, [id]);
+
     return (
         <Modal isOpen={isOpen} onClose={onCloseModal}>
             <ModalOverlay />
@@ -99,13 +99,11 @@ export default function ViewCategory({ id, setId, setCategories }) {
                     {category ? 
                     <Stack>
                         <label>Name</label>
-                        <Input value={category.name} onChange={(e) => {
-                            if(category.status === 'draft') {
-                                setCategory({...category, name: e.target.value})
-                            } else {
-                                message.error('Cannot edit published category');
-                            }
-                        }}/>
+                        <Input
+                            disabled={category && category.status === 'published'} 
+                            value={category.name} 
+                            onChange={(e) => {setCategory({...category, name: e.target.value})}}
+                        />
                     </Stack>: <Spinner />}
                 </ModalBody>
                 <ModalFooter>
