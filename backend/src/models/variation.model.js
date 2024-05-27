@@ -2,7 +2,7 @@
 
 const { model, Schema } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_product_variation';
+const DOCUMENT_NAME = 'aliconcon_product_variations';
 const COLLECTION_NAME = 'variations';
 
 const schema = new Schema({
@@ -14,6 +14,11 @@ const schema = new Schema({
     name:{
         type: String,
         required: true
+    },
+    thumbnail: {
+        ref: 'aliconcon_images',
+        type: Schema.Types.ObjectId,
+        default: null
     },
     variation_tier_idx: {
         type: Array,

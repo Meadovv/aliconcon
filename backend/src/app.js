@@ -36,10 +36,17 @@ app.use((req, res, next) => {
 // Error Handler
 app.use((error, req, res, next) => {
     const statusCode = error.status || 500;
+    let message = error.message || 'Internal Server Error';
+
+    // Check if error is a CastError
+    if (error.name === 'CastError') {
+        message = 'Invalid ID format';
+    }
+
     return res.status(statusCode).json({
         status: 'error',
         code: statusCode,
-        message: error.message || 'Internal Server Error',
+        message: message,
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
     })
 })

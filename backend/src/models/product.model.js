@@ -5,17 +5,6 @@ const { model, Schema } = require('mongoose');
 const DOCUMENT_NAME = 'aliconcon_products';
 const COLLECTION_NAME = 'products';
 
-const groupSchema = new Schema({
-    group: {
-        type: Schema.Types.ObjectId,
-        ref: 'aliconcon_groups'
-    },
-    addBy: {
-        type: Schema.Types.ObjectId,
-        ref: 'aliconcon_users'
-    }
-});
-
 const productSchema = new Schema({
     shop: {
         type: Schema.Types.ObjectId,
@@ -64,6 +53,7 @@ const productSchema = new Schema({
     },
     thumbnail: {
         type: String,
+        ref: 'aliconcon_images',
         required: true,
     },
     rating: {
@@ -91,7 +81,16 @@ const productSchema = new Schema({
         default: 0
     },
     groups: {
-        type: [groupSchema],
+        type: [{
+            group: {
+                type: Schema.Types.ObjectId,
+                ref: 'aliconcon_groups'
+            },
+            addBy: {
+                type: Schema.Types.ObjectId,
+                ref: 'aliconcon_users'
+            }
+        }],
         default: []
     }
 }, {

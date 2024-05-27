@@ -13,9 +13,9 @@ router.post('/register', ErrorMiddleware.asyncHandler(ShopController.register));
 router.post('/login', ErrorMiddleware.asyncHandler(ShopController.login));
 router.get('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCategories));
 router.get('/get-category', ErrorMiddleware.asyncHandler(ShopController.getCategory));
-router.get('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProducts));
 router.post('/get-variation', ErrorMiddleware.asyncHandler(ShopController.getVariation));
 router.get('/get-product', ErrorMiddleware.asyncHandler(ShopController.getProduct));
+router.get('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProducts));
 
 // Authentication
 router.use(ErrorMiddleware.asyncHandler(AuthenticationMiddleware.authentication));
@@ -24,19 +24,27 @@ router.post('/metadata', ErrorMiddleware.asyncHandler(ShopController.metadata));
 router.post('/add-user', ErrorMiddleware.asyncHandler(ShopController.addUser));
 router.post('/delete-user', ErrorMiddleware.asyncHandler(ShopController.deleteUser));
 router.post('/get-user-list', ErrorMiddleware.asyncHandler(ShopController.getUserList));
+
 router.post('/create-product', ErrorMiddleware.asyncHandler(ShopController.createProduct));
 router.post('/delete-product', ErrorMiddleware.asyncHandler(ShopController.deleteProduct));
+router.post('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProductsByAdmin));
+
 router.post('/create-category', ErrorMiddleware.asyncHandler(ShopController.createCategory));
 router.post('/delete-category', ErrorMiddleware.asyncHandler(ShopController.deleteCategory));
 router.post('/get-category', ErrorMiddleware.asyncHandler(ShopController.getCategoryByAdmin));
 router.post('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCategoriesByAdmin));
 router.post('/switch-category-status', ErrorMiddleware.asyncHandler(ShopController.switchCategoryStatus));
 router.post('/update-category', ErrorMiddleware.asyncHandler(ShopController.updateCategory));
+
 router.post('/switch-user-status', ErrorMiddleware.asyncHandler(ShopController.switchUserStatus));
 router.post('/get-user', ErrorMiddleware.asyncHandler(ShopController.getUser));
 router.post('/change-user-role', ErrorMiddleware.asyncHandler(ShopController.changeUserRole));
+
 router.post('/create-group', ErrorMiddleware.asyncHandler(ShopController.createGroup));
 router.post('/update-group', ErrorMiddleware.asyncHandler(ShopController.updateGroup));
 router.post('/delete-group', ErrorMiddleware.asyncHandler(ShopController.deleteGroup));
+router.post('/add-product-to-group', ErrorMiddleware.asyncHandler(ShopController.addProductToGroup));
+router.post('/remove-product-from-group', ErrorMiddleware.asyncHandler(ShopController.removeProductFromGroup));
+router.post('/view-group', ErrorMiddleware.asyncHandler(ShopController.viewGroup));
 
 module.exports = router;

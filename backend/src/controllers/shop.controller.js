@@ -194,6 +194,24 @@ class ShopController {
         }).send(res);
     }
 
+    static getProducts = async (req, res) => {
+        new SUCCESS({
+            message: 'Get products successfully',
+            metadata: await ProductService.getProducts({
+                ...req.query
+            })
+        }).send(res);
+    }
+
+    static getProductsByAdmin = async (req, res) => {
+        new SUCCESS({
+            message: 'Get products successfully',
+            metadata: await ProductService.getProductsByAdmin({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static getCategories = async (req, res) => {
         new SUCCESS({
             message: 'Get shop categories successfully',
@@ -227,18 +245,6 @@ class ShopController {
                     object: req.body
                 }),
                 ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static getProducts = async (req, res) => {
-        new SUCCESS({
-            message: 'Get products successfully',
-            metadata: await CategoryService.getProducts({
-                ...getFields({
-                    fields: ['shopId', 'categoryId'],
-                    object: req.query
-                })
             })
         }).send(res);
     }
@@ -321,7 +327,46 @@ class ShopController {
             message: 'Group updated successfully',
             metadata: await GroupService.update({
                 ...getFields({
-                    fields: ['group'],
+                    fields: ['groupId', 'name'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static addProductToGroup = async (req, res) => {
+        new SUCCESS({
+            message: 'Product added to group successfully',
+            metadata: await GroupService.addProductToGroup({
+                ...getFields({
+                    fields: ['groupId', 'productId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static removeProductFromGroup = async (req, res) => {
+        new SUCCESS({
+            message: 'Product removed from group successfully',
+            metadata: await GroupService.removeProductFromGroup({
+                ...getFields({
+                    fields: ['groupId', 'productId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static viewGroup = async (req, res) => {
+        new SUCCESS({
+            message: 'View group successfully',
+            metadata: await GroupService.viewGroup({
+                ...getFields({
+                    fields: ['groupId'],
                     object: req.body
                 }),
                 ...req.jwt_decode

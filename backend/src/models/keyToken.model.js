@@ -3,13 +3,13 @@
 const app_config = require('../configs/app.config');
 const { Schema, model } = require('mongoose');
 
-const DOCUMENT_NAME = 'aliconcon_key';
+const DOCUMENT_NAME = 'aliconcon_keys';
 const COLLECTION_NAME = 'keys';
 
 var keyTokenSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_user',
+        ref: 'aliconcon_users',
         required: true
     },
     key: {
@@ -19,7 +19,7 @@ var keyTokenSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        index: { expires: app_config.jwt.expired},
+        index: { expires: app_config.jwt.expired },
     },
 }, {
     timestamps: true,
