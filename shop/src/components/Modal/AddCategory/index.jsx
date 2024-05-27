@@ -1,17 +1,8 @@
-import {
-    Button,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalCloseButton,
-    FormControl,
-    FormLabel,
-    Input
+import { 
+    Button, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader,
+    ModalBody, ModalFooter, ModalCloseButton, FormControl, FormLabel, Input
 } from '@chakra-ui/react';
+
 import { AddIcon } from '@chakra-ui/icons';
 import React from 'react';
 
@@ -47,6 +38,7 @@ export default function AddCategoryModal({ setCategories }) {
 
     return (
         <>
+        {/*Always on*/}
             <Button
                 bg={'green.400'}
                 color={'white'}
@@ -58,6 +50,7 @@ export default function AddCategoryModal({ setCategories }) {
             >
                 Add new Category
             </Button>
+        {/*On when isOpen on*/}
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>

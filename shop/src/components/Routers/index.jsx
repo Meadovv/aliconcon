@@ -30,7 +30,7 @@ const routers = [
         path: '/products',
         children: <Products />,
         layout: true,
-        middleware: 'private'
+        middleware: 'public'
     },
     {
         path: '/categories',
