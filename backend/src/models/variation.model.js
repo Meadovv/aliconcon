@@ -15,6 +15,11 @@ const schema = new Schema({
         type: String,
         required: true
     },
+    thumbnail: {
+        ref: 'aliconcon_images',
+        type: Schema.Types.ObjectId,
+        default: null
+    },
     variation_tier_idx: {
         type: Array,
         default: []
