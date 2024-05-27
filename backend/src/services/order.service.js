@@ -15,9 +15,9 @@ class OrderService {
     }
 
     static getOrderByOwner = async ({ userId, orderId }) => {
-        const foundOrder = await orderModel.findOne({ user: userId, _id: orderId }).lean();
-        if (!foundOrder) throw NOT_FOUND_ERROR('Order not found');
-        if (foundOrder.user.toString() !== userId) throw new BAD_REQUEST_ERROR('You are not allowed to access this order');
+        const foundOrder = await orderModel.findById({ _id: orderId }).lean();
+        if (!foundOrder) throw new NOT_FOUND_ERROR('Order not found');
+        if (foundOrder?.user?.toString() !== userId && foundOrder.user !== null) throw new BAD_REQUEST_ERROR('You are not allowed to access this order');
         return foundOrder;
     }
 

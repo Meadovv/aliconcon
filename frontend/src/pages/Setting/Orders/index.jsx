@@ -45,7 +45,11 @@ export default function Orders() {
             }
         })
         .then(res => {
-            setData(res.data.metadata);
+            const dataWithKey = res.data.metadata?.map((item, index) => ({
+                ...item,
+                key: index,
+            }));
+            setData(dataWithKey);
         })
         .catch(err => {
             console.log(err);
@@ -55,7 +59,7 @@ export default function Orders() {
 
     React.useEffect(() => {
         getOrders();
-    }, [])
+    }, []);
 
     return (
         <Table columns={columns} dataSource={data} />

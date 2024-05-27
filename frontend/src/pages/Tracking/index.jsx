@@ -12,29 +12,53 @@ import { message } from 'antd';
 import axios from 'axios';
 import api from '../../apis';
 
+import { useSelector } from 'react-redux';
+
 export default function Tracking() {
     const [orderID, setOrderID] = React.useState('');
     const [order, setOrder] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [searchParams, setSearchParams] = useSearchParams('');
-    const navigate = useNavigate();
+
+    const user = useSelector((state) => state.auth);
 
     const shippingFee = 30000;
 
     const getTracking = async () => {
         if (!orderID) return;
         setLoading(true);
-        await axios
-            .get(api.GET_TRACKING({ id: orderID }))
-            .then((res) => {
-                setOrder(res.data.metadata);
-                message.success(res.data.message);
-            })
-            .catch((err) => {
-                setOrder(null);
-                console.log(err);
-                message.error(err.response.data.message);
-            });
+        if(user) {
+            await axios
+                .post(api.GET_USER_TRACKING, {
+                    orderId: orderID,
+                }, {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    }
+                })
+                .then((res) => {
+                    setOrder(res.data.metadata);
+                    message.success(res.data.message);
+                })
+                .catch((err) => {
+                    setOrder(null);
+                    console.log(err);
+                    message.error(err.response.data.message);
+                });
+        } else {
+            await axios
+                .get(api.GET_TRACKING({ id: orderID }))
+                .then((res) => {
+                    setOrder(res.data.metadata);
+                    message.success(res.data.message);
+                })
+                .catch((err) => {
+                    setOrder(null);
+                    console.log(err);
+                    message.error(err.response.data.message);
+                });
+        }
         setLoading(false);
     };
 

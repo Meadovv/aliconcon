@@ -31,6 +31,7 @@ const api = {
     GET_TRACKING: ({ id }) => {
         return BACKEND_API + 'user/get-order?orderId=' + id;
     },
+    GET_USER_TRACKING: BACKEND_API + 'user/get-order',
     PAYMENT_GATE: ({ id }) => {
         return PAYMENT_GATE + id;
     },
