@@ -73,12 +73,15 @@ export default function AddProductModal({ setProducts }) {
 
     const onAdd = async () => {
         setLoading(true);
-        await axios.post(api.CREATE_PRODUCT, form, {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token')
+        await axios.post( api.CREATE_PRODUCT
+            , form
+            , {
+                headers: {
+                    'x-client-id': localStorage.getItem('client'),
+                    'x-token-id': localStorage.getItem('token')
+                }
             }
-        }).then(res => {
+        ).then(res => {
             message.success(res.data.message);
             setProducts(res.data.metadata);
             onClose();
@@ -141,20 +144,29 @@ export default function AddProductModal({ setProducts }) {
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={() => {
-                            setForm({
-                                name: '',
-                                thumbnail: '',
-                                short_description: '',
-                                price: '',
-                                category: '',
-                                variations: []
-                            });
-                            onClose();
-                        }} isLoading={loading}>
+                        <Button 
+                            isLoading={loading}
+                            colorScheme="blue" mr={3} onClick={() => {
+                                setForm({
+                                    name: null,
+                                    thumbnail: null,
+                                    short_description: null,
+                                    price: null,
+                                    category: null,
+                                    variations: null
+                                });
+                                onClose();
+                            }} 
+                        >
                             Close
                         </Button>
-                        <Button colorScheme="green" onClick={onAdd} type='submit' isLoading={loading} loadingText='Adding...'>Add</Button>
+                        <Button 
+                            colorScheme="green" onClick={onAdd} 
+                            type='submit' isLoading={loading} 
+                            loadingText='Adding...'
+                        >
+                            Add
+                        </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
