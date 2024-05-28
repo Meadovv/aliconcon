@@ -73,6 +73,7 @@ class ProductService {
                 path: 'category',
                 select: '_id name'
             })
+            .populate('addBy', '_id name')
             .populate('shop', '_id name')
             .lean();
         return products;
