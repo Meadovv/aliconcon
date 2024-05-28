@@ -163,6 +163,18 @@ export default function Categories() {
             key: 'addedBy',
             responsive: ['md'], // This column will be hidden on screens smaller than md
         },
+        {
+            title: 'Show products',
+            key: 'status',
+            render: (_, record) => {
+                {/* View products of this category */}
+                <Space size="middle">
+                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>
+                        View products
+                    </Button>
+                </Space>
+            },
+        },
     ];
 
     {/* Quick actions columns with view detail and publish button */}
@@ -174,9 +186,6 @@ export default function Categories() {
                 <Space size="middle">
                     {/* View detail button */}
                     <Button onClick={() => viewCategory(record._id)}>View details</Button>
-
-                    {/* View products of this category */}
-                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>View products</Button>
 
                     {/* Publishing options */}
                     <Popconfirm
