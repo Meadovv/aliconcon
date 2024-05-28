@@ -6,31 +6,30 @@ import { useSelector } from 'react-redux';
 
 import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
 
-import AddCategoryModal from '../../components/Modal/AddCategory';
-
 import axios from 'axios';
 import api from '../../apis';
 
-import ViewCategoryModal from '../../components/Modal/ViewCategory';
-import ViewProdByCateModal from '../../components/Modal/ViewProdByCate';
+import ViewGroupModal from '../../components/Modal/ViewGroup';
+import ViewProdByGroupModal from '../../components/Modal/ViewProdByGroup';
+import AddGroupModal from '../../components/Modal/AddGroup';
 
-export default function Categories() {
+export default function Group() {
 
     const user = useSelector((state) => state.auth.user);
 
     {/* View modal functions*/}
-    const [viewCategoryId, setViewCategoryId] = React.useState(null);
-    const [viewProdByCate, setViewProdByCate] = React.useState({
+    const [viewGroupId, setViewGroupId] = React.useState(null);
+    const [viewProdByGroup, setViewProdByGroup] = React.useState({
         name : null,
         id : null,
     });
 
-    const viewCategory = (id) => {
-        setViewCategoryId(id);
+    const viewGroup = (id) => {
+        setViewGroupId(id);
     };
     
-    const viewProductOfCategory = (id, name) => {
-        setViewProdByCate({
+    const viewProductOfGroup = (id, name) => {
+        setViewProdByGroup({
             name: name,
             id: id,
         });
@@ -39,44 +38,36 @@ export default function Categories() {
     {/* States and data functions*/}
     const [recordPerPage, setRecordPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
+
     const [dataList, setDataList] = React.useState([]);
 
-    const [categories, setCategories] = React.useState([]);
+    const [groups, setGroups] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
 
     const [filter, setFilter] = React.useState({
-        mode: 'all',
         name: null,
         email: null,
     });
 
     const createDataList = () => {
         const dataList = [];
-        categories
-            .filter(
-                (category) =>
-                    (filter.mode === 'all' ? true : category.status === filter.mode) &&
-                    (filter.email ? category.addBy.email.includes(filter.email) : true) &&
-                    (filter.name ? category.name.includes(filter.name) : true),
-            )
-            .forEach((category, index) => {
+        groups.forEach((group, index) => {
                 dataList.push({
                     key: index,
-                    _id: category._id,
-                    name: category.name,
-                    status: category.status,
-                    createdAt: category.createdAt,
-                    addBy: category.addBy.email,
+                    _id: group._id,
+                    name: group.name,
+                    createdAt: group.createdAt,
+                    addBy: group.addBy.email,
                 });
             });
         setDataList(dataList);
     };
 
-    const getCategories = async () => {
+    const getGroups = async () => {
         setLoading(true);
         await axios
             .post(
-                api.GET_CATEGORIES,
+                api.GET_GROUPS,
                 {},
                 {
                     headers: {
@@ -87,33 +78,7 @@ export default function Categories() {
             )
             .then((res) => {
                 message.success(res.data.message);
-                setCategories(res.data.metadata);
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
-    const switchStatus = async (id) => {
-        setLoading(true);
-        await axios
-            .post(
-                api.SWITCH_CATEGORY_STATUS,
-                {
-                    categoryId: id,
-                },
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                getCategories();
+                setGroups(res.data.metadata);
             })
             .catch((err) => {
                 console.log(err);
@@ -142,12 +107,6 @@ export default function Categories() {
             key: 'name',
         },
         {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
-        },
-        {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
@@ -167,9 +126,11 @@ export default function Categories() {
             title: 'Show products',
             key: 'status',
             render: (_, record) => {
-                {/* View products of this category */}
+                {/* View products of this group */}
                 <Space size="middle">
-                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>
+                    <Button 
+                        onClick={() => viewProductOfGroup(record._id, record.name)}
+                    >
                         View products
                     </Button>
                 </Space>
@@ -185,52 +146,34 @@ export default function Categories() {
             render: (_, record) => (
                 <Space size="middle">
                     {/* View detail button */}
-                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
-
-                    {/* Publishing options */}
-                    <Popconfirm
-                        title={
-                            record.status === 'draft'
-                                ? 'Are you sure you want to publish this category?'
-                                : 'Are you sure you want to unpublish this category?'
-                        }
-                        onConfirm={() => switchStatus(record._id)}
-                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
+                    <Button 
+                        onClick={() => viewGroup(record._id)}
                     >
-                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
-                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        </Button>
-                    </Popconfirm>
+                        View details
+                    </Button>
                 </Space>
             ),
         });
     }
 
     React.useEffect(() => {
-        getCategories();
+        getGroups();
     }, []);
 
     React.useEffect(() => {
         createDataList();
-    }, [categories, filter]);
+    }, [groups, filter]);
 
     return (
         <Flex direction="column" gap={35}>
 
             {/* View detail modal */}
-            <ViewCategoryModal id={viewCategoryId} setId={setViewCategoryId} setCategories={setCategories} />
-            <ViewProdByCateModal category={viewProdByCate} setCategory={setViewProdByCate} />
+            <ViewGroupModal id={viewGroupId} setId={setViewGroupId} setGroups={setGroups} />
+            <ViewProdByGroupModal group={viewProdByGroup} setGroup={setViewProdByGroup} />
 
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
-                <AddCategoryModal setCategories={setCategories} />
+                <AddGroupModal setGroups={setGroups} />
                 <Button
                     bg={'blue.400'}
                     color={'white'}
@@ -268,15 +211,6 @@ export default function Categories() {
 
                         {/* Filter mode */}
                         <HStack justify="flex-start">
-                            <Select
-                                defaultValue={filter.mode}
-                                style={{ minWidth: 110 }}
-                                onChange={(value) => setFilter({ ...filter, mode: value })}
-                            >
-                                <Select.Option value="all">All</Select.Option>
-                                <Select.Option value="draft">Draft</Select.Option>
-                                <Select.Option value="published">Published</Select.Option>
-                            </Select>
                             <Select
                                 defaultValue={recordPerPage}
                                 style={{ width: 120 }}
