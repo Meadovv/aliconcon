@@ -48,4 +48,11 @@ router.post('/remove-product-from-group', ErrorMiddleware.asyncHandler(ShopContr
 router.post('/view-group', ErrorMiddleware.asyncHandler(ShopController.viewGroup));
 router.post('/get-groups', ErrorMiddleware.asyncHandler(ShopController.getGroups));
 
+router.post('/create-voucher', ErrorMiddleware.asyncHandler(ShopController.createVoucher));
+router.post('/switch-voucher', ErrorMiddleware.asyncHandler(ShopController.switchVoucher));
+router.post('/delete-voucher', ErrorMiddleware.asyncHandler(ShopController.deleteVoucher));
+router.post('/get-voucher', ErrorMiddleware.asyncHandler(ShopController.getVoucher));
+router.post('/get-vouchers', ErrorMiddleware.asyncHandler(ShopController.getVouchers));
+router.post('/add-to-voucher', ErrorMiddleware.asyncHandler(ShopController.addToVoucher));
+
 module.exports = router;

@@ -3,6 +3,8 @@ const productModel = require('../models/product.model');
 const shopModel = require('../models/shop.model');
 const ROLES = require('../constants/ROLES')
 
+const utils = require('../utils');
+
 const {
     BAD_REQUEST_ERROR, UNAUTHENTICATED_ERROR
 } = require('../core/error.response');
@@ -54,11 +56,15 @@ class ProductService {
                 path: 'category',
                 select: '_id name'
             })
+            .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
             .lean();
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
-        return product;
+        return utils.OtherUtils.getInfoData({
+            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'thumbnail', 'category', 'likes', 'isLike', 'variations'],
+            object: product
+        });
     }
 
     static getProductsByAdmin = async ({ shopId, userId }) => {

@@ -7,8 +7,8 @@ const ShopService = require('../services/shop.service');
 const ProductService = require('../services/product.service');
 const CategoryService = require('../services/category.service');
 const VariationService = require('../services/variation.service');
-const ImageService = require('../services/image.service');
 const GroupService = require('../services/group.service');
+const VoucherService = require('../services/voucher.service');
 
 class ShopController {
 
@@ -378,6 +378,84 @@ class ShopController {
         new SUCCESS({
             message: 'Get groups successfully',
             metadata: await GroupService.getGroups({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getGroup = async (req, res) => {
+
+    }
+
+    static createVoucher = async (req, res) => {
+        new CREATED({
+            message: 'Voucher created successfully',
+            metadata: await VoucherService.createVoucher({
+                ...getFields({
+                    fields: ['name', 'description', 'startDate', 'endDate', 'amount', 'discount'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static switchVoucher = async (req, res) => {
+        new SUCCESS({
+            message: 'Switch voucher successfully',
+            metadata: await VoucherService.switchVoucher({
+                ...getFields({
+                    fields: ['voucherId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static deleteVoucher = async (req, res) => {
+        new SUCCESS({
+            message: 'Voucher deleted successfully',
+            metadata: await VoucherService.deleteVoucher({
+                ...getFields({
+                    fields: ['voucherId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getVoucher = async (req, res) => {
+        new SUCCESS({
+            message: 'Get voucher successfully',
+            metadata: await VoucherService.getVoucher({
+                ...getFields({
+                    fields: ['voucherId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getVouchers = async (req, res) => {
+        new SUCCESS({
+            message: 'Get vouchers successfully',
+            metadata: await VoucherService.getVouchers({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static addToVoucher = async (req, res) => {
+        new SUCCESS({
+            message: 'Add to voucher successfully',
+            metadata: await VoucherService.addToVoucher({
+                ...getFields({
+                    fields: ['voucherId', 'itemId', 'itemType'],
+                    object: req.body
+                }),
                 ...req.jwt_decode
             })
         }).send(res);
