@@ -7,16 +7,11 @@ import { Table, Space, Select, message, Tag, Popconfirm } from 'antd';
 import { useSelector } from 'react-redux';
 
 import AddProductModal from '../../../components/Modal/AddProduct';
+import axios from 'axios';
+import api from '../../../apis';
 
 export default function Products() {
-    const [products, setProducts] = React.useState([
-        {
-            name: 'Product 1',
-            status: 'draft',
-            createdAt: '2021-09-01T00:00:00.000Z',
-            addBy: 'Admin',
-        },
-    ]);
+    const [products, setProducts] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
     const [dataList, setDataList] = React.useState([]);
     const [recordPerPage, setRecordPerPage] = React.useState(10);
@@ -25,12 +20,26 @@ export default function Products() {
     const { user, shop } = useSelector((state) => state.auth);
 
     const getProducts = async () => {
-        
+        setLoading(true);
+        await axios.post(api.GET_PRODUCTS, {}, {
+            headers: {
+                'x-token-id': localStorage.getItem('token'),
+                'x-client-id': localStorage.getItem('client')
+            }
+        })
+        .then(res => {
+            setProducts(res.data.metadata);
+        })
+        .catch(err => {
+            console.log(err);
+            message.error(err.response.data.message);
+        })
+        setLoading(false);
     };
 
     const createDataList = () => {
         const dataList = products.map((product, index) => ({
-            key: index,
+            key: product._id,
             ...product,
         }));
         setDataList(dataList);
