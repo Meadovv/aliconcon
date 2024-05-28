@@ -46,5 +46,6 @@ router.post('/delete-group', ErrorMiddleware.asyncHandler(ShopController.deleteG
 router.post('/add-product-to-group', ErrorMiddleware.asyncHandler(ShopController.addProductToGroup));
 router.post('/remove-product-from-group', ErrorMiddleware.asyncHandler(ShopController.removeProductFromGroup));
 router.post('/view-group', ErrorMiddleware.asyncHandler(ShopController.viewGroup));
+router.post('/get-groups', ErrorMiddleware.asyncHandler(ShopController.getGroups));
 
 module.exports = router;

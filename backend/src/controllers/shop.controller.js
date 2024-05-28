@@ -373,6 +373,15 @@ class ShopController {
             })
         }).send(res);
     }
+
+    static getGroups = async (req, res) => {
+        new SUCCESS({
+            message: 'Get groups successfully',
+            metadata: await GroupService.getGroups({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
 }
 
 module.exports = ShopController;
