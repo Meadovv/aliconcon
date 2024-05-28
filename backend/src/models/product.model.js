@@ -13,6 +13,7 @@ const productSchema = new Schema({
     },
     addBy: {
         type: Schema.Types.ObjectId,
+        ref: 'aliconcon_users',
         required: true
     },
     editBy: {
