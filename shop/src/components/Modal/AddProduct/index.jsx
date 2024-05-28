@@ -19,8 +19,6 @@ import {
     Flex,
     Box,
     Image,
-    List,
-    ListItem,
     HStack,
     VStack,
     Text,

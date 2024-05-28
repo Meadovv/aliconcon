@@ -6,7 +6,7 @@ import { Table, Space, Select, message, Tag, Popconfirm } from 'antd';
 
 import { useSelector } from 'react-redux';
 
-import AddProductModal from '../../../components/Modal/AddProduct';
+import AddGroupModal from '../../../components/Modal/AddGroup';
 
 export default function Groups() {
     const [products, setProducts] = React.useState([
@@ -108,7 +108,7 @@ export default function Groups() {
     return (
         <Flex direction={'column'} gap={5}>
             <HStack justify="flex-end">
-                <AddProductModal />
+                <AddGroupModal />
                 <Button
                     bg={'blue.400'}
                     color={'white'}

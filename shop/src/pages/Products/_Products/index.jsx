@@ -39,8 +39,9 @@ export default function Products() {
 
     const createDataList = () => {
         const dataList = products.map((product, index) => ({
-            key: product._id,
             ...product,
+            key: product._id,
+            addBy: product.addBy.name,
         }));
         setDataList(dataList);
     };

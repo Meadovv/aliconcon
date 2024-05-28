@@ -23,6 +23,7 @@ const api = {
     DELETE_IMAGE: host + 'image/delete',
     ADD_PRODUCT: host + 'shop/create-product',
     GET_PRODUCTS: host + 'shop/get-products',
+    ADD_GROUP: host + 'shop/create-group',
 }
 
 export const IMAGE_HOST = {
