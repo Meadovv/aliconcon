@@ -6,6 +6,7 @@ import Settings from '../../pages/Settings';
 import Vouchers from '../../pages/Vouchers';
 import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
+import SearchProduct from '../../pages/SearchProduct';
 
 const routers = [
     {
@@ -17,6 +18,12 @@ const routers = [
     {
         path: '/',
         children: <Home />,
+        layout: true,
+        middleware: 'public'
+    },
+    {
+        path: '/search-product',
+        children: <SearchProduct />,
         layout: true,
         middleware: 'public'
     },

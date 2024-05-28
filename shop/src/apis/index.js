@@ -32,6 +32,10 @@ const api = {
     UPDATE_GROUP: host + 'shop/update-group',
     GET_GROUP: host + 'shop/get-group',
     GET_GROUPS: host + 'shop/get-groups',
+    VIEW_GROUP: host + 'shop/view-group',
+
+    ADD_PRODUCT_TO_GROUP: host + 'shop/add-product-to-group',
+    REMOVE_PRODUCT_FROM_GROUP: host + 'shop/remove-product-from-group',
 }
 
 export default api;

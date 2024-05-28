@@ -138,8 +138,32 @@ export default function ViewProdByGroupModal({group, setGroup}) {
         setLoading(true);
         await axios
             .post(
-                api.GET_PRODUCTS,
-                {},
+                api.VIEW_GROUP
+                , {groupId: group.id}
+                , {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setProducts(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    const addProdToGroup = async (productId) => {
+        setLoading(true);
+        await axios
+            .post(
+                api.ADD_PRODUCT_TO_GROUP,
+                {groupId: group.id, productId: productId},
                 {
                     headers: {
                         'x-client-id': localStorage.getItem('client'),
@@ -149,10 +173,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
             )
             .then((res) => {
                 message.success(res.data.message);
-                setProducts(
-                    (res.data.metadata).filter(
-                        (product) => (product.groups.includes(group.name)))
-                );
+                setProducts(res.data.metadata);
             })
             .catch((err) => {
                 console.log(err);
@@ -160,6 +181,31 @@ export default function ViewProdByGroupModal({group, setGroup}) {
             });
         setLoading(false);
     };
+
+    const removeProdFromGroup = async (productId) => {
+        setLoading(true);
+        await axios
+            .post(
+                api.REMOVE_PRODUCT_FROM_GROUP,
+                {groupId: group.id, productId: productId},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setProducts(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
 
     const switchStatus = async (id) => {
         setLoading(true);
@@ -199,7 +245,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
     const onCloseModal = async () => {
         setGroup({
             name : null,
-            id : false,
+            id : null,
         });
         onClose();
     }

@@ -33,13 +33,13 @@ export default function ViewGroup({ id, setId, setGroups }) {
 
     const onSave = async () => {
         setLoading(true);
-        await axios.post(api.UPDATE_GROUP, {
-            group: group
-        }, {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token')
-            }
+        await axios.post(api.UPDATE_GROUP
+            , {groupId: id, name: group.name}
+            , {
+                headers: {
+                    'x-client-id': localStorage.getItem('client'),
+                    'x-token-id': localStorage.getItem('token')
+                }
         }).then(res => {
             message.success(res.data.message);
             setGroups(res.data.metadata);
@@ -53,12 +53,15 @@ export default function ViewGroup({ id, setId, setGroups }) {
 
     const onDelete = async () => {
         setLoading(true);
-        await axios.post(api.DELETE_GROUP, { groupId: id }, {
-            headers: {
+        await axios.post( api.DELETE_GROUP
+            , { groupId: id }
+            , {
+                headers: {
                 'x-client-id': localStorage.getItem('client'),
                 'x-token-id': localStorage.getItem('token')
+                }
             }
-        }).then(res => {
+        ).then(res => {
             message.success(res.data.message);
             setGroups(res.data.metadata);
         }).catch(err => {
