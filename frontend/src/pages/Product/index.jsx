@@ -6,9 +6,6 @@ import { STATUS } from '../../utils/status';
 import Loader from '../../components/Loader';
 import { formatPrice } from '../../utils/helpers';
 
-import { getProduct } from '../../reducer/actions/product.slice';
-import { addToCart } from '../../reducer/actions/cart.slice';
-
 import { message } from 'antd';
 
 const ProductSinglePage = () => {

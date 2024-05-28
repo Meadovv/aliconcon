@@ -3,7 +3,6 @@ import {
     userReducer,
     modalReducer,
     categoryReducer,
-    productReducer,
     cartReducer,
     searchReducer
 } from './actions';
@@ -13,7 +12,6 @@ const store = configureStore({
         user: userReducer,
         modal: modalReducer,
         category: categoryReducer,
-        product: productReducer,
         cart: cartReducer,
         search: searchReducer
     }
