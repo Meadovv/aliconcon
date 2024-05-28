@@ -20,14 +20,14 @@ function App() {
                 <Route element={<PublicMiddleware />}>
                     {routers.map((router, index) => {
                         if(router.middleware === 'public') {
-                            return <Route key={index} path={router.path} element={<Layout {...router}/>}/>
+                            return <Route key={index} path={router.path} element={<Layout layout={router.layout}> {router.children} </Layout>}/>
                         } else return null;
                     })}
                 </Route>
                 <Route element={<PrivateMiddleware />}>
                     {routers.map((router, index) => {
                         if(router.middleware === 'private') {
-                            return <Route key={index} path={router.path} element={<Layout {...router}/>}/>
+                            return <Route key={index} path={router.path} element={<Layout layout={router.layout}> {router.children} </Layout>}/>
                         } else return null;
                     })}
                 </Route>

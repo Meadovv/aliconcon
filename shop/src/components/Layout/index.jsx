@@ -21,7 +21,7 @@ import {
     MenuList,
     Image,
 } from '@chakra-ui/react';
-import { FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, FiChevronDown, FiUser } from 'react-icons/fi';
+import { FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, FiChevronDown, FiUser, FiArchive, FiPackage } from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -65,8 +65,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
     
     const LinkItems = [
         { name: 'Home', icon: FiHome, link: '/', disabled: false },
-        { name: 'Categories', icon: FiTrendingUp, link: '/categories', disabled: false },
-        { name: 'Products', icon: FiCompass, link: '/products', disabled: false },
+        { name: 'Categories', icon: FiArchive, link: '/categories', disabled: false },
+        { name: 'Products', icon: FiPackage, link: '/products', disabled: false },
         { name: 'Vouchers', icon: FiStar, link: '/vouchers', disabled: false },
         { name: 'Users', icon: FiUser, link: '/users', disabled: user?.role > 2 },
         { name: 'Settings', icon: FiSettings, link: '/settings', disabled: user?.role > 1 },
