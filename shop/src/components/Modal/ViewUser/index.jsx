@@ -9,7 +9,6 @@ import {
     ModalCloseButton,
     Button,
     Spinner,
-    Select,
     Stack
 } from '@chakra-ui/react';
 import React from 'react';
@@ -17,7 +16,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 import api from '../../../apis';
-import { message, Divider } from 'antd';
+import { message, Select, Divider, Popconfirm } from 'antd';
 
 const ROLES = [
     'Owner',
@@ -30,7 +29,10 @@ export default function ViewUser({ id, setId, setUsers }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
     const [targetUser, setTargetUser] = React.useState(null);
+
     const user = useSelector(state => state.auth.user);
+
+    const [selectedRole, setSelectedRole] = useState(null);
 
     const getUser = async () => {
         onOpen();
@@ -50,6 +52,7 @@ export default function ViewUser({ id, setId, setUsers }) {
     React.useEffect(() => {
         if (!id) return;
         getUser();
+        setSelectedRole(targetUser.role);
     }, [id]);
 
     const onSave = async () => {
@@ -96,11 +99,23 @@ export default function ViewUser({ id, setId, setUsers }) {
                         <Divider orientation='left'>Other Information</Divider>
                         <div>Account is add at: {new Date(targetUser.createdAt).toLocaleDateString()}</div>
                         <Divider orientation='left'>Change Role</Divider>
-                        <Select value={targetUser.role} onChange={(e) => setTargetUser({...targetUser, role: e.target.value})}>
-                            {Array.from({length: 4 - user?.role}, (_, i) => user?.role + i + 1).map(role => 
-                                <option key={role} value={role}>{ROLES[role - 1]}</option>
-                            )}
-                        </Select>
+                        <Popconfirm
+                            title="Are you sure you want to change the role?"
+                            onConfirm={() => setTargetUser({...targetUser, role: selectedRole})}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Select 
+                                value={selectedRole} 
+                                onChange={(e) => setSelectedRole(e.target.value)}
+                            >
+                                {Array
+                                    .from({length: 4 - user?.role}, (_, i) => user?.role + i + 1)
+                                    .map(role => 
+                                        <Select.Option key={role} value={role}>{ROLES[role - 1]}</Select.Option>
+                                )}
+                            </Select>
+                        </Popconfirm>
                     </Stack> : <Spinner />}
                 </ModalBody>
                 <ModalFooter>
