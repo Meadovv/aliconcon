@@ -20,6 +20,132 @@ export default function ViewProdByGroupModal({group, setGroup}) {
 
     const [viewProductId, setViewProductId] = React.useState(null);
 
+    {/* States */}
+    const [recordPerPage, setRecordPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [dataList, setDataList] = React.useState([]);
+
+    const [products, setProducts] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    const [filter, setFilter] = React.useState({
+        mode: 'all',
+        name: null,
+        email: null,
+    });
+    
+    {/* Data functions*/}
+    const createDataList = () => {
+        const dataList = [];
+        products
+            .filter(
+                (product) =>
+                    (filter.email ? product.addBy.email.includes(filter.email) : true) &&
+                    (filter.name ? product.name.includes(filter.name) : true),
+            )
+            .forEach((product, index) => {
+                dataList.push({
+                    key: index,
+                    _id: product._id,
+                    thumbnail: product.thumbnail,
+                    name: product.name,
+                    status: product.status,
+                    createdAt: product.createdAt,
+                    addBy: product.addBy.email,
+                });
+            });
+        setDataList(dataList);
+    };
+
+    const getProducts = async () => {
+        onOpen();
+        setLoading(true);
+        await axios
+            .post(
+                api.VIEW_GROUP
+                , {groupId: group.id}
+                , {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setProducts(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    const switchStatus = async (id) => {
+        setLoading(true);
+        await axios
+            .post(
+                api.SWITCH_PRODUCT_STATUS,
+                {
+                    productId: id,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                getProducts();
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    {/* Remove from group */}
+    const removeProdFromGroup = async (productId) => {
+        setLoading(true);
+        await axios
+            .post(
+                api.REMOVE_PRODUCT_FROM_GROUP,
+                {groupId: group.id, productId: productId},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setProducts(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    {/* Pagination control functions */}
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    {/* View Product detail */}
     const viewProduct = (id) => {
         setViewProductId(id);
     };
@@ -82,133 +208,31 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                         onConfirm={() => switchStatus(record._id)}
                         okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
                         cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
+                        okButtonProps={{size: 'large',}}
+                        cancelButtonProps={{size: 'large',}}
                     >
                         <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        </Button>
+                    </Popconfirm>
+
+                    {/* Remove from group options */}
+                    <Popconfirm
+                        title={'Are you sure you want to remove this product from the group ?'}
+                        onConfirm={() => removeProdFromGroup(record._id)}
+                        okText={'Remove'}
+                        cancelText="No"
+                        okButtonProps={{size: 'large',}}
+                        cancelButtonProps={{size: 'large',}}
+                    >
+                        <Button colorScheme={'red'}>
+                            {'Remove from the group'}
                         </Button>
                     </Popconfirm>
                 </Space>
             ),
         });
     }
-
-    {/* States */}
-    const [recordPerPage, setRecordPerPage] = React.useState(10);
-    const [currentPage, setCurrentPage] = React.useState(1);
-    const [dataList, setDataList] = React.useState([]);
-
-    const [products, setProducts] = React.useState([]);
-    const [loading, setLoading] = React.useState(false);
-
-    const [filter, setFilter] = React.useState({
-        mode: 'all',
-        name: null,
-        email: null,
-    });
-
-    const createDataList = () => {
-        const dataList = [];
-        products
-            .filter(
-                (product) =>
-                    (filter.email ? product.addBy.email.includes(filter.email) : true) &&
-                    (filter.name ? product.name.includes(filter.name) : true),
-            )
-            .forEach((product, index) => {
-                dataList.push({
-                    key: index,
-                    _id: product._id,
-                    thumbnail: product.thumbnail,
-                    name: product.name,
-                    status: product.status,
-                    createdAt: product.createdAt,
-                    addBy: product.addBy.email,
-                });
-            });
-        setDataList(dataList);
-    };
-
-    const getProducts = async () => {
-        onOpen();
-        setLoading(true);
-        await axios
-            .post(
-                api.VIEW_GROUP
-                , {groupId: group.id}
-                , {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                setProducts(res.data.metadata);
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
-    const removeProdFromGroup = async (productId) => {
-        setLoading(true);
-        await axios
-            .post(
-                api.REMOVE_PRODUCT_FROM_GROUP,
-                {groupId: group.id, productId: productId},
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                setProducts(res.data.metadata);
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
-
-    const switchStatus = async (id) => {
-        setLoading(true);
-        await axios
-            .post(
-                api.SWITCH_PRODUCT_STATUS,
-                {
-                    productId: id,
-                },
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                getProducts();
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
 
     const onCloseModal = async () => {
         setGroup({
@@ -217,18 +241,6 @@ export default function ViewProdByGroupModal({group, setGroup}) {
         });
         onClose();
     }
-
-    {/* Pagination control functions */}
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
 
     React.useEffect(() => {
         if(!group.id) return;
