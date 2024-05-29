@@ -170,7 +170,7 @@ class ProductService {
             query.price = { ...query?.price, $lte: Number(high_price) };
         }
         const products = await productModel.find(query)
-            .select('_id name price thumbnail category shop groups likes short_description')
+            .select('_id name price thumbnail category shop groups likes short_description sell_count')
             .populate('category', '_id name')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
