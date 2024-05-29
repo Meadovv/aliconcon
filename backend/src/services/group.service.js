@@ -154,6 +154,20 @@ class GroupService {
 
         return productsInGroup;
     }
+
+    static getGroups = async ({ shopId, userId }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) throw new BAD_REQUEST_ERROR('User not found!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) throw new BAD_REQUEST_ERROR('User not in this shop!');
+        const groups = await groupModel
+            .find({ shop: shopId })
+            .populate('addBy', '_id name')
+            .lean();
+        return groups;
+    }
 }
 
 module.exports = GroupService

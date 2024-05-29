@@ -27,6 +27,7 @@ router.post('/get-user-list', ErrorMiddleware.asyncHandler(ShopController.getUse
 
 router.post('/create-product', ErrorMiddleware.asyncHandler(ShopController.createProduct));
 router.post('/delete-product', ErrorMiddleware.asyncHandler(ShopController.deleteProduct));
+router.post('/get-product', ErrorMiddleware.asyncHandler(ShopController.getProductByAdmin));
 router.post('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProductsByAdmin));
 
 router.post('/create-category', ErrorMiddleware.asyncHandler(ShopController.createCategory));
@@ -46,5 +47,13 @@ router.post('/delete-group', ErrorMiddleware.asyncHandler(ShopController.deleteG
 router.post('/add-product-to-group', ErrorMiddleware.asyncHandler(ShopController.addProductToGroup));
 router.post('/remove-product-from-group', ErrorMiddleware.asyncHandler(ShopController.removeProductFromGroup));
 router.post('/view-group', ErrorMiddleware.asyncHandler(ShopController.viewGroup));
+router.post('/get-groups', ErrorMiddleware.asyncHandler(ShopController.getGroups));
+
+router.post('/create-voucher', ErrorMiddleware.asyncHandler(ShopController.createVoucher));
+router.post('/switch-voucher', ErrorMiddleware.asyncHandler(ShopController.switchVoucher));
+router.post('/delete-voucher', ErrorMiddleware.asyncHandler(ShopController.deleteVoucher));
+router.post('/get-voucher', ErrorMiddleware.asyncHandler(ShopController.getVoucher));
+router.post('/get-vouchers', ErrorMiddleware.asyncHandler(ShopController.getVouchers));
+router.post('/add-to-voucher', ErrorMiddleware.asyncHandler(ShopController.addToVoucher));
 
 module.exports = router;
