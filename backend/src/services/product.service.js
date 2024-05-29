@@ -75,14 +75,29 @@ class ProductService {
         const foundUser = foundShop.users.find(user => user._id.toString() === userId);
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
         const products = await productModel.find({ shop: shopId })
+            .select('_id name category price thumbnail addBy')
             .populate({
                 path: 'category',
                 select: '_id name'
             })
             .populate('addBy', '_id name')
-            .populate('shop', '_id name')
             .lean();
         return products;
+    }
+
+    static getProductByAdmin = async ({ shopId, userId, productId }) => {
+        if (!shopId) throw new BAD_REQUEST_ERROR('Shop not found!')
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
+        if (!userId) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
+        if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        const product = await productModel.findById(productId)
+            .populate('category', '_id name')
+            .populate('thumbnail', '_id name')
+            .populate('shop', '_id name')
+            .lean();
+        return product;
     }
 
     static getProducts = async ({ shop, category, low_price, high_price }) => {

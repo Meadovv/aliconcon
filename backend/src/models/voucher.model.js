@@ -25,7 +25,7 @@ const schema = new Schema({
         required: true
     },
     items: [{
-        _id: {
+        item: {
             type: Schema.Types.ObjectId,
             required: true
         },
@@ -33,7 +33,8 @@ const schema = new Schema({
             type: String,
             enum: ['aliconcon_products', 'aliconcon_groups'],
             required: true
-        }
+        },
+        _id: false
     }],
     discount: {
         type: Number,
@@ -56,9 +57,8 @@ const schema = new Schema({
         default: 0
     },
     status: {
-        type: String,
-        enum: ['active', 'inactive'],
-        default: 'inactive'
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

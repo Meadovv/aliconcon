@@ -212,6 +212,19 @@ class ShopController {
         }).send(res);
     }
 
+    static getProductByAdmin = async (req, res) => {
+        new SUCCESS({
+            message: 'Get product successfully',
+            metadata: await ProductService.getProductByAdmin({
+                ...getFields({
+                    fields: ['productId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static getCategories = async (req, res) => {
         new SUCCESS({
             message: 'Get shop categories successfully',

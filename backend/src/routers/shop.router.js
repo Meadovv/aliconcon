@@ -27,6 +27,7 @@ router.post('/get-user-list', ErrorMiddleware.asyncHandler(ShopController.getUse
 
 router.post('/create-product', ErrorMiddleware.asyncHandler(ShopController.createProduct));
 router.post('/delete-product', ErrorMiddleware.asyncHandler(ShopController.deleteProduct));
+router.post('/get-product', ErrorMiddleware.asyncHandler(ShopController.getProductByAdmin));
 router.post('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProductsByAdmin));
 
 router.post('/create-category', ErrorMiddleware.asyncHandler(ShopController.createCategory));
