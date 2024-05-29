@@ -54,10 +54,7 @@ class ProductService {
 
     static getProduct = async ({ id, user }) => {
         const product = await productModel.findById(id)
-            .populate({
-                path: 'category',
-                select: '_id name'
-            })
+            .populate('category', '_id name')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
             .populate('groups.group', '_id name')
@@ -114,7 +111,7 @@ class ProductService {
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
         return utils.OtherUtils.getInfoData({
-            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations'],
+            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating'],
             object: product
         });
     }
