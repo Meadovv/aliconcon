@@ -9,6 +9,7 @@ import { Table, Space, Select, message, Input } from 'antd';
 import axios from 'axios';
 import api from '../../../apis';
 import ViewProductModal from '../ViewProduct';
+import AddProductToGroupModal from '../AddProdToGroup';
 
 
 export default function ViewProdByGroupModal({group, setGroup}) {
@@ -158,30 +159,6 @@ export default function ViewProdByGroupModal({group, setGroup}) {
         setLoading(false);
     };
 
-    const addProdToGroup = async (productId) => {
-        setLoading(true);
-        await axios
-            .post(
-                api.ADD_PRODUCT_TO_GROUP,
-                {groupId: group.id, productId: productId},
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                setProducts(res.data.metadata);
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
     const removeProdFromGroup = async (productId) => {
         setLoading(true);
         await axios
@@ -233,15 +210,6 @@ export default function ViewProdByGroupModal({group, setGroup}) {
         setLoading(false);
     };
 
-    React.useEffect(() => {
-        if(!group.id) return;
-        getProducts();
-    }, [group]);
-
-    React.useEffect(() => {
-        createDataList();
-    }, [products, filter]);
-
     const onCloseModal = async () => {
         setGroup({
             name : null,
@@ -262,6 +230,15 @@ export default function ViewProdByGroupModal({group, setGroup}) {
         }
     };
 
+    React.useEffect(() => {
+        if(!group.id) return;
+        getProducts();
+    }, [group]);
+
+    React.useEffect(() => {
+        createDataList();
+    }, [products, filter]);
+
     return (
         <Modal isOpen={isOpen} onClose={onCloseModal}>
             <ModalOverlay />
@@ -273,6 +250,11 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                         {/* View detail modal */}
                         <ViewProductModal id={viewProductId} setId={setViewProductId} setProducts={setProducts} />
                         {/* The actual table */}
+
+                        {/* Add product to this group buttons */}
+                        <HStack justify="flex-end">
+                            <AddProductToGroupModal groupId={group.id} />
+                        </HStack>
                         <Table
                             loading={loading}
                             columns={columns}

@@ -13,7 +13,7 @@ import ViewGroupModal from '../../components/Modal/ViewGroup';
 import ViewProdByGroupModal from '../../components/Modal/ViewProdByGroup';
 import AddGroupModal from '../../components/Modal/AddGroup';
 
-export default function Group() {
+export default function Groups() {
 
     const user = useSelector((state) => state.auth.user);
 
@@ -169,7 +169,7 @@ export default function Group() {
 
             {/* View detail modal */}
             <ViewGroupModal id={viewGroupId} setId={setViewGroupId} setGroups={setGroups} />
-            <ViewProdByGroupModal group={viewProdByGroup} setGroup={setViewProdByGroup} />
+            <ViewProdByGroupModal group={{viewProdByGroup}} setGroup={setViewProdByGroup} />
 
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">

@@ -63,6 +63,7 @@ export default function ViewProduct({ id, setId, setProducts }) {
 
     const getProduct = async () => {
         onOpen();
+        setLoading(true);
         await axios.post( api.GET_PRODUCT
         , { productId: id }
         , {
@@ -76,6 +77,7 @@ export default function ViewProduct({ id, setId, setProducts }) {
             console.log(err)
             message.error(err.response.data.message);
         })
+        setLoading(false);
     };
 
     const onSave = async () => {
@@ -126,9 +128,7 @@ export default function ViewProduct({ id, setId, setProducts }) {
 
     React.useEffect(() => {
         if (!id) return;
-        setLoading(true);
         getProduct();
-        setLoading(false);
     }, [id]);
 
     return (

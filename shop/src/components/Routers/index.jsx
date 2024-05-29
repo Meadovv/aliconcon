@@ -7,6 +7,7 @@ import Vouchers from '../../pages/Vouchers';
 import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
 import SearchProduct from '../../pages/SearchProduct';
+import Group from '../../pages/Groups';
 
 const routers = [
     {
@@ -42,6 +43,12 @@ const routers = [
     {
         path: '/categories',
         children: <Categories />,
+        layout: true,
+        middleware: 'public'
+    },
+    {
+        path: '/groups',
+        children: <Group />,
         layout: true,
         middleware: 'public'
     },
