@@ -47,38 +47,6 @@ const HomePage = () => {
                             </div>
                             {loading ? <Loader /> : <ProductList products={products} />}
                         </div>
-
-                        {/* <div className="categories-item">
-                            <div className="title-md">
-                                <h3>{categories[0]}</h3>
-                            </div>
-                            {productStatus === STATUS.LOADING ? <Loader /> : <ProductList products={catProductsOne} />}
-                        </div>
-
-                        <div className="categories-item">
-                            <div className="title-md">
-                                <h3>{categories[1]}</h3>
-                            </div>
-                            {productStatus === STATUS.LOADING ? <Loader /> : <ProductList products={catProductsTwo} />}
-                        </div>
-
-                        <div className="categories-item">
-                            <div className="title-md">
-                                <h3>{categories[2]}</h3>
-                            </div>
-                            {productStatus === STATUS.LOADING ? (
-                                <Loader />
-                            ) : (
-                                <ProductList products={catProductsThree} />
-                            )}
-                        </div>
-
-                        <div className="categories-item">
-                            <div className="title-md">
-                                <h3>{categories[3]}</h3>
-                            </div>
-                            {productStatus === STATUS.LOADING ? <Loader /> : <ProductList products={catProductsFour} />}
-                        </div> */}
                     </div>
                 </div>
             </div>

@@ -204,18 +204,17 @@ class ProductService {
                             item: groupId
                         }
                     },
-                    startDate: { $lt: new Date() },
-                    endDate: { $gt: new Date() }
+                    startDate: { $lte: new Date() },
+                    endDate: { $gte: new Date() }
                 })
                     .select('_id startDate endDate discount amount used')
                     .sort({ discount: -1 })
                     .limit(1)
                     .lean();
-    
-                return voucher[0];
+                if(voucher.length) return voucher[0];
+                else return null;
             }));
-    
-            const allVouchers = [...productVouchers, ...groupVouchers];
+            const allVouchers = [...productVouchers];
             if (allVouchers.length) {
                 product.sale = allVouchers.reduce((max, voucher) => voucher.discount > max.discount ? voucher : max, allVouchers[0]).discount;
             }
