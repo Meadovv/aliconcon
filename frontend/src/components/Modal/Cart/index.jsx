@@ -11,19 +11,39 @@ const CartModal = ({ carts }) => {
             {carts?.length > 0 ? (
                 <div className="cart-modal-list grid">
                     {carts.map((item, index) => {
-                        const newPrice = item?.price - (item?.price * item?.sale) / 100;
+
+                        const product = item.product
+                        const variant = item.variant
+
+                        const newPrice = variant?.price - (variant?.price * product?.sale) / 100;
                         return (
                             <div className="cart-modal-item grid align-center font-manrope py-2" key={index}>
                                 <div className="cart-modal-item-img">
-                                    <img src={IMAGE_HOST.THUMBNAIL(item?.thumbnail.name)} alt="" className="img-cover" />
+                                    <img src={IMAGE_HOST.THUMBNAIL(
+                                        variant?.thumbnail ? variant?.thumbnail.name : product?.thumbnail.name
+                                    )} alt="" className="img-cover" />
                                 </div>
                                 <div>
-                                    <div className="cart-modal-item-title fs-13 font-manrope text-capitalize">
-                                        {item?.name}
+                                    <div className="cart-modal-item-title fs-14 font-manrope text-capitalize" style={{
+                                        fontWeight: 600
+                                    }}>
+                                        {product?.name}
+                                    </div>
+                                    <div className="cart-modal-item-title fs-13 font-manrope text-capitalize" style={{
+                                        color: '#9b9b9b'
+                                    }}>
+                                        {variant?.name}
                                     </div>
                                     <div className="cart-modal-item-price text-orange fs-14 fw-6">
-                                        {formatPrice(newPrice)} <div className='text-black'>x {item?.quantity}</div>
+                                        {formatPrice(newPrice)}
                                     </div>
+                                </div>
+                                <div className="cart-modal-item-price text-black fs-16 fw-6" style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-end'
+                                }}>
+                                    x {item?.quantity}
                                 </div>
                             </div>
                         );

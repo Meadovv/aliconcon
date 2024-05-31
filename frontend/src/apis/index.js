@@ -18,6 +18,7 @@ const api = {
     GET_PRODUCT: ({ id, user }) => {
         return BACKEND_API + 'shop/get-product?id=' + id + '&user=' + user;
     },
+    GET_VARIANT: BACKEND_API + 'shop/get-variation',
     LOGIN: BACKEND_API + 'user/login',
     METADATA: BACKEND_API + 'user/metadata',
     LOGOUT: BACKEND_API + 'access/logout',

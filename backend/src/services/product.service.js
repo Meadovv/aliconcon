@@ -111,7 +111,7 @@ class ProductService {
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
         return utils.OtherUtils.getInfoData({
-            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating'],
+            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count'],
             object: product
         });
     }

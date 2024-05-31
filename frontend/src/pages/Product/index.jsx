@@ -4,18 +4,25 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Loader from '../../components/Loader';
 import { formatPrice, formatNumber } from '../../utils/helpers';
-
+import { addToCart } from '../../reducer/actions/cart.slice';
 import axios from 'axios';
 import api from '../../apis';
 import { message } from 'antd';
 
 import { IMAGE_HOST } from '../../apis';
 
+import { 
+    Select
+} from '@chakra-ui/react';
+
 import Error from '../Error';
 
 export default function Product() {
+    const dispatch = useDispatch();
     const [product, setProduct] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const [variantTierIdx, setVariantTierIdx] = React.useState([]);
+    const [variant, setVariant] = React.useState(null);
     const params = useParams();
 
     const [quantity, setQuantity] = React.useState(1);
@@ -39,6 +46,11 @@ export default function Product() {
             )
             .then((res) => {
                 setProduct(res.data.metadata);
+                setVariantTierIdx(Array.from({ length: res.data.metadata?.variations?.length }, () => 0));
+                getVariant({
+                    productId: res.data.metadata._id,
+                    variation_tier_idx: Array.from({ length: res.data.metadata?.variations?.length }, () => 0),
+                });
             })
             .catch((err) => {
                 console.log(err);
@@ -49,7 +61,44 @@ export default function Product() {
 
     React.useEffect(() => {
         getProduct(params.productId);
+        setVariantTierIdx(Array.from({ length: product?.variations?.length }, () => 0));
     }, [params]);
+
+    React.useEffect(() => {
+        if(product) {
+            if(variantTierIdx.length === product?.variations?.length) {
+                getVariant({ productId: product._id, variation_tier_idx: variantTierIdx });
+            }
+        }
+    }, [product, variantTierIdx]);
+
+    const likeSwitch = async (productId) => {
+        
+    }
+
+    const addToCartHandler = (product) => {
+        if(quantity > variant?.quantity) {
+            message.error('Not enough quantity in stock');
+            return;
+        }
+        dispatch(addToCart({ product, variant, quantity }));
+        message.success('Added to cart');
+    }
+
+    const getVariant = async ({ productId, variation_tier_idx }) => {
+        if(!product || !variantTierIdx?.length) return;
+        await axios.post(api.GET_VARIANT, {
+            productId: productId,
+            variation_tier_idx: variation_tier_idx,
+        })
+        .then(res => {
+            setVariant(res.data.metadata);
+        })
+        .catch(err => {
+            console.error(err);
+            message.error(err.response.data.message);
+        })
+    }
 
     return loading ? (
         <Loader />
@@ -62,7 +111,9 @@ export default function Product() {
                             <div className="product-img">
                                 <div className="product-img-zoom">
                                     <img
-                                        src={IMAGE_HOST.ORIGINAL(product?.thumbnail.name)}
+                                        src={IMAGE_HOST.ORIGINAL(
+                                            variant?.thumbnail ? variant?.thumbnail?.name : product?.thumbnail?.name,
+                                        )}
                                         alt=""
                                         className="img-cover"
                                     />
@@ -73,7 +124,17 @@ export default function Product() {
                         <div className="product-single-r">
                             <div className="product-details font-manrope">
                                 <div className="title fs-26 fw-7">
-                                    {product?.name}
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                    }}>
+                                        <span>{product?.name}</span>
+                                        <i className="fas fa-bookmark" style={{
+                                            color: product?.isLike ? '#ff5e14' : 'black',
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                        }} onClick={() => likeSwitch(product._id)}></i>
+                                    </div>
                                     <div
                                         style={{
                                             display: 'flex',
@@ -82,24 +143,21 @@ export default function Product() {
                                             fontWeight: '450'
                                         }}
                                     >
-                                        <div>Yêu thích: {formatNumber(product?.likes)}</div>
+                                        <div>Likes: {formatNumber(product?.likes)}</div>
                                         <div className="vert-line"></div>
-                                        <div>Đã bán: {formatNumber(product?.sell_count)}</div>
+                                        <div>Sell: {formatNumber(product?.sell_count)}</div>
+                                        <div className="vert-line"></div>
+                                        <div>Rating: {formatNumber(product?.rating)}</div>
                                     </div>
                                 </div>
                                 <div className="info flex align-center flex-wrap fs-14">
-                                    {/* <div className="rating">
-                                        <span className="text-orange fw-5">Rating:</span>
-                                        <span className="mx-1">{product?.rating}</span>
-                                    </div>
-                                    <div className="vert-line"></div> */}
                                     <div className="brand">
                                         <span className="text-orange fw-5">Category:</span>
                                         <span className="mx-1 text-capitalize">{product?.category.name}</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="para fw-3 fs-15">{product?.description}</p>
+                                    <p className="para fw-3 fs-15">{product?.short_description}</p>
                                 </div>
                                 <div className="price">
                                     <div className="flex align-center">
@@ -115,12 +173,48 @@ export default function Product() {
 
                                     <div className="flex align-center my-1">
                                         <div className="new-price fw-5 font-poppins fs-24 text-orange">
-                                            {formatPrice(product?.price - (product?.price * product?.sale) / 100)}
+                                            {formatPrice(variant?.price - (variant?.price * product?.sale) / 100)}
                                         </div>
-                                        <div className="discount bg-orange fs-13 text-white fw-6 font-poppins">
+                                        <div className="discount bg-orange fs-13 text-white fw-6 font-poppins" style={{
+                                            display: product?.sale === 0 ? 'none' : 'block',
+                                        }}>
                                             {product?.sale}% OFF
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className='flex-column align-center my-3' style={{
+                                    width: '100%',
+                                }}>
+                                    {product?.variations.map((variant, index) => {
+                                        return (
+                                            <div key={index} style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                width: '100%',
+                                                marginTop: '10px',
+                                            }}>
+                                                <div style={{
+                                                    marginRight: '10px',
+                                                    width: '150px'
+                                                }}>{variant.name}</div>
+                                                <Select value={variantTierIdx[index]} onChange={(e) => {
+                                                    setVariantTierIdx(prev => {
+                                                        const newVariantTierIdx = [...prev];
+                                                        newVariantTierIdx[index] = Number(e.target.value);
+                                                        return newVariantTierIdx;
+                                                    });
+                                                }}>
+                                                    {variant.options.map((tier, idx) => {
+                                                        return (
+                                                            <option key={idx} value={idx}>{tier}</option>
+                                                        )
+                                                    })}
+                                                </Select>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
 
                                 <div className="qty flex align-center my-4">
@@ -142,17 +236,19 @@ export default function Product() {
                                             <i className="fas fa-plus"></i>
                                         </button>
                                     </div>
-                                    {product?.stock === 0 ? (
+                                    {variant?.quantity === 0 ? (
                                         <div className="qty-error text-uppercase bg-danger text-white fs-12 ls-1 mx-2 fw-5">
                                             out of stock
                                         </div>
                                     ) : (
-                                        ''
+                                        <div className="qty-error text-uppercase bg-danger text-white fs-12 ls-1 mx-2 fw-5">
+                                            {variant?.quantity} in stock
+                                        </div>
                                     )}
                                 </div>
 
                                 <div className="btns">
-                                    <button type="button" className="add-to-cart-btn btn">
+                                    <button type="button" className="add-to-cart-btn btn btn-cart">
                                         <i className="fas fa-shopping-cart"></i>
                                         <span
                                             className="btn-text mx-2"
@@ -163,7 +259,7 @@ export default function Product() {
                                             add to cart
                                         </span>
                                     </button>
-                                    <button type="button" className="buy-now btn mx-3">
+                                    <button type="button" className="buy-now btn btn-buy mx-3">
                                         <span className="btn-text">buy now</span>
                                     </button>
                                 </div>

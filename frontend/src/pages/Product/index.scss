@@ -119,11 +119,11 @@
                         &-text{
                             text-transform: capitalize;
                         }
-                        &:first-child{
+                        &.btn-cart{
                             background-color: #FFEEE8;
                             color: $clr-orange;
                         }
-                        &:last-child{
+                        &.btn-buy{
                             background-color: $clr-orange;
                             color: white;
                         }

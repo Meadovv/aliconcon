@@ -4,29 +4,10 @@ import { formatPrice, formatNumber } from '../../utils/helpers';
 import './index.scss';
 
 import { IMAGE_HOST } from '../../apis';
-import { Button } from '@chakra-ui/react';
-
-import { MdAddShoppingCart, MdRemoveRedEye } from "react-icons/md";
-
-import { addToCart } from '../../reducer/actions/cart.slice';
-import { useDispatch } from 'react-redux';
-
-import { message } from 'antd'
 
 const Product = ({ product }) => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-
     const newPrice = product?.price - (product?.price * product?.sale) / 100;
-
-    const add = (product) => {
-        dispatch(addToCart(product));
-        message.success('Add to cart successfully!');
-    }
-
-    const preview = (product) => {
-
-    }
 
     return (
         <div
@@ -58,19 +39,9 @@ const Product = ({ product }) => {
                     <span className="new-price">{formatPrice(newPrice)}</span>
                 </div>
             </div>
-            <div className="product-item-action">
-                <Button width={'50%'} leftIcon={<MdAddShoppingCart />} onClick={(e) => {
-                    e.stopPropagation();
-                    add(product);
-                }} colorScheme='red'>Add</Button>
-                <Button width={'50%'} leftIcon={<MdRemoveRedEye />} onClick={(e) => {
-                    e.stopPropagation();
-                    preview(product);
-                }} color="red">Preview</Button>
-            </div>
             <div className="product-item-sub">
-                <div>Đã bán: {formatNumber(product?.sell_count + 2345)}</div>
-                <div>Yêu thích: {formatNumber(product?.likes + 3456)}</div>
+                <div>Sell: {formatNumber(product?.sell_count + 2345)}</div>
+                <div>Likes: {formatNumber(product?.likes + 3456)}</div>
             </div>
         </div>
     );

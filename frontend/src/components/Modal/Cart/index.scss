@@ -47,7 +47,7 @@
 
     &-list{
         .cart-modal-item{
-            grid-template-columns: 64px auto 65px;
+            grid-template-columns: 64px auto auto;
             column-gap: 12px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             &-img{
