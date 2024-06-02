@@ -17,8 +17,22 @@ export default function Products() {
     
     const user = useSelector((state) => state.auth.user);
 
+    {/* States */}
     const [viewProductId, setViewProductId] = React.useState(null);
 
+    const [recordPerPage, setRecordPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [dataList, setDataList] = React.useState([]);
+
+    const [products, setProducts] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    const [filter, setFilter] = React.useState({
+        mode: 'all',
+        name: null,
+        email: null,
+    });
+    
     const viewProduct = (id) => {
         setViewProductId(id);
     };
@@ -96,20 +110,6 @@ export default function Products() {
             ),
         });
     }
-
-    {/* States */}
-    const [recordPerPage, setRecordPerPage] = React.useState(10);
-    const [currentPage, setCurrentPage] = React.useState(1);
-    const [dataList, setDataList] = React.useState([]);
-
-    const [products, setProducts] = React.useState([]);
-    const [loading, setLoading] = React.useState(false);
-
-    const [filter, setFilter] = React.useState({
-        mode: 'all',
-        name: null,
-        email: null,
-    });
 
     const createDataList = () => {
         const dataList = [];

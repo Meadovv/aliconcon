@@ -36,6 +36,13 @@ const api = {
 
     ADD_PRODUCT_TO_GROUP: host + 'shop/add-product-to-group',
     REMOVE_PRODUCT_FROM_GROUP: host + 'shop/remove-product-from-group',
+
+    SWITCH_VOUCHER: host + 'shop/switch-voucher',
+    CREATE_VOUCHER: host + 'shop/create-voucher',
+    DELETE_VOUCHER: host + 'shop/delete-voucher',
+    UPDATE_VOUCHER: host + 'shop/update-voucher',
+    GET_VOUCHERS: host + 'shop/get-vouchers',
+    GET_VOUCHER: host + 'shop/get-voucher',
 }
 
 export default api;
