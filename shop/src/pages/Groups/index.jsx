@@ -17,7 +17,7 @@ export default function Groups() {
 
     const user = useSelector((state) => state.auth.user);
 
-    {/* View modal functions*/}
+    {/* View modals functions*/}
     const [viewGroupId, setViewGroupId] = React.useState(null);
     const [viewProdByGroup, setViewProdByGroup] = React.useState({
         name : null,
@@ -51,7 +51,13 @@ export default function Groups() {
 
     const createDataList = () => {
         const dataList = [];
-        groups.forEach((group, index) => {
+        groups
+            .filter(
+                (group) =>
+                    (filter.email ? group.addBy.email.includes(filter.email) : true) &&
+                    (filter.name ? group.name.includes(filter.name) : true),
+            )
+            .forEach((group, index) => {
                 dataList.push({
                     key: index,
                     _id: group._id,

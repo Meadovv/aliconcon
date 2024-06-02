@@ -5,29 +5,48 @@ import { Table, Space, Select, message, Input, Popconfirm } from 'antd';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import api from '../../apis';
-import AddVoucherModal from '../../components/Modal/AddVoucher';  // Assuming you have a similar modal for adding vouchers
-import ViewVoucherModal from '../../components/Modal/ViewVoucher';  // Assuming you have a similar modal for viewing vouchers
+import AddVoucherModal from '../../components/Modal/AddVoucher';
+import ViewVoucherModal from '../../components/Modal/ViewVoucher';  
 
 export default function Vouchers() {
     const user = useSelector((state) => state.auth.user);
 
     {/* States */}
-    const [viewVoucherId, setViewVoucherId] = useState(null);
-    const [vouchers, setVouchers] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [vouchers, setVouchers] = useState([]);
     const [dataList, setDataList] = useState([]);
+
     const [recordPerPage, setRecordPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+
     const [filter, setFilter] = useState({
         mode: 'all',
         name: null,
         email: null,
+        startDate: null,
+        endDate: null,
     });
 
+    const [viewVoucherId, setViewVoucherId] = useState(null);
+    const [viewProdByVou, setViewProdByVou] = React.useState({
+        name : null,
+        id : null,
+    });
+
+    {/* View modal functions*/}
     const viewVoucher = (id) => {
         setViewVoucherId(id);
     };
 
+    const viewProductOfVoucher = (id, name) => {
+        setViewProdByVou({
+            name: name,
+            id: id,
+        });
+    };
+
+    {/* Columns structure */}
     const columns = [
         {
             title: 'ID',
@@ -54,6 +73,7 @@ export default function Vouchers() {
             title: 'Start Date',
             dataIndex: 'startDate',
             key: 'startDate',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
             render: (startDate) => {
                 const date = new Date(startDate);
                 return date.toLocaleDateString();
@@ -63,9 +83,22 @@ export default function Vouchers() {
             title: 'End Date',
             dataIndex: 'endDate',
             key: 'endDate',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
             render: (endDate) => {
                 const date = new Date(endDate);
                 return date.toLocaleDateString();
+            },
+        },
+        {
+            title: 'Show products',
+            key: 'status',
+            render: (_, record) => {
+                {/* View products of this category */}
+                <Space size="middle">
+                    <Button onClick={() => viewProductOfVoucher(record._id, record.name)}>
+                        View products
+                    </Button>
+                </Space>
             },
         },
     ];
@@ -107,8 +140,14 @@ export default function Vouchers() {
         vouchers
             .filter(
                 (voucher) =>
+                    (filter.mode === 'all' 
+                        ? true 
+                        : (voucher.status && filter.mode == 'active') || (!voucher.status && filter.mode == 'inactive') 
+                    )
                     (filter.email ? voucher.addBy.email.includes(filter.email) : true) &&
-                    (filter.name ? voucher.name.includes(filter.name) : true),
+                    (filter.name ? voucher.name.includes(filter.name) : true) &&
+                    (filter.startDate ? voucher.startDate.includes(filter.startDate) : true)
+                    (filter.endDate ? voucher.endDate.includes(filter.endDate) : true),
             )
             .forEach((voucher, index) => {
                 dataList.push({
@@ -174,14 +213,6 @@ export default function Vouchers() {
         setLoading(false);
     };
 
-    useEffect(() => {
-        getVouchers();
-    }, []);
-
-    useEffect(() => {
-        createDataList();
-    }, [vouchers, filter]);
-
     const handlePreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -194,11 +225,20 @@ export default function Vouchers() {
         }
     };
 
+    useEffect(() => {
+        getVouchers();
+    }, []);
+
+    useEffect(() => {
+        createDataList();
+    }, [vouchers, filter]);
+
     return (
         <Flex direction="column" gap={35}>
 
             {/* View detail modal */}
             <ViewVoucherModal id={viewVoucherId} setId={setViewVoucherId} setVouchers={setVouchers} />
+            <ViewProdByVouModal voucher={viewProdByVou} setVoucher={setViewProdByVou} />
 
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
@@ -245,8 +285,8 @@ export default function Vouchers() {
                                 onChange={(value) => setFilter({ ...filter, mode: value })}
                             >
                                 <Select.Option value="all">All</Select.Option>
-                                <Select.Option value="draft">Draft</Select.Option>
-                                <Select.Option value="published">Published</Select.Option>
+                                <Select.Option value="active">Active</Select.Option>
+                                <Select.Option value="inactive">Inactive</Select.Option>
                             </Select>
                             <Select
                                 defaultValue={recordPerPage}
@@ -266,6 +306,16 @@ export default function Vouchers() {
                                 placeholder="Email"
                                 onChange={(e) => setFilter({ ...filter, email: e.target.value })}
                                 value={filter.email}
+                            />
+                            <Input
+                                placeholder="Start date"
+                                onChange={(e) => setFilter({ ...filter, startDate: e.target.value })}
+                                value={filter.startDate}
+                            />
+                            <Input
+                                placeholder="End date"
+                                onChange={(e) => setFilter({ ...filter, endDate: e.target.value })}
+                                value={filter.endDate}
                             />
                         </HStack>
                     </Flex>

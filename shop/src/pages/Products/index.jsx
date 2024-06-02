@@ -36,6 +36,7 @@ export default function Products() {
     const viewProduct = (id) => {
         setViewProductId(id);
     };
+    
 
     {/* Columns structure */}
     const columns = [
@@ -116,6 +117,7 @@ export default function Products() {
         products
             .filter(
                 (product) =>
+                    (filter.mode === 'all' ? true : product.status === filter.mode) &&
                     (filter.email ? product.addBy.email.includes(filter.email) : true) &&
                     (filter.name ? product.name.includes(filter.name) : true),
             )

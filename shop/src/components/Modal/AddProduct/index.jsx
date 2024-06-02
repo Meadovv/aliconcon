@@ -27,6 +27,7 @@ export default function AddProductModal({ setProducts }) {
         name: '',
         thumbnail: '',
         short_description: '',
+        description: '',
         price: '',
         category: '',
         variations: []

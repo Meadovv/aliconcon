@@ -3,14 +3,10 @@ import { AddIcon, ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon 
 import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector } from 'react-redux';
-
 import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
-
 import AddCategoryModal from '../../components/Modal/AddCategory';
-
 import axios from 'axios';
 import api from '../../apis';
-
 import ViewCategoryModal from '../../components/Modal/ViewCategory';
 import ViewProdByCateModal from '../../components/Modal/ViewProdByCate';
 
@@ -18,25 +14,7 @@ export default function Categories() {
 
     const user = useSelector((state) => state.auth.user);
 
-    {/* View modal functions*/}
-    const [viewCategoryId, setViewCategoryId] = React.useState(null);
-    const [viewProdByCate, setViewProdByCate] = React.useState({
-        name : null,
-        id : null,
-    });
-
-    const viewCategory = (id) => {
-        setViewCategoryId(id);
-    };
-    
-    const viewProductOfCategory = (id, name) => {
-        setViewProdByCate({
-            name: name,
-            id: id,
-        });
-    };
-
-    {/* States and data functions*/}
+    {/* States */}
     const [recordPerPage, setRecordPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [dataList, setDataList] = React.useState([]);
@@ -50,6 +28,103 @@ export default function Categories() {
         email: null,
     });
 
+    
+    const [viewCategoryId, setViewCategoryId] = React.useState(null);
+    const [viewProdByCate, setViewProdByCate] = React.useState({
+        name : null,
+        id : null,
+    });
+
+    {/* View modal functions*/}
+    const viewCategory = (id) => {
+        setViewCategoryId(id);
+    };
+    
+    const viewProductOfCategory = (id, name) => {
+        setViewProdByCate({
+            name: name,
+            id: id,
+        });
+    };
+    
+    {/* Columns structure */}
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
+        },
+        {
+            title: 'Created At',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
+            render: (createdAt) => {
+                const date = new Date(createdAt);
+                return date.toLocaleDateString();
+            },
+        },
+        {
+            title: 'Added By',
+            dataIndex: 'addBy',
+            key: 'addedBy',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
+        },
+        {
+            title: 'Show products',
+            key: 'status',
+            render: (_, record) => {
+                {/* View products of this category */}
+                <Space size="middle">
+                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>
+                        View products
+                    </Button>
+                </Space>
+            },
+        },
+    ];
+
+    {/* Quick actions columns with view detail and publish button */}
+    if (user && user.role < 4) {
+        columns.push({
+            title: 'Quick Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    {/* View detail button */}
+                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
+
+                    {/* Publishing options */}
+                    <Popconfirm
+                        title={
+                            record.status === 'draft'
+                                ? 'Are you sure you want to publish this category?'
+                                : 'Are you sure you want to unpublish this category?'
+                        }
+                        onConfirm={() => switchStatus(record._id)}
+                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        cancelText="No"
+                        okButtonProps={{
+                            size: 'large',
+                        }}
+                        cancelButtonProps={{
+                            size: 'large',
+                        }}
+                    >
+                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
+                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        </Button>
+                    </Popconfirm>
+                </Space>
+            ),
+        });
+    }
     const createDataList = () => {
         const dataList = [];
         categories
@@ -129,89 +204,10 @@ export default function Categories() {
         }
     };
     const handleNextPage = () => {
-        if (currentPage < totalPages) {
+        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
             setCurrentPage(currentPage + 1);
         }
     };
-
-    {/* Columns structure */}
-    const columns = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
-        },
-        {
-            title: 'Created At',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
-            render: (createdAt) => {
-                const date = new Date(createdAt);
-                return date.toLocaleDateString();
-            },
-        },
-        {
-            title: 'Added By',
-            dataIndex: 'addBy',
-            key: 'addedBy',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
-        },
-        {
-            title: 'Show products',
-            key: 'status',
-            render: (_, record) => {
-                {/* View products of this category */}
-                <Space size="middle">
-                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>
-                        View products
-                    </Button>
-                </Space>
-            },
-        },
-    ];
-
-    {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
-        columns.push({
-            title: 'Quick Actions',
-            key: 'actions',
-            render: (_, record) => (
-                <Space size="middle">
-                    {/* View detail button */}
-                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
-
-                    {/* Publishing options */}
-                    <Popconfirm
-                        title={
-                            record.status === 'draft'
-                                ? 'Are you sure you want to publish this category?'
-                                : 'Are you sure you want to unpublish this category?'
-                        }
-                        onConfirm={() => switchStatus(record._id)}
-                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
-                    >
-                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
-                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        </Button>
-                    </Popconfirm>
-                </Space>
-            ),
-        });
-    }
 
     React.useEffect(() => {
         getCategories();
