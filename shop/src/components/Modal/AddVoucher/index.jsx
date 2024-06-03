@@ -85,11 +85,11 @@ export default function AddVoucherModal({ setVouchers }) {
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Start date</FormLabel>
-                                <Input type="number" placeholder="Voucher Start date" onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
+                                <Input type="date" placeholder="Voucher Start date" onChange={(e) => setForm({ ...form, startDate: new Date(e.target.value) })} />
                             </FormControl>
                             <FormControl>
                                 <FormLabel>End date</FormLabel>
-                                <Input type="number" placeholder="Voucher End date" onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
+                                <Input type="date" placeholder="Voucher End date" onChange={(e) => setForm({ ...form, endDate: new Date(e.target.value) })} />
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Amount</FormLabel>

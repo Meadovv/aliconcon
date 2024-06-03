@@ -40,6 +40,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
         products
             .filter(
                 (product) =>
+                    (filter.mode === 'all' ? true : product.status === filter.mode) &&
                     (filter.email ? product.addBy.email.includes(filter.email) : true) &&
                     (filter.name ? product.name.includes(filter.name) : true),
             )
@@ -264,9 +265,10 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                         {/* The actual table */}
 
                         {/* Add product to this group buttons */}
-                        <HStack justify="flex-end">
+                        <HStack justify="flex-end" display={user && user.role < 4 ? 'flex' : 'none'}>
                             <AddProductToGroupModal groupId={group.id} />
                         </HStack>
+
                         <Table
                             loading={loading}
                             columns={columns}

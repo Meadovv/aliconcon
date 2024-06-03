@@ -7,11 +7,13 @@ import axios from 'axios';
 
 import api from '../../../apis';
 import { message } from 'antd';
+import ViewItemByVouModal from '../ViewItemByVoucher';
 
 export default function ViewVoucher({ id, setId, setVouchers }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
     const [voucher, setVoucher] = React.useState(null);
+    const [items, setItems] = React.useState([]);
 
     const getVoucher = async () => {
         onOpen();
@@ -25,6 +27,7 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
             }
         }).then(res => {
             setVoucher(res.data.metadata);
+            setItems(voucher.items)
         }).catch(err => {
             console.log(err)
             message.error(err.response.data.message);
@@ -93,6 +96,7 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
                 
                 <ModalBody>
                     {voucher ? <Stack spacing={3}>
+                        <ViewItemByVouModal data={items} setData={setItems} />
                         <FormControl>
                             <FormLabel>Name</FormLabel>
                             <Input 
@@ -128,15 +132,15 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
                         <FormControl>
                             <FormLabel>Start date</FormLabel>
                             <Input 
-                                type="number" value={voucher.startDate} 
-                                onChange={(e) => setVoucher({ ...voucher, price: e.target.value })} 
+                                type="date" value={voucher.startDate} 
+                                onChange={(e) => setVoucher({ ...voucher, startDate: new Date(e.target.value) })} 
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel>Price</FormLabel>
+                            <FormLabel>End date</FormLabel>
                             <Input 
-                                type="number" value={voucher.endDate} 
-                                onChange={(e) => setVoucher({ ...voucher, price: e.target.value })} 
+                                type="date" value={voucher.endDate} 
+                                onChange={(e) => setVoucher({ ...voucher, endDate: new Date(e.target.value) })} 
                             />
                         </FormControl>
 

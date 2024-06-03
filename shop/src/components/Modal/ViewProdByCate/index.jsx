@@ -39,6 +39,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
         products
             .filter(
                 (product) =>
+                    (filter.mode === 'all' ? true : product.status === filter.mode) &&
                     (filter.email ? product.addBy.email.includes(filter.email) : true) &&
                     (filter.name ? product.name.includes(filter.name) : true),
             )

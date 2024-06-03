@@ -29,21 +29,10 @@ export default function Vouchers() {
     });
 
     const [viewVoucherId, setViewVoucherId] = useState(null);
-    const [viewProdByVou, setViewProdByVou] = React.useState({
-        name : null,
-        id : null,
-    });
 
     {/* View modal functions*/}
     const viewVoucher = (id) => {
         setViewVoucherId(id);
-    };
-
-    const viewProductOfVoucher = (id, name) => {
-        setViewProdByVou({
-            name: name,
-            id: id,
-        });
     };
 
     {/* Columns structure */}
@@ -87,18 +76,6 @@ export default function Vouchers() {
             render: (endDate) => {
                 const date = new Date(endDate);
                 return date.toLocaleDateString();
-            },
-        },
-        {
-            title: 'Show products',
-            key: 'status',
-            render: (_, record) => {
-                {/* View products of this category */}
-                <Space size="middle">
-                    <Button onClick={() => viewProductOfVoucher(record._id, record.name)}>
-                        View products
-                    </Button>
-                </Space>
             },
         },
     ];
@@ -238,7 +215,6 @@ export default function Vouchers() {
 
             {/* View detail modal */}
             <ViewVoucherModal id={viewVoucherId} setId={setViewVoucherId} setVouchers={setVouchers} />
-            <ViewProdByVouModal voucher={viewProdByVou} setVoucher={setViewProdByVou} />
 
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
@@ -298,21 +274,25 @@ export default function Vouchers() {
                                 <Select.Option value={15}>15 / Page</Select.Option>
                             </Select>
                             <Input
+                                type='text'
                                 placeholder="Name"
                                 onChange={(e) => setFilter({ ...filter, name: e.target.value })}
                                 value={filter.name}
                             />
                             <Input
+                                type='text'
                                 placeholder="Email"
                                 onChange={(e) => setFilter({ ...filter, email: e.target.value })}
                                 value={filter.email}
                             />
                             <Input
+                                type='date'
                                 placeholder="Start date"
                                 onChange={(e) => setFilter({ ...filter, startDate: e.target.value })}
                                 value={filter.startDate}
                             />
                             <Input
+                                type='date'
                                 placeholder="End date"
                                 onChange={(e) => setFilter({ ...filter, endDate: e.target.value })}
                                 value={filter.endDate}
