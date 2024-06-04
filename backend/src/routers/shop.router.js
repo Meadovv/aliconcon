@@ -55,6 +55,7 @@ router.post('/delete-voucher', ErrorMiddleware.asyncHandler(ShopController.delet
 router.post('/get-voucher', ErrorMiddleware.asyncHandler(ShopController.getVoucher));
 router.post('/get-vouchers', ErrorMiddleware.asyncHandler(ShopController.getVouchers));
 router.post('/add-to-voucher', ErrorMiddleware.asyncHandler(ShopController.addToVoucher));
+router.post('/remove-from-voucher', ErrorMiddleware.asyncHandler(ShopController.removeFromVoucher));
 
 router.post('/add-to-cart', ErrorMiddleware.asyncHandler(ShopController.addToCart));
 router.post('/get-cart', ErrorMiddleware.asyncHandler(ShopController.getCart));

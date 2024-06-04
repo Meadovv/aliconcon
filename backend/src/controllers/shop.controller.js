@@ -475,6 +475,19 @@ class ShopController {
         }).send(res);
     }
 
+    static removeFromVoucher = async (req, res) => {
+        new SUCCESS({
+            message: 'Remove from voucher successfully',
+            metadata: await VoucherService.removeFromVoucher({
+                ...getFields({
+                    fields: ['voucherId', 'itemId', 'itemType'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static addToCart = async (req, res) => {
         new SUCCESS({
             message: 'Add to cart successfully',

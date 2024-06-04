@@ -147,7 +147,39 @@ class VoucherService {
     }
     
     static removeFromVoucher = async ({ shopId, userId, voucherId, itemId, itemType }) => {
-        
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) throw new BAD_REQUEST_ERROR('User not found!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        if (userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('You are not allowed to remove item from voucher!');
+        const foundVoucher = await voucherModel.findById(voucherId).lean();
+        if (!foundVoucher) throw new BAD_REQUEST_ERROR('Voucher not found!');
+
+        let itemModel;
+        if (itemType === 'product') {
+            itemModel = productModel;
+        } else if (itemType === 'group') {
+            itemModel = groupModel;
+        } else {
+            throw new BAD_REQUEST_ERROR('Invalid item type!');
+        }
+
+        const foundItem = await itemModel.findById(itemId).lean();
+        if (!foundItem) throw new BAD_REQUEST_ERROR(`Item not found!`);
+
+        const itemInVoucher = foundVoucher.items.find(item => item.item.toString() === itemId);
+        if (!itemInVoucher) throw new BAD_REQUEST_ERROR('Item not in voucher!');
+        foundVoucher.items = foundVoucher.items.filter(item => item.item.toString() !== itemId);
+        await voucherModel.findByIdAndUpdate(voucherId, foundVoucher);
+
+        const vouchers = await voucherModel
+            .find({ shop: shopId })
+            .select('_id name addBy status startDate endDate')
+            .populate('addBy', '_id name')
+            .lean();
+        return vouchers;
     }
 }
 

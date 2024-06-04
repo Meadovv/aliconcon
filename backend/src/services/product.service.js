@@ -1,7 +1,7 @@
 const categoryModel = require('../models/category.model');
 const productModel = require('../models/product.model');
 const shopModel = require('../models/shop.model');
-const groupModel = require('../models/group.model');
+const imageModel = require('../models/image.model');
 const voucherModel = require('../models/voucher.model');
 const ROLES = require('../constants/ROLES')
 
@@ -33,6 +33,9 @@ class ProductService {
         const foundCategory = await categoryModel.findById(category);
         if (!foundCategory) throw new BAD_REQUEST_ERROR('Category not found!');
         if (foundCategory.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Category not found in this shop!');
+        const foundThumbnail = await imageModel.findById(thumbnail);
+        if (!foundThumbnail) throw new BAD_REQUEST_ERROR('Thumbnail not found!');
+        if (foundThumbnail.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Thumbnail not found in this shop!');
         const newProduct = await productModel.create({
             shop: shopId,
             addBy: userId,
