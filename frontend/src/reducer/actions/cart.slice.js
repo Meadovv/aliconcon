@@ -15,8 +15,12 @@ const cartSlice = createSlice({
             const quantity = action.payload.quantity;
 
             const idx = state.carts.findIndex((item) => item.product._id === product._id && item.variant._id === variant._id);
-            if(idx !== -1) {
-                state.carts[idx].quantity += quantity;
+            if (idx !== -1) {
+                if (state.carts[idx].quantity + quantity > variant?.quantity) {
+                    throw new Error('Quantity is more than available quantity');
+                } else {
+                    state.carts[idx].quantity += quantity;
+                }
             } else {
                 state.carts.push({
                     product,
@@ -24,6 +28,11 @@ const cartSlice = createSlice({
                     quantity: quantity
                 });
             }
+            localStorage.setItem('carts', JSON.stringify(state.carts));
+        },
+
+        restoreCart: (state, action) => {
+            state.carts = action.payload.carts;
         },
 
         removeFromCart: (state, action) => {
@@ -40,6 +49,6 @@ const cartSlice = createSlice({
     }
 });
 
-export const { addToCart, getCartTotal, clearCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, getCartTotal, clearCart, removeFromCart, restoreCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

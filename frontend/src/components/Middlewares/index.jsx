@@ -7,6 +7,8 @@ import api from '../../apis';
 
 import { setUser } from '../../reducer/actions/user.slice';
 
+import { restoreCart } from '../../reducer/actions/cart.slice';
+
 export default function Middlewares({ middleware }) {
 
     const user = useSelector(state => state.user)
@@ -34,13 +36,14 @@ export default function Middlewares({ middleware }) {
         }
     }
 
-    const getCart = async () => {
-
+    const getCart = async (userId) => {
+        const cartJSON = localStorage.getItem('carts');
+        if(cartJSON) dispatch(restoreCart({ carts: JSON.parse(cartJSON) }));
     }
 
     React.useEffect(() => {
         getUser();
-        getCart();
+        getCart(user?._id);
     }, [user, getUser])
 
     if(middleware) return localStorage.getItem('token') && localStorage.getItem('client') ? null : <Navigate to='/login' />
