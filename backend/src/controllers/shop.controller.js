@@ -502,7 +502,7 @@ class ShopController {
             message: 'Remove from cart successfully',
             metadata: await CartService.removeFromCart({
                 ...getFields({
-                    fields: ['productId', 'variationId', 'quantity'],
+                    fields: ['productId', 'variationId'],
                     object: req.body
                 }),
                 ...req.jwt_decode

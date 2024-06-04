@@ -150,7 +150,7 @@ class CartService {
         return await this.getCart({ userId });
     }
 
-    static removeFromCart = async ({ userId, productId, variationId, quantity }) => {
+    static removeFromCart = async ({ userId, productId, variationId }) => {
         const foundUser = await userModel.findById(userId).lean();
         if (!foundUser) {
             throw new NOT_FOUND_ERROR("User not found");
@@ -167,13 +167,7 @@ class CartService {
         if (!foundCart) {
             throw new NOT_FOUND_ERROR("Product not found in cart");
         }
-        if (quantity > foundCart.quantity) throw new BAD_REQUEST_ERROR("Quantity is more than available quantity");
-        if (quantity === foundCart.quantity) {
-            await cartModel.findByIdAndDelete(foundCart._id);
-        } else {
-            const newQuantity = foundCart.quantity - quantity;
-            await cartModel.findByIdAndUpdate(foundCart._id, { quantity: newQuantity });
-        }
+        await cartModel.findByIdAndDelete(foundCart._id);
         return await this.getCart({ userId });
     }
 
