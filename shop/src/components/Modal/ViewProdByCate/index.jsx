@@ -58,7 +58,6 @@ export default function ViewProdByCateModal({category, setCategory}) {
     };
 
     const getProducts = async () => {
-        onOpen();
         setLoading(true);
         await axios
             .post(
@@ -212,6 +211,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
 
     React.useEffect(() => {
         if(!category.id) return;
+        onOpen();
         getProducts();
     }, [category]);
 

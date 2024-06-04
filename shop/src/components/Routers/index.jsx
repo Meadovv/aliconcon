@@ -56,7 +56,7 @@ const routers = [
         path: '/vouchers',
         children: <Vouchers />,
         layout: true,
-        middleware: 'private'
+        middleware: 'public'
     },
     {
         path: '/users',

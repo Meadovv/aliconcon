@@ -1,6 +1,6 @@
 import { 
     useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
-    ModalFooter, ModalCloseButton, Button, Spinner, Input,  Stack
+    ModalFooter, ModalCloseButton, Button, Spinner, Input,  Stack, FormControl, FormLabel
 } from '@chakra-ui/react';
 import React from 'react';
 import axios from 'axios';
@@ -15,6 +15,11 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
     const [voucher, setVoucher] = React.useState(null);
     const [items, setItems] = React.useState([]);
 
+    {/* View Items detail */}
+    const viewItem = () => {
+        setItems(voucher.items)
+    };
+
     const getVoucher = async () => {
         onOpen();
         setLoading(true);
@@ -27,7 +32,6 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
             }
         }).then(res => {
             setVoucher(res.data.metadata);
-            setItems(voucher.items)
         }).catch(err => {
             console.log(err)
             message.error(err.response.data.message);
@@ -96,7 +100,11 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
                 
                 <ModalBody>
                     {voucher ? <Stack spacing={3}>
+                        {/* View Items modal */}
+                        <Button onClick={viewItem}>View items</Button>
                         <ViewItemByVouModal data={items} setData={setItems} />
+
+                        {/* Form */}
                         <FormControl>
                             <FormLabel>Name</FormLabel>
                             <Input 
