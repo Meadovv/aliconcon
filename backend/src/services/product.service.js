@@ -104,7 +104,7 @@ class ProductService {
 
         const allVouchers = [...productVouchers, ...groupVouchers];
         if (allVouchers.length) {
-            const maxDiscount = 0;
+            let maxDiscount = 0;
             allVouchers.forEach(voucher => {
                 if(!voucher) return;
                 maxDiscount = Math.max(maxDiscount, voucher.discount);

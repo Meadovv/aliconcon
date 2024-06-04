@@ -53,7 +53,7 @@ const productSchema = new Schema({
         required: true,
     },
     thumbnail: {
-        type: String,
+        type: Schema.Types.ObjectId,
         ref: 'aliconcon_images',
         required: true,
     },
