@@ -9,6 +9,7 @@ const router = express.Router();
 
 // Public
 
+router.get('/get-shop', ErrorMiddleware.asyncHandler(ShopController.getShop));
 router.post('/register', ErrorMiddleware.asyncHandler(ShopController.register));
 router.post('/login', ErrorMiddleware.asyncHandler(ShopController.login));
 router.get('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCategories));

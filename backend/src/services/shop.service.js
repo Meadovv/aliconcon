@@ -8,9 +8,19 @@ const Utils = require('../utils');
 const ROLES = require('../constants/ROLES');
 
 const KeyTokenService = require('./keyToken.service');
-const categoryModel = require('../models/category.model');
 
 class ShopService {
+
+    static getShop = async ({ shopId }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!');
+        }
+        return Utils.OtherUtils.getInfoData({
+            fields: ['_id', 'name', 'email', 'phone', 'address'],
+            object: foundShop
+        });
+    }
 
     static metadata = async ({ shopId, userId }) => {
         const foundShop = await shopModel.findById(shopId).lean();

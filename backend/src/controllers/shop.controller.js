@@ -13,6 +13,18 @@ const CartService = require('../services/cart.service');
 
 class ShopController {
 
+    static getShop = async (req, res) => {
+        return new SUCCESS({
+            message: 'Shop successfully!',
+            metadata: await ShopService.getShop({
+                ...getFields({
+                    fields: ['shopId'],
+                    object: req.query
+                })
+            })
+        }).send(res);
+    }
+
     static metadata = async (req, res) => {
         return new SUCCESS({
             message: 'Metadata successfully!',
