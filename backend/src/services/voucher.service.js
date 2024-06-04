@@ -145,6 +145,10 @@ class VoucherService {
             .lean();
         return vouchers;
     }
+    
+    static removeFromVoucher = async ({ shopId, userId, voucherId, itemId, itemType }) => {
+        
+    }
 }
 
 module.exports = VoucherService;

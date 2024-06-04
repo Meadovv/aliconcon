@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 
 import { setUser } from '../../reducer/actions/user.slice';
+import { clearCart } from '../../reducer/actions/cart.slice';
 
 import axios from 'axios';
 import api from '../../apis';
@@ -27,6 +28,7 @@ export default function Logout() {
             .then((response) => {
                 message.success(response.data.message);
                 dispatch(setUser(null));
+                dispatch(clearCart());
                 localStorage.clear();
                 navigate('/');
             })

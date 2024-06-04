@@ -8,7 +8,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     {routers.map((router, index) => {
-                        return <Route key={index} path={router.path} element={<Layout {...router}/>} />;
+                        return <Route key={index} path={router.path} element={<Layout {...router}/>} />
                     })}
                 </Routes>
             </BrowserRouter>

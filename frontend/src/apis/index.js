@@ -18,6 +18,11 @@ const api = {
     GET_PRODUCT: ({ id, user }) => {
         return BACKEND_API + 'shop/get-product?id=' + id + '&user=' + user;
     },
+    REMOVE_FROM_CART: BACKEND_API + 'shop/remove-from-cart',
+    CLEAR_CART: BACKEND_API + 'shop/clear-cart',
+    TOGGLE_CART: BACKEND_API + 'shop/toggle-cart',
+    GET_CART: BACKEND_API + 'shop/get-cart',
+    ADD_TO_CART: BACKEND_API + 'shop/add-to-cart',
     GET_VARIANT: BACKEND_API + 'shop/get-variation',
     LOGIN: BACKEND_API + 'user/login',
     METADATA: BACKEND_API + 'user/metadata',

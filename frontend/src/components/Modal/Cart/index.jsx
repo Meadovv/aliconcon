@@ -13,14 +13,14 @@ const CartModal = ({ carts }) => {
                     {carts.map((item, index) => {
 
                         const product = item.product
-                        const variant = item.variant
+                        const variation = item.variation
 
-                        const newPrice = variant?.price - (variant?.price * product?.sale) / 100;
+                        const newPrice = variation?.price - (variation?.price * product?.sale) / 100;
                         return (
                             <div className="cart-modal-item grid align-center font-manrope py-2" key={index}>
                                 <div className="cart-modal-item-img">
                                     <img src={IMAGE_HOST.THUMBNAIL(
-                                        variant?.thumbnail ? variant?.thumbnail.name : product?.thumbnail.name
+                                        variation?.thumbnail ? variation?.thumbnail.name : product?.thumbnail.name
                                     )} alt="" className="img-cover" />
                                 </div>
                                 <div>
@@ -32,7 +32,13 @@ const CartModal = ({ carts }) => {
                                     <div className="cart-modal-item-title fs-13 font-manrope text-capitalize" style={{
                                         color: '#9b9b9b'
                                     }}>
-                                        {variant?.name}
+                                        {variation?.name}
+                                    </div>
+                                    <div className="cart-modal-item-price text-gray fs-14 fw-6" style={{
+                                        display: product?.sale ? 'block' : 'none',
+                                        textDecoration: 'line-through',
+                                    }}>
+                                        {formatPrice(variation?.price)}
                                     </div>
                                     <div className="cart-modal-item-price text-orange fs-14 fw-6">
                                         {formatPrice(newPrice)}

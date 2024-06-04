@@ -21,10 +21,9 @@ const Navbar = () => {
     <nav className='navbar'>
       <div className='navbar-cnt flex align-center'>
         <div className='brand-and-toggler flex align-center'>
-          {/* <button type = "button" className='sidebar-show-btn text-white'>
-            <i className='fas fa-bars'></i>
-          </button> */}
-          <div className='navbar-brand flex align-center' onClick={() => navigate('/')}>
+          <div className='navbar-brand flex align-center' onClick={() => navigate('/')} style={{
+            cursor: 'pointer'
+          }}>
             <span className='navbar-brand-ico'>
               <i className='fa-solid fa-bag-shopping'></i>
             </span>
@@ -43,24 +42,13 @@ const Navbar = () => {
                 </div>
             </div>
           </div>
-
-          {/* <ul className='navbar-nav flex align-center fs-12 fw-4 font-manrope'>
-            {
-              // taking only first 8 categories
-              categories.slice(0, 8).map((category, idx) => (
-                <li className='nav-item no-wrap' key = {idx}>
-                  <Link to = {`category/${category}`} className='nav-link text-capitalize'>{category.replace("-", " ")}</Link>
-                </li>
-              ))
-            }
-          </ul> */}
         </div>
 
         <div className='navbar-cart flex align-center'>
           <div className='cart-btn' onClick={() => navigate('/cart')}>
             <i className='fa-solid fa-cart-shopping'></i>
             <div className='cart-items-value' style={{
-              display: cart.itemCount ? 'block' : 'none'
+              display: cart.itemCount ? 'flex' : 'none'
             }}>{cart.itemCount}</div>
             <CartModal carts = {cart.carts} />
           </div>

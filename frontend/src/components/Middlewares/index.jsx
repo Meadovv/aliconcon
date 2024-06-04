@@ -4,11 +4,14 @@ import { Navigate } from 'react-router-dom';
 
 import axios from 'axios';
 import api from '../../apis';
-import { message } from 'antd';
 
 import { setUser } from '../../reducer/actions/user.slice';
 
-export default function Middlewares({ middleware }) {
+import { restoreCart } from '../../reducer/actions/cart.slice';
+
+import { message } from 'antd';
+
+export default function Middlewares({ middleware, component }) {
 
     const user = useSelector(state => state.user)
     const dispatch = useDispatch();
@@ -35,10 +38,34 @@ export default function Middlewares({ middleware }) {
         }
     }
 
+    const getCart = async () => {
+        if(localStorage.getItem('token') && localStorage.getItem('client')) {
+            await axios.post(api.GET_CART, {}, {
+                headers: {
+                    'x-token-id': localStorage.getItem('token'),
+                    'x-client-id': localStorage.getItem('client')
+                }
+            })
+            .then(res => {
+                dispatch(restoreCart({ carts: res.data.metadata }));
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        } else {
+            const cartJSON = localStorage.getItem('carts');
+            if(cartJSON) dispatch(restoreCart({ carts: JSON.parse(cartJSON) }));
+        }
+    }
+
     React.useEffect(() => {
         getUser();
     }, [user, getUser])
 
-    if(middleware) return localStorage.getItem('token') && localStorage.getItem('client') ? null : <Navigate to='/login' />
-    else return null;
+    React.useEffect(() => {
+        getCart();
+    }, [])
+
+    if(middleware) return localStorage.getItem('token') && localStorage.getItem('client') ? component : <Navigate to='/' />
+    else return component;
 }
