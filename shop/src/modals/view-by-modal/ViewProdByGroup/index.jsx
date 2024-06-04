@@ -7,9 +7,9 @@ import { useSelector,  } from 'react-redux';
 import { Table, Space, Select, message, Input } from 'antd';
 
 import axios from 'axios';
-import api from '../../apis';
-import ViewProductModal from '../ViewProduct';
-import AddProductToGroupModal from '../AddProdToGroup';
+import api from '../../../apis';
+import ViewProductModal from '../../view-detail-modal/ViewProduct';
+import AddProductToGroupModal from '../../search-add-modal/AddProdToGroup';
 
 
 export default function ViewProdByGroupModal({group, setGroup}) {

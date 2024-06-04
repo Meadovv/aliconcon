@@ -3,10 +3,11 @@ import React from 'react';
 
 import { Table, Space, Select, message, Tag } from 'antd';
 
-import AddUserModal from '../../components/Modal/AddUser';
-import ViewUserModal from '../../components/Modal/ViewUser';
 import axios from 'axios';
 import api from '../../apis';
+
+import AddUserModal from '../../modals/add-modal/AddUser';
+import ViewUserModal from '../../modals/view-detail-modal/ViewUser';
 
 const ROLES = ['Owner', 'Admin', 'Moderator', 'Editor'];
 

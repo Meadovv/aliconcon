@@ -9,9 +9,9 @@ import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
 import axios from 'axios';
 import api from '../../apis';
 
-import ViewGroupModal from '../../components/Modal/ViewGroup';
-import ViewProdByGroupModal from '../../components/Modal/ViewProdByGroup';
-import AddGroupModal from '../../components/Modal/AddGroup';
+import ViewGroup from '../../modals/view-detail-modal/ViewGroup'
+import ViewProdByGroupModal from '../../modals/view-by-modal/ViewProdByGroup';
+import AddGroupModal from '../../modals/add-modal/AddGroup';
 
 export default function Groups() {
 
@@ -174,7 +174,7 @@ export default function Groups() {
         <Flex direction="column" gap={35}>
 
             {/* View detail modal */}
-            <ViewGroupModal id={viewGroupId} setId={setViewGroupId} setGroups={setGroups} />
+            <ViewGroup id={viewGroupId} setId={setViewGroupId} setGroups={setGroups} />
             <ViewProdByGroupModal group={{viewProdByGroup}} setGroup={setViewProdByGroup} />
 
             {/* Add, Import, Export buttons */}

@@ -5,8 +5,8 @@ import { Table, Space, Select, message, Input, Popconfirm } from 'antd';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import api from '../../apis';
-import AddVoucherModal from '../../components/Modal/AddVoucher';
-import ViewVoucherModal from '../../components/Modal/ViewVoucher';  
+import AddVoucherModal from '../../modals/add-modal/AddVoucher';
+import ViewVoucherModal from '../../modals/view-detail-modal/ViewVoucher';  
 
 export default function Vouchers() {
     const user = useSelector((state) => state.auth.user);

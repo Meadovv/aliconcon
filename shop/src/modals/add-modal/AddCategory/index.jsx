@@ -7,10 +7,10 @@ import { AddIcon } from '@chakra-ui/icons';
 import React from 'react';
 
 import axios from 'axios';
-import api from '../../apis';
+import api from '../../../apis';
 import { message } from 'antd';
 
-export default function AddGroupModal({ setGroups }) {
+export default function AddCategoryModal({ setCategories }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [form, setForm] = React.useState({
@@ -20,14 +20,14 @@ export default function AddGroupModal({ setGroups }) {
 
     const onAdd = async () => {
         setLoading(true);
-        await axios.post(api.CREATE_GROUP, form, {
+        await axios.post(api.CREATE_CATEGORY, form, {
             headers: {
                 'x-client-id': localStorage.getItem('client'),
                 'x-token-id': localStorage.getItem('token')
             }
         }).then(res => {
             message.success(res.data.message);
-            setGroups(res.data.metadata);
+            setCategories(res.data.metadata);
             onClose();
         }).catch(err => {
             console.log(err)
@@ -48,18 +48,18 @@ export default function AddGroupModal({ setGroups }) {
                 leftIcon={<AddIcon />}
                 onClick={onOpen}
             >
-                Add new Group
+                Add new Category
             </Button>
             {/*On when isOpen on*/}
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Add Group</ModalHeader>
+                    <ModalHeader>Add Category</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <FormControl>
                             <FormLabel>Name</FormLabel>
-                            <Input type="text" placeholder="Group Name" onChange={(e) => setForm({...form, name: e.target.value})}/>
+                            <Input type="text" placeholder="Category Name" onChange={(e) => setForm({...form, name: e.target.value})}/>
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>

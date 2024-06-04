@@ -6,24 +6,24 @@ import {
 import React from 'react';
 import axios from 'axios';
 
-import api from '../../apis';
+import api from '../../../apis';
 import { message } from 'antd';
 
-export default function ViewGroup({ id, setId, setGroups }) {
+export default function ViewCategory({ id, setId, setCategories }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
-    const [group, setGroup] = React.useState(null);
+    const [category, setCategory] = React.useState(null);
 
-    const getGroup = async () => {
+    const getCategory = async () => {
         onOpen();
         setLoading(true);
-        await axios.post(api.GET_GROUP, { groupId: id }, {
+        await axios.post(api.GET_CATEGORY, { categoryId: id }, {
             headers: {
                 'x-client-id': localStorage.getItem('client'),
                 'x-token-id': localStorage.getItem('token')
             }
         }).then(res => {
-            setGroup(res.data.metadata);
+            setCategory(res.data.metadata);
         }).catch(err => {
             console.log(err)
             message.error(err.response.data.message);
@@ -33,16 +33,16 @@ export default function ViewGroup({ id, setId, setGroups }) {
 
     const onSave = async () => {
         setLoading(true);
-        await axios.post(api.UPDATE_GROUP
-            , {groupId: id, name: group.name}
-            , {
-                headers: {
-                    'x-client-id': localStorage.getItem('client'),
-                    'x-token-id': localStorage.getItem('token')
-                }
+        await axios.post(api.UPDATE_CATEGORY, {
+            category: category
+        }, {
+            headers: {
+                'x-client-id': localStorage.getItem('client'),
+                'x-token-id': localStorage.getItem('token')
+            }
         }).then(res => {
             message.success(res.data.message);
-            setGroups(res.data.metadata);
+            setCategories(res.data.metadata);
             onCloseModal();
         }).catch(err => {
             console.log(err)
@@ -53,17 +53,14 @@ export default function ViewGroup({ id, setId, setGroups }) {
 
     const onDelete = async () => {
         setLoading(true);
-        await axios.post( api.DELETE_GROUP
-            , { groupId: id }
-            , {
-                headers: {
+        await axios.post(api.DELETE_CATEGORY, { categoryId: id }, {
+            headers: {
                 'x-client-id': localStorage.getItem('client'),
                 'x-token-id': localStorage.getItem('token')
-                }
             }
-        ).then(res => {
+        }).then(res => {
             message.success(res.data.message);
-            setGroups(res.data.metadata);
+            setCategories(res.data.metadata);
         }).catch(err => {
             console.log(err)
             message.error(err.response.data.message);
@@ -74,28 +71,29 @@ export default function ViewGroup({ id, setId, setGroups }) {
 
     const onCloseModal = async () => {
         setId(null);
-        setGroup(null);
+        setCategory(null);
         onClose();  
     }
 
     React.useEffect(() => {
         if (!id) return;
-        getGroup();
+        getCategory();
     }, [id]);
 
     return (
         <Modal isOpen={isOpen} onClose={onCloseModal}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>View Group</ModalHeader>
+                <ModalHeader>View Category</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    {group ? 
+                    {category ? 
                     <Stack>
                         <label>Name</label>
                         <Input
-                            value={group.name} 
-                            onChange={(e) => {setGroup({...group, name: e.target.value})}}
+                            disabled={category && category.status === 'published'} 
+                            value={category.name} 
+                            onChange={(e) => {setCategory({...category, name: e.target.value})}}
                         />
                     </Stack>: <Spinner />}
                 </ModalBody>
@@ -113,6 +111,7 @@ export default function ViewGroup({ id, setId, setGroups }) {
                         mr={3}
                         onClick={onDelete}
                         isLoading={loading}
+                        isDisabled={category && category.status === 'published'}
                     >
                         Delete
                     </Button>
@@ -122,6 +121,7 @@ export default function ViewGroup({ id, setId, setGroups }) {
                         type="submit"
                         isLoading={loading}
                         loadingText="Saving..."
+                        isDisabled={category && category.status === 'published'}
                     >
                         Save
                     </Button>

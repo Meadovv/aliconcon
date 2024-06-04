@@ -18,10 +18,8 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import api from '../../apis';
-import {
-    message
-} from 'antd';
+import api from '../../../apis';
+import { message } from 'antd';
 
 const ROLES = [
     'Owner',

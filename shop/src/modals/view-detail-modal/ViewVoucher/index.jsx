@@ -5,9 +5,9 @@ import {
 import React from 'react';
 import axios from 'axios';
 
-import api from '../../apis';
+import api from '../../../apis';
 import { message } from 'antd';
-import ViewItemByVouModal from '../ViewItemByVoucher';
+import ViewItemByVouModal from '../../view-by-modal/ViewItemByVoucher';
 
 export default function ViewVoucher({ id, setId, setVouchers }) {
     const { isOpen, onOpen, onClose } = useDisclosure();

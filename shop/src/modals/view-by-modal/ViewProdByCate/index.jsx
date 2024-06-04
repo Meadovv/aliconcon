@@ -7,8 +7,8 @@ import { useSelector,  } from 'react-redux';
 import { Table, Space, Select, message, Input } from 'antd';
 
 import axios from 'axios';
-import api from '../../apis';
-import ViewProductModal from '../ViewProduct';
+import api from '../../../apis';
+import ViewProductModal from '../../ViewProduct';
 
 
 export default function ViewProdByCateModal({category, setCategory}) {

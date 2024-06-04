@@ -6,12 +6,11 @@ import { useSelector } from 'react-redux';
 
 import { Table, Space, Select, message, Input } from 'antd';
 
-import AddProductModal from '../../components/Modal/AddProduct';
-
 import axios from 'axios';
 import api from '../../apis';
 
-import ViewProductModal from '../../components/Modal/ViewProduct';
+import AddProductModal from '../../modals/add-modal/AddProduct';
+import ViewProductModal from '../../modals/view-detail-modal/ViewProduct';
 
 export default function Products() {
     

@@ -4,11 +4,12 @@ import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
-import AddCategoryModal from '../../components/Modal/AddCategory';
+
 import axios from 'axios';
 import api from '../../apis';
-import ViewCategoryModal from '../../components/Modal/ViewCategory';
-import ViewProdByCateModal from '../../components/Modal/ViewProdByCate';
+import ViewCategoryModal from '../../modals/view-detail-modal/ViewCategory'
+import ViewProdByCateModal from '../../modals/view-by-modal/ViewProdByCate';
+import AddCategoryModal from '../../modals/add-modal/AddCategory';
 
 export default function Categories() {
 

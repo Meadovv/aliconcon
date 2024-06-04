@@ -11,8 +11,8 @@ import {
 } from '@chakra-ui/react';
 import { ArrowUpIcon, ArrowDownIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
-import AddProductModal from '../../components/Modal/AddProduct';
-import ViewProduct from '../../components/Modal/ViewProduct';
+import AddProductModal from '../../modals/add-modal/AddProduct';
+import ViewProduct from '../../modals/view-detail-modal/ViewProduct';
 
 export default function SearchProduct() {
     const user = useSelector((state) => state.auth.user);
