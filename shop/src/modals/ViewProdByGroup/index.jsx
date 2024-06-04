@@ -7,11 +7,12 @@ import { useSelector,  } from 'react-redux';
 import { Table, Space, Select, message, Input } from 'antd';
 
 import axios from 'axios';
-import api from '../../../apis';
+import api from '../../apis';
 import ViewProductModal from '../ViewProduct';
+import AddProductToGroupModal from '../AddProdToGroup';
 
 
-export default function ViewProdByCateModal({category, setCategory}) {
+export default function ViewProdByGroupModal({group, setGroup}) {
     
     const user = useSelector((state) => state.auth.user);
 
@@ -32,7 +33,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
         name: null,
         email: null,
     });
-
+    
     {/* Data functions*/}
     const createDataList = () => {
         const dataList = [];
@@ -58,12 +59,13 @@ export default function ViewProdByCateModal({category, setCategory}) {
     };
 
     const getProducts = async () => {
+        onOpen();
         setLoading(true);
         await axios
             .post(
-                api.GET_PRODUCTS,
-                {},
-                {
+                api.VIEW_GROUP
+                , {groupId: group.id}
+                , {
                     headers: {
                         'x-client-id': localStorage.getItem('client'),
                         'x-token-id': localStorage.getItem('token'),
@@ -72,10 +74,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
             )
             .then((res) => {
                 message.success(res.data.message);
-                setProducts(
-                    (res.data.metadata).filter(
-                        (product) => (product.category.includes(category.name)))
-                );
+                setProducts(res.data.metadata);
             })
             .catch((err) => {
                 console.log(err);
@@ -110,9 +109,29 @@ export default function ViewProdByCateModal({category, setCategory}) {
         setLoading(false);
     };
 
-    {/* View Product detail */}
-    const viewProduct = (id) => {
-        setViewProductId(id);
+    {/* Remove from group */}
+    const removeProdFromGroup = async (productId) => {
+        setLoading(true);
+        await axios
+            .post(
+                api.REMOVE_PRODUCT_FROM_GROUP,
+                {groupId: group.id, productId: productId},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setProducts(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
     };
 
     {/* Pagination control functions */}
@@ -125,6 +144,11 @@ export default function ViewProdByCateModal({category, setCategory}) {
         if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
             setCurrentPage(currentPage + 1);
         }
+    };
+
+    {/* View Product detail */}
+    const viewProduct = (id) => {
+        setViewProductId(id);
     };
 
     {/* Columns structure */}
@@ -185,15 +209,25 @@ export default function ViewProdByCateModal({category, setCategory}) {
                         onConfirm={() => switchStatus(record._id)}
                         okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
                         cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
+                        okButtonProps={{size: 'large',}}
+                        cancelButtonProps={{size: 'large',}}
                     >
                         <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        </Button>
+                    </Popconfirm>
+
+                    {/* Remove from group options */}
+                    <Popconfirm
+                        title={'Are you sure you want to remove this product from the group ?'}
+                        onConfirm={() => removeProdFromGroup(record._id)}
+                        okText={'Remove'}
+                        cancelText="No"
+                        okButtonProps={{size: 'large',}}
+                        cancelButtonProps={{size: 'large',}}
+                    >
+                        <Button colorScheme={'red'}>
+                            {'Remove from the group'}
                         </Button>
                     </Popconfirm>
                 </Space>
@@ -202,18 +236,17 @@ export default function ViewProdByCateModal({category, setCategory}) {
     }
 
     const onCloseModal = async () => {
-        setCategory({
+        setGroup({
             name : null,
-            id : false,
+            id : null,
         });
         onClose();
     }
 
     React.useEffect(() => {
-        if(!category.id) return;
-        onOpen();
+        if(!group.id) return;
         getProducts();
-    }, [category]);
+    }, [group]);
 
     React.useEffect(() => {
         createDataList();
@@ -223,13 +256,19 @@ export default function ViewProdByCateModal({category, setCategory}) {
         <Modal isOpen={isOpen} onClose={onCloseModal}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Products of Category: {category.name}</ModalHeader>
+                <ModalHeader>Products of Group: {group.name}</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                     <Flex direction="column" gap={35}>
                         {/* View detail modal */}
                         <ViewProductModal id={viewProductId} setId={setViewProductId} setProducts={setProducts} />
                         {/* The actual table */}
+
+                        {/* Add product to this group buttons */}
+                        <HStack justify="flex-end" display={user && user.role < 4 ? 'flex' : 'none'}>
+                            <AddProductToGroupModal groupId={group.id} />
+                        </HStack>
+
                         <Table
                             loading={loading}
                             columns={columns}

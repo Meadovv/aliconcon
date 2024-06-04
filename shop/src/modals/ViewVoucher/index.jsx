@@ -5,7 +5,7 @@ import {
 import React from 'react';
 import axios from 'axios';
 
-import api from '../../../apis';
+import api from '../../apis';
 import { message } from 'antd';
 import ViewItemByVouModal from '../ViewItemByVoucher';
 

@@ -10,7 +10,7 @@ import { useSelector, } from 'react-redux';
 import { Table, Space, Select, message, Input } from 'antd';
 
 import axios from 'axios';
-import api from '../../../apis';
+import api from '../../apis';
 
 export default function ViewItemByVouModal({voucherId, data, setData}) {
     

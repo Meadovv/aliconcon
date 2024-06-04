@@ -15,7 +15,7 @@ import React from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-import api from '../../../apis';
+import api from '../../apis';
 import { message, Select, Divider, Popconfirm } from 'antd';
 
 const ROLES = [
