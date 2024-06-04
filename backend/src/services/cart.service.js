@@ -4,8 +4,6 @@ const variationModel = require("../models/variation.model");
 const cartModel = require("../models/cart.model");
 const voucherModel = require("../models/voucher.model");
 
-const Utils = require("../utils");
-
 const {
     BAD_REQUEST_ERROR, NOT_FOUND_ERROR
 } = require('../core/error.response');
@@ -90,6 +88,33 @@ class CartService {
         return cartItems;
     }
 
+    static toggleCart = async ({ userId, productId, variationId, type }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR("User not found");
+        }
+        const foundProduct = await productModel.findById(productId).lean();
+        if (!foundProduct) {
+            throw new NOT_FOUND_ERROR("Product not found");
+        }
+        const foundVariation = await variationModel.findById(variationId).lean();
+        if (!foundVariation) {
+            throw new NOT_FOUND_ERROR("Variation not found");
+        }
+        const foundCart = await cartModel.findOne({ product: productId, variation: variationId, user: userId }).lean();
+        if (!foundCart) {
+            throw new NOT_FOUND_ERROR("Product not found in cart");
+        }
+        if (type) {
+            if (foundCart.quantity > foundVariation.quantity) throw new BAD_REQUEST_ERROR("Quantity is more than available quantity");
+            await cartModel.findByIdAndUpdate(foundCart._id, { quantity: foundCart.quantity + 1 });
+        } else {
+            if (foundCart.quantity < 1) throw new BAD_REQUEST_ERROR("Quantity must be greater than 0");
+            await cartModel.findByIdAndUpdate(foundCart._id, { quantity: foundCart.quantity - 1 });
+        }
+        return await this.getCart({ userId });
+    }
+
     static addToCart = async ({ userId, productId, variationId, quantity }) => {
         if (quantity <= 0) throw new BAD_REQUEST_ERROR("Quantity must be greater than 0");
         const foundUser = await userModel.findById(userId).lean();
@@ -153,6 +178,11 @@ class CartService {
     }
 
     static clearCart = async ({ userId }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR("User not found");
+        }
+        await cartModel.deleteMany({ user: userId });
         return await this.getCart({ userId });
     }
 }

@@ -518,6 +518,19 @@ class ShopController {
             })
         }).send(res);
     }
+
+    static toggleCart = async (req, res) => {
+        new SUCCESS({
+            message: 'Toggle cart successfully',
+            metadata: await CartService.toggleCart({
+                ...getFields({
+                    fields: ['productId', 'variationId', 'type'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
 }
 
 module.exports = ShopController;

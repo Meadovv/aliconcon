@@ -60,5 +60,6 @@ router.post('/add-to-cart', ErrorMiddleware.asyncHandler(ShopController.addToCar
 router.post('/get-cart', ErrorMiddleware.asyncHandler(ShopController.getCart));
 router.post('/remove-from-cart', ErrorMiddleware.asyncHandler(ShopController.removeFromCart));
 router.post('/clear-cart', ErrorMiddleware.asyncHandler(ShopController.clearCart));
+router.post('/toggle-cart', ErrorMiddleware.asyncHandler(ShopController.toggleCart));
 
 module.exports = router;
