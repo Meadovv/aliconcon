@@ -4,7 +4,6 @@ import { Navigate } from 'react-router-dom';
 
 import axios from 'axios';
 import api from '../../apis';
-import { message } from 'antd';
 
 import { setUser } from '../../reducer/actions/user.slice';
 
@@ -35,8 +34,13 @@ export default function Middlewares({ middleware }) {
         }
     }
 
+    const getCart = async () => {
+
+    }
+
     React.useEffect(() => {
         getUser();
+        getCart();
     }, [user, getUser])
 
     if(middleware) return localStorage.getItem('token') && localStorage.getItem('client') ? null : <Navigate to='/login' />

@@ -99,13 +99,17 @@ class ProductService {
                 .sort({ discount: -1 })
                 .limit(1)
                 .lean();
-
-            return voucher[0];
+            return voucher.length > 0 ? voucher[0] : null;
         }));
 
         const allVouchers = [...productVouchers, ...groupVouchers];
         if (allVouchers.length) {
-            product.sale = allVouchers.reduce((max, voucher) => voucher.discount > max.discount ? voucher : max, allVouchers[0]).discount;
+            const maxDiscount = 0;
+            allVouchers.forEach(voucher => {
+                if(!voucher) return;
+                maxDiscount = Math.max(maxDiscount, voucher.discount);
+            })
+            product.sale = maxDiscount;
         }
 
         product.isLike = product.likes.map(id => id.toString()).includes(user);
