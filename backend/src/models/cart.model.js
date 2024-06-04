@@ -11,7 +11,12 @@ const schema = new Schema({
         ref: 'aliconcon_users',
         required: true
     },
-    variant: {
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'aliconcon_products',
+        required: true
+    },
+    variation: {
         type: Schema.Types.ObjectId,
         ref: 'aliconcon_product_variations',
         required: true
