@@ -56,4 +56,9 @@ router.post('/get-voucher', ErrorMiddleware.asyncHandler(ShopController.getVouch
 router.post('/get-vouchers', ErrorMiddleware.asyncHandler(ShopController.getVouchers));
 router.post('/add-to-voucher', ErrorMiddleware.asyncHandler(ShopController.addToVoucher));
 
+router.post('/add-to-cart', ErrorMiddleware.asyncHandler(ShopController.addToCart));
+router.post('/get-cart', ErrorMiddleware.asyncHandler(ShopController.getCart));
+router.post('/remove-from-cart', ErrorMiddleware.asyncHandler(ShopController.removeFromCart));
+router.post('/clear-cart', ErrorMiddleware.asyncHandler(ShopController.clearCart));
+
 module.exports = router;

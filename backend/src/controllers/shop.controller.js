@@ -9,6 +9,7 @@ const CategoryService = require('../services/category.service');
 const VariationService = require('../services/variation.service');
 const GroupService = require('../services/group.service');
 const VoucherService = require('../services/voucher.service');
+const CartService = require('../services/cart.service');
 
 class ShopController {
 
@@ -469,6 +470,50 @@ class ShopController {
                     fields: ['voucherId', 'itemId', 'itemType'],
                     object: req.body
                 }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static addToCart = async (req, res) => {
+        new SUCCESS({
+            message: 'Add to cart successfully',
+            metadata: await CartService.addToCart({
+                ...getFields({
+                    fields: ['productId', 'variationId', 'quantity'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static getCart = async (req, res) => {
+        new SUCCESS({
+            message: 'Get cart successfully',
+            metadata: await CartService.getCart({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static removeFromCart = async (req, res) => {
+        new SUCCESS({
+            message: 'Remove from cart successfully',
+            metadata: await CartService.removeFromCart({
+                ...getFields({
+                    fields: ['productId', 'variationId', 'quantity'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static clearCart = async (req, res) => {
+        new SUCCESS({
+            message: 'Clear cart successfully',
+            metadata: await CartService.clearCart({
                 ...req.jwt_decode
             })
         }).send(res);
