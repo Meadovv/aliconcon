@@ -14,9 +14,15 @@ const ShopOwnerDashboard = () => {
         labels: Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`),
         datasets: [
             {
-                label: 'Orders',
+                label: 'Orders   ',
                 data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
                 borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            },
+            {
+                label: 'Income   ', 
+                data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 100)),
+                borderColor: 'rgba(192, 100, 1, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
             }
         ]
