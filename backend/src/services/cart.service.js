@@ -185,7 +185,7 @@ class CartService {
         let totalCash = 0;
         // kiểm tra các sản phẩm trong giỏ hàng
 
-        if(information.userId) {
+        if (information.userId) {
             const foundUser = await userModel.findById(information.userId).lean();
             if (!foundUser) {
                 throw new NOT_FOUND_ERROR("User not found");
@@ -225,10 +225,10 @@ class CartService {
                 .sort({ discount: -1 })
                 .limit(1)
                 .lean();
-            
+
             const groupVouchers = await Promise.all(foundProduct.groups.map(async group => {
                 const groupId = group.group._id.toString();
-    
+
                 const voucher = await voucherModel.find({
                     items: {
                         $elemMatch: {
@@ -250,7 +250,7 @@ class CartService {
             if (allVouchers.length) {
                 let maxDiscount = 0;
                 allVouchers.forEach(voucher => {
-                    if(!voucher) return;
+                    if (!voucher) return;
                     maxDiscount = Math.max(maxDiscount, voucher.discount);
                 })
                 sale = maxDiscount;
@@ -258,13 +258,19 @@ class CartService {
 
             // tính tổng tiền
             totalCash += (foundVariation.price - (foundVariation.price * sale / 100)) * item.quantity;
-
-            // cập nhật số lượng sản phẩm
-            await variationModel.findByIdAndUpdate(foundVariation._id, { quantity: foundVariation.quantity - item.quantity });
-            
             return item;
         }));
-        
+
+        await Promise.all(carts.map(async (item) => {
+            const foundProduct = await productModel.findById(item.product._id).lean();
+            const foundVariation = await variationModel.findById(item.variation._id).lean();
+            // cập nhật số lượng sản phẩm
+            await variationModel.findByIdAndUpdate(foundVariation._id, { quantity: foundVariation.quantity - item.quantity });
+
+            // xóa sản phẩm khỏi giỏ hàng
+            if (information.userId) await cartModel.findOneAndDelete({ product: foundProduct._id, variation: foundVariation._id, user: information.userId });
+        }));
+
         // tính tổng tiền
         const order = await orderModel.create({
             user: information.userId ? information.userId : null,

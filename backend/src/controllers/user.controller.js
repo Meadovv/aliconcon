@@ -7,7 +7,8 @@ const {
 
 const {
     getFields
-} = require('../utils/other.utils')
+} = require('../utils/other.utils');
+const OrderService = require("../services/order.service");
 
 
 class UserController {
@@ -144,6 +145,31 @@ class UserController {
                     fields: ['information', 'carts', 'method'],
                     object: req.body
                 }),
+            })
+        }).send(res);
+    }
+
+    static getOrder = async (req, res) => {
+        new SUCCESS({
+            message: 'Get order successfully',
+            metadata: await OrderService.getOrder({
+                ...getFields({
+                    fields: ['orderId'],
+                    object: req.query
+                }),
+            })
+        }).send(res);
+    }
+
+    static getOrderByOwner = async (req, res) => {
+        new SUCCESS({
+            message: 'Get order by owner successfully',
+            metadata: await OrderService.getOrderByOwner({
+                ...getFields({
+                    fields: ['orderId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
             })
         }).send(res);
     }

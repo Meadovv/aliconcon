@@ -41,6 +41,11 @@ const schema = new Schema({
         enum: [0, 1],
         required: true
     },
+    paid: {
+        type: Number,
+        enum: [0, 1],
+        default: 0
+    },
 }, {
     timestamps: true,
     collection: COLLECTION_NAME
