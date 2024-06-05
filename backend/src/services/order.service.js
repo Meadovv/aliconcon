@@ -8,7 +8,7 @@ class OrderService {
     static getOrder = async ({ orderId }) => {
         const foundOrder = await orderModel.findById(orderId);
         if (!foundOrder) throw new NOT_FOUND_ERROR('Order not found');
-        if (foundOrder.user.toString()) throw new BAD_REQUEST_ERROR('You are not allowed to access this order');
+        if (foundOrder.user?.toString()) throw new BAD_REQUEST_ERROR('You are not allowed to access this order');
         return foundOrder;
     }
 
