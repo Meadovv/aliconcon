@@ -5,7 +5,7 @@ import {
     Button, Flex, Input, Box, useDisclosure, ModalCloseButton,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import Spinner from '../../Spinner';
+import Spinner from '../../../components/Spinner';
 import api from '../../../apis';
 import { message } from 'antd';
 

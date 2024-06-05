@@ -13,6 +13,7 @@ import { ArrowUpIcon, ArrowDownIcon, SearchIcon, ChevronLeftIcon, ChevronRightIc
 import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
 import AddProductModal from '../../modals/add-modal/AddProduct';
 import ViewProduct from '../../modals/view-detail-modal/ViewProduct';
+import api from '../../apis';
 
 export default function SearchProduct() {
     const user = useSelector((state) => state.auth.user);
