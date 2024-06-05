@@ -1,27 +1,14 @@
 import React from 'react';
 import {
-    IconButton,
-    Avatar,
-    Box,
-    CloseButton,
-    Flex,
-    HStack,
-    VStack,
-    Icon,
-    useColorModeValue,
-    Link,
-    Drawer,
-    DrawerContent,
-    Text,
-    useDisclosure,
-    Menu,
-    MenuButton,
-    MenuDivider,
-    MenuItem,
-    MenuList,
-    Image,
+    IconButton, Avatar, Box, CloseButton, Image,
+    Flex, HStack, VStack,Icon, useColorModeValue,
+    Link, Drawer, DrawerContent, Text, useDisclosure,
+    Menu, MenuButton, MenuDivider, MenuItem, MenuList,
 } from '@chakra-ui/react';
-import { FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, FiChevronDown, FiUser, FiArchive, FiPackage, FiSearch, FiBook } from 'react-icons/fi';
+import { 
+    FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, 
+    FiChevronDown, FiUser, FiArchive, FiPackage, FiSearch, FiBook, FiImage 
+} from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -69,6 +56,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         { name: 'Categories', icon: FiArchive, link: '/categories', disabled: false },
         { name: 'Products', icon: FiPackage, link: '/products', disabled: false },
         { name: 'Groups', icon: FiBook, link: '/groups', disabled: false },
+        { name: 'Images', icon: FiImage, link: '/images', disabled: false },
         { name: 'Vouchers', icon: FiStar, link: '/vouchers', disabled: false },
         { name: 'Users', icon: FiUser, link: '/users', disabled: user?.role > 2 },
         { name: 'Settings', icon: FiSettings, link: '/settings', disabled: user?.role > 1 },
@@ -180,9 +168,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
                             <HStack>
                                 <Avatar
                                     size={'sm'}
-                                    src={
-                                        'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                                    }
+                                    src={'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'}
                                 />
                                 <VStack
                                     display={{ base: 'none', md: 'flex' }}

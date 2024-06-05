@@ -8,6 +8,7 @@ import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
 import SearchProduct from '../../pages/SearchProduct';
 import Group from '../../pages/Groups';
+import Images from '../../pages/Images';
 
 const routers = [
     {
@@ -49,6 +50,12 @@ const routers = [
     {
         path: '/groups',
         children: <Group />,
+        layout: true,
+        middleware: 'public'
+    },
+    {
+        path: '/images',
+        children: <Images />,
         layout: true,
         middleware: 'public'
     },

@@ -43,6 +43,10 @@ const api = {
     UPDATE_VOUCHER: host + 'shop/update-voucher',
     GET_VOUCHERS: host + 'shop/get-vouchers',
     GET_VOUCHER: host + 'shop/get-voucher',
+
+    GET_IMAGES: host + 'image/get',
+    UPLOAD_IMAGE: host + 'image/upload',
+    DELETE_IMAGE: host + 'image/delete',
 }
 
 export default api;
