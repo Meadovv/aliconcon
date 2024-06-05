@@ -15,5 +15,6 @@ router.use(ErrorMiddleware.asyncHandler(AuthenticationMiddleware.authentication)
 router.post('/metadata', ErrorMiddleware.asyncHandler(UserController.metadata));
 router.post('/get-comment', ErrorMiddleware.asyncHandler(UserController.getComments));
 router.post('/leave-comment', ErrorMiddleware.asyncHandler(UserController.leaveComment));
+router.post('/information', ErrorMiddleware.asyncHandler(UserController.getInformation));
 
 module.exports = router;

@@ -93,6 +93,15 @@ class UserService {
             token: token
         }
     }
+
+    static getInformation = async ({ userId }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        foundUser.password = undefined;
+        return foundUser;
+    }
 }
 
 module.exports = UserService;

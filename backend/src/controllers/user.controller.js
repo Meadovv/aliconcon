@@ -69,6 +69,15 @@ class UserController {
             })
         }).send(res);
     }
+
+    static getInformation = async (req, res) => {
+        new SUCCESS({
+            message: 'Get information successfully',
+            metadata: await UserService.getInformation({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
 }
 
 module.exports = UserController;
