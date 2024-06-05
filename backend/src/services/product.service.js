@@ -115,10 +115,24 @@ class ProductService {
             product.sale = maxDiscount;
         }
 
+        const relatedProducts = await productModel.find({
+            category: product.category,
+            _id: { $ne: id }
+        })
+            .select('_id name price thumbnail category shop short_description sell_count')
+            .sort({ sell_count: -1 })
+            .populate('category', '_id name')
+            .populate('thumbnail', '_id name')
+            .populate('shop', '_id name')
+            .limit(5)
+            .lean();
+
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
+        product.relatedProducts = relatedProducts;
+
         return utils.OtherUtils.getInfoData({
-            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count'],
+            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count', 'relatedProducts'],
             object: product
         });
     }
