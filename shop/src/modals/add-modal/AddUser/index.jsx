@@ -82,7 +82,7 @@ export default function AddUserModal({ setUsers }) {
                             <FormLabel>Role</FormLabel>
                             <Select placeholder="Select role" onChange={(e) => setForm({...form, role: e.target.value})}>
                             {Array.from({length: 4 - user?.role}, (_, i) => user?.role + i + 1).map(role => 
-                                <option key={role} value={role}>{ROLES[role - 1]}</option>
+                                <Select.Option key={role} value={role}>{ROLES[role - 1]}</Select.Option>
                             )}
                             </Select>
                         </FormControl>

@@ -35,6 +35,96 @@ export default function Vouchers() {
         setViewVoucherId(id);
     };
 
+    {/* Data functions */}
+    const createDataList = () => {
+        const dataList = [];
+        vouchers
+            .filter(
+                (voucher) =>
+                    (filter.mode === 'all' 
+                        ? true 
+                        : (voucher.status && filter.mode == 'active') || (!voucher.status && filter.mode == 'inactive')
+                    )
+                    (filter.email ? voucher.addBy.email.includes(filter.email) : true) &&
+                    (filter.name ? voucher.name.includes(filter.name) : true) &&
+                    (filter.startDate ? voucher.startDate.includes(filter.startDate) : true)
+                    (filter.endDate ? voucher.endDate.includes(filter.endDate) : true),
+            )
+            .forEach((voucher, index) => {
+                dataList.push({
+                    key: index,
+                    _id: voucher._id,
+                    name: voucher.name,
+                    status: voucher.status,
+                    startDate: voucher.startDate,
+                    endDate: voucher.endDate,
+                    addBy: voucher.addBy.email,
+                });
+            });
+        setDataList(dataList);
+    };
+
+    const getVouchers = async () => {
+        setLoading(true);
+        await axios
+            .post(
+                api.GET_VOUCHERS,  
+                {},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setVouchers(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    const switchStatus = async (id) => {
+        setLoading(true);
+        await axios
+            .post(
+                api.SWITCH_VOUCHER, 
+                {
+                    voucherId: id,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                getVouchers();
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
     {/* Columns structure */}
     const columns = [
         {
@@ -112,96 +202,6 @@ export default function Vouchers() {
         });
     }
 
-    const createDataList = () => {
-        const dataList = [];
-        vouchers
-            .filter(
-                (voucher) =>
-                    (filter.mode === 'all' 
-                        ? true 
-                        : (voucher.status && filter.mode == 'active') || (!voucher.status && filter.mode == 'inactive') 
-                    )
-                    (filter.email ? voucher.addBy.email.includes(filter.email) : true) &&
-                    (filter.name ? voucher.name.includes(filter.name) : true) &&
-                    (filter.startDate ? voucher.startDate.includes(filter.startDate) : true)
-                    (filter.endDate ? voucher.endDate.includes(filter.endDate) : true),
-            )
-            .forEach((voucher, index) => {
-                dataList.push({
-                    key: index,
-                    _id: voucher._id,
-                    name: voucher.name,
-                    status: voucher.status,
-                    startDate: voucher.startDate,
-                    endDate: voucher.endDate,
-                    addBy: voucher.addBy.email,
-                });
-            });
-        setDataList(dataList);
-    };
-
-    const getVouchers = async () => {
-        setLoading(true);
-        await axios
-            .post(
-                api.GET_VOUCHERS,  
-                {},
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                setVouchers(res.data.metadata);
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
-    const switchStatus = async (id) => {
-        setLoading(true);
-        await axios
-            .post(
-                api.SWITCH_VOUCHER, 
-                {
-                    voucherId: id,
-                },
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                getVouchers();
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
     useEffect(() => {
         getVouchers();
     }, []);
@@ -218,7 +218,9 @@ export default function Vouchers() {
 
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
+
                 <AddVoucherModal setVouchers={setVouchers} />
+
                 <Button
                     bg={'blue.400'}
                     color={'white'}
@@ -229,6 +231,7 @@ export default function Vouchers() {
                 >
                     Import
                 </Button>
+
                 <Button
                     bg={'red.400'}
                     color={'white'}

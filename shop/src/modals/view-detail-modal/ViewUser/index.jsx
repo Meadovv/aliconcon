@@ -32,7 +32,7 @@ export default function ViewUser({ id, setId, setUsers }) {
 
     const user = useSelector(state => state.auth.user);
 
-    const [selectedRole, setSelectedRole] = useState(null);
+    const [selectedRole, setSelectedRole] = React.useState(null);
 
     const getUser = async () => {
         onOpen();
@@ -48,12 +48,6 @@ export default function ViewUser({ id, setId, setUsers }) {
             message.error(err.response.data.message);
         });
     };
-
-    React.useEffect(() => {
-        if (!id) return;
-        getUser();
-        setSelectedRole(targetUser.role);
-    }, [id]);
 
     const onSave = async () => {
         setLoading(true);
@@ -80,6 +74,12 @@ export default function ViewUser({ id, setId, setUsers }) {
         setTargetUser(null);
         onClose();  
     }
+
+    React.useEffect(() => {
+        if (!id) return;
+        getUser();
+        setSelectedRole(targetUser.role);
+    }, [id]);
 
     return (
         <Modal isOpen={isOpen} onClose={onCloseModal}>
