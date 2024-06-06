@@ -52,7 +52,6 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
             (product) => (productIdList.includes(product._id))
         )       
         .filter((product) =>
-            (filter.mode === 'all' ? true : product.status === filter.mode) &&
             (filter.email ? product.addBy.email.includes(filter.email) : true) &&
             (filter.name ? product.name.includes(filter.name) : true),
         )
@@ -225,23 +224,6 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
         setLoading(false);
     };
 
-    {/* Pagination control functions */}
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const handleNextProductPage = () => {
-        if (currentPage < Math.ceil(productList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-    const handleNextGroupPage = () => {
-        if (currentPage < Math.ceil(groupList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
     {/* Columns structure */}
     const columns = [
         {
@@ -294,12 +276,12 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
     }
 
     const onCloseModal = async () => {
-        setData(null);
+        setData([]);
         onClose();
     }
 
     React.useEffect(() => {
-        if(!data) return;
+        if(data.length === 0) return;
         onOpen();
         getProducts();
         getGroups();
@@ -395,37 +377,6 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                                         </Flex>
                                     )}
                                 />
-                                {/* Pagination controls */}
-                                <Flex justify="flex-end" alignItems="center" gap={2}>
-                                    <IconButton
-                                        icon={<ChevronLeftIcon />}
-                                        onClick={handlePreviousPage}
-                                        isDisabled={currentPage === 1}
-                                        color={"gray.800"}
-                                        backgroundColor={"cyan.400"}
-                                        _hover={{ backgroundColor: "cyan.600" }}
-                                    />
-                                    <Box
-                                        borderWidth="1px"
-                                        borderRadius="md"
-                                        backgroundColor={"cyan.400"}
-                                        borderColor={"cyan.400"}
-                                        color="gray.800"
-                                        p={2}
-                                        fontSize="xl"
-                                        fontWeight="semibold"
-                                    >
-                                        {`Page ${currentPage} of ${Math.ceil(productList.length / recordPerPage)}`}
-                                    </Box>
-                                    <IconButton
-                                        icon={<ChevronRightIcon />}
-                                        onClick={handleNextProductPage}
-                                        isDisabled={currentPage === Math.ceil(productList.length / recordPerPage)}
-                                        color={"gray.800"}
-                                        backgroundColor={"cyan.400"}
-                                        _hover={{ backgroundColor: "cyan.600" }}
-                                    />
-                                </Flex>
                             </Flex>
                             </TabPanel>
 
@@ -499,37 +450,6 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                                             </Flex>
                                         )}
                                     />
-                                    {/* Pagination controls */}
-                                    <Flex justify="flex-end" alignItems="center" gap={2}>
-                                        <IconButton
-                                            icon={<ChevronLeftIcon />}
-                                            onClick={handlePreviousPage}
-                                            isDisabled={currentPage === 1}
-                                            color={"gray.800"}
-                                            backgroundColor={"cyan.400"}
-                                            _hover={{ backgroundColor: "cyan.600" }}
-                                        />
-                                        <Box
-                                            borderWidth="1px"
-                                            borderRadius="md"
-                                            backgroundColor={"cyan.400"}
-                                            borderColor={"cyan.400"}
-                                            color="gray.800"
-                                            p={2}
-                                            fontSize="xl"
-                                            fontWeight="semibold"
-                                        >
-                                            {`Page ${currentPage} of ${Math.ceil(groupList.length / recordPerPage)}`}
-                                        </Box>
-                                        <IconButton
-                                            icon={<ChevronRightIcon />}
-                                            onClick={handleNextGroupPage}
-                                            isDisabled={currentPage === Math.ceil(groupList.length / recordPerPage)}
-                                            color={"gray.800"}
-                                            backgroundColor={"cyan.400"}
-                                            _hover={{ backgroundColor: "cyan.600" }}
-                                        />
-                                    </Flex>
                                 </Flex>
                             </TabPanel>
                         </TabPanels>

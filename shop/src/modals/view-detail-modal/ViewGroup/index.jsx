@@ -9,27 +9,9 @@ import axios from 'axios';
 import api from '../../../apis';
 import { message } from 'antd';
 
-export default function ViewGroup({ id, setId, setGroups }) {
+export default function ViewGroup({ group, setGroup, setGroups }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
-    const [group, setGroup] = React.useState(null);
-
-    const getGroup = async () => {
-        onOpen();
-        setLoading(true);
-        await axios.post(api.GET_GROUP, { groupId: id }, {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token')
-            }
-        }).then(res => {
-            setGroup(res.data.metadata);
-        }).catch(err => {
-            console.log(err)
-            message.error(err.response.data.message);
-        })
-        setLoading(false);
-    };
 
     const onSave = async () => {
         setLoading(true);
@@ -73,15 +55,17 @@ export default function ViewGroup({ id, setId, setGroups }) {
     }
 
     const onCloseModal = async () => {
-        setId(null);
-        setGroup(null);
+        setGroup({
+            id: null,
+            name: null,
+        });
         onClose();  
     }
 
     React.useEffect(() => {
-        if (!id) return;
-        getGroup();
-    }, [id]);
+        if (!group.id) return;
+        onOpen();
+    }, [group]);
 
     return (
         <Modal isOpen={isOpen} onClose={onCloseModal}>

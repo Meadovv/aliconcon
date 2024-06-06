@@ -7,7 +7,7 @@ import Vouchers from '../../pages/Vouchers';
 import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
 import SearchProduct from '../../pages/SearchProduct';
-import Group from '../../pages/Groups';
+import Groups from '../../pages/Groups';
 import Images from '../../pages/Images';
 
 const routers = [
@@ -21,13 +21,13 @@ const routers = [
         path: '/',
         children: <Home />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/search-product',
         children: <SearchProduct />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/logout',
@@ -39,37 +39,37 @@ const routers = [
         path: '/products',
         children: <Products />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/categories',
         children: <Categories />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/groups',
-        children: <Group />,
+        children: <Groups />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/images',
         children: <Images />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/vouchers',
         children: <Vouchers />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/users',
         children: <Users />,
         layout: true,
-        middleware: 'public'
+        middleware: 'private'
     },
     {
         path: '/settings',

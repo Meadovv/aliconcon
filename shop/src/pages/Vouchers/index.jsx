@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HStack, Button, Flex, Box, IconButton } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Table, Space, Select, message, Input, Popconfirm } from 'antd';
+import { Table, Space, Select, message, Input, Popconfirm, Tag } from 'antd';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import api from '../../apis';
@@ -43,11 +43,11 @@ export default function Vouchers() {
                 (voucher) =>
                     (filter.mode === 'all' 
                         ? true 
-                        : (voucher.status && filter.mode == 'active') || (!voucher.status && filter.mode == 'inactive')
-                    )
+                        : (voucher.status && filter.mode === 'active') || (!voucher.status && filter.mode === 'inactive')
+                    ) &&
                     (filter.email ? voucher.addBy.email.includes(filter.email) : true) &&
                     (filter.name ? voucher.name.includes(filter.name) : true) &&
-                    (filter.startDate ? voucher.startDate.includes(filter.startDate) : true)
+                    (filter.startDate ? voucher.startDate.includes(filter.startDate) : true) &&
                     (filter.endDate ? voucher.endDate.includes(filter.endDate) : true),
             )
             .forEach((voucher, index) => {
