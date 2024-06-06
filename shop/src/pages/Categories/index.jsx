@@ -116,6 +116,7 @@ export default function Categories() {
                         cancelButtonProps={{
                             size: 'large',
                         }}
+                        overlayStyle={{ zIndex: 2000 }}
                     >
                         <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}

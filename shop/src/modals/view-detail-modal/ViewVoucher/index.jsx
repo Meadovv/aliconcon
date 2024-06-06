@@ -17,8 +17,13 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
 
     {/* View Items detail */}
     const viewItem = () => {
-        setItems(voucher.items)
+        setItems(voucher.items);
     };
+
+    const resetVoucher = () => {
+        getVoucher();
+        viewItem();
+    }
 
     const getVoucher = async () => {
         onOpen();
@@ -31,7 +36,9 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
                 'x-token-id': localStorage.getItem('token')
             }
         }).then(res => {
+            message.success(res.data.message);
             setVoucher(res.data.metadata);
+            
         }).catch(err => {
             console.log(err)
             message.error(err.response.data.message);
@@ -102,7 +109,7 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
                     {voucher ? <Stack spacing={3}>
                         {/* View Items modal */}
                         <Button onClick={viewItem}>View items</Button>
-                        <ViewItemByVouModal data={items} setData={setItems} />
+                        <ViewItemByVouModal resetVoucher={resetVoucher} voucherId={id} data={items} setData={setItems} />
 
                         {/* Form */}
                         <FormControl>

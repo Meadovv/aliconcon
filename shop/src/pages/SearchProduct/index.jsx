@@ -9,7 +9,7 @@ import {
     IconButton,
     Image,
 } from '@chakra-ui/react';
-import { ArrowUpIcon, ArrowDownIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { ArrowUpIcon, ArrowDownIcon, SearchIcon, } from '@chakra-ui/icons';
 import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
 import AddProductModal from '../../modals/add-modal/AddProduct';
 import ViewProduct from '../../modals/view-detail-modal/ViewProduct';
@@ -30,7 +30,7 @@ export default function SearchProduct() {
     const [filter, setFilter] = useState({
         mode: 'all',
         name: null,
-        email: null,
+        addBy: null,
     });
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -47,7 +47,7 @@ export default function SearchProduct() {
             .filter(
                 (product) =>
                     (filter.mode === 'all' ? true : product.status === filter.mode) &&
-                    (filter.email ? product.addBy.email.includes(filter.email) : true) &&
+                    (filter.addBy ? product.addBy.name.includes(filter.addBy) : true) &&
                     (filter.name ? product.name.includes(filter.name) : true),
             )
             .forEach((product, index) => {
@@ -57,8 +57,7 @@ export default function SearchProduct() {
                     thumbnail: product.thumbnail,
                     name: product.name,
                     status: product.status,
-                    createdAt: product.createdAt,
-                    addBy: product.addBy.email,
+                    addBy: product.addBy.name,
                 });
             });
         setDataList(dataList);
@@ -139,26 +138,13 @@ export default function SearchProduct() {
         setSearchQuery('');
     };
 
-    {/* Pagination control functions*/}
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
     {/* Columns structure */}
     const columns = [
         {
             title: 'Thumbnail',
             dataIndex: 'thumbnail',
             key: 'thumbnail',
-            render: (thumbnail) => <Image src={thumbnail} boxSize="50px" objectFit="cover" alt="thumbnail" />,
+            render: (thumbnail) => <Image src={thumbnail} boxSize="50px" objectFit="cover" alt={thumbnail} />,
         },
         {
             title: 'Name',
@@ -211,6 +197,7 @@ export default function SearchProduct() {
                         cancelButtonProps={{
                             size: 'large',
                         }}
+                        overlayStyle={{ zIndex: 2000 }}
                     >
                         <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}
@@ -323,44 +310,14 @@ export default function SearchProduct() {
                                 value={filter.name}
                             />
                             <Input
-                                placeholder="Email"
-                                onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                                value={filter.email}
+                                placeholder="Added by"
+                                onChange={(e) => setFilter({ ...filter, addBy: e.target.value })}
+                                value={filter.addBy}
                             />
                         </HStack>
                     </Flex>
                 )}
             />
-            <Flex justify="flex-end" alignItems="center" gap={2}>
-                <IconButton
-                    icon={<ChevronLeftIcon />}
-                    onClick={handlePreviousPage}
-                    isDisabled={currentPage === 1}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-                <Box
-                    borderWidth="1px"
-                    borderRadius="md"
-                    backgroundColor={"cyan.400"}
-                    borderColor={"cyan.400"}
-                    color="gray.800"
-                    p={2}
-                    fontSize="xl"
-                    fontWeight="semibold"
-                >
-                    {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                </Box>
-                <IconButton
-                    icon={<ChevronRightIcon />}
-                    onClick={handleNextPage}
-                    isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-            </Flex>
         </Flex>
     );
 }

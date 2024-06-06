@@ -23,7 +23,7 @@ export default function Vouchers() {
     const [filter, setFilter] = useState({
         mode: 'all',
         name: null,
-        email: null,
+        addBy: null,
         startDate: null,
         endDate: null,
     });
@@ -43,9 +43,9 @@ export default function Vouchers() {
                 (voucher) =>
                     (filter.mode === 'all' 
                         ? true 
-                        : (voucher.status && filter.mode === 'active') || (!voucher.status && filter.mode === 'inactive')
+                        : ((voucher.status && filter.mode === 'active') || (!voucher.status && filter.mode === 'inactive'))
                     ) &&
-                    (filter.email ? voucher.addBy.email.includes(filter.email) : true) &&
+                    (filter.email ? voucher.addBy.name.includes(filter.addBy) : true) &&
                     (filter.name ? voucher.name.includes(filter.name) : true) &&
                     (filter.startDate ? voucher.startDate.includes(filter.startDate) : true) &&
                     (filter.endDate ? voucher.endDate.includes(filter.endDate) : true),
@@ -55,10 +55,10 @@ export default function Vouchers() {
                     key: index,
                     _id: voucher._id,
                     name: voucher.name,
-                    status: voucher.status,
+                    status: (voucher.status) ? 'Active' : 'Inactive',
                     startDate: voucher.startDate,
                     endDate: voucher.endDate,
-                    addBy: voucher.addBy.email,
+                    addBy: voucher.addBy.name,
                 });
             });
         setDataList(dataList);
@@ -114,17 +114,6 @@ export default function Vouchers() {
         setLoading(false);
     };
 
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
     {/* Columns structure */}
     const columns = [
         {
@@ -146,7 +135,7 @@ export default function Vouchers() {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
+            render: (status) => <Tag color={status === 'Inactive' ? 'red' : 'green'}>{status}</Tag>,
         },
         {
             title: 'Start Date',
@@ -176,15 +165,14 @@ export default function Vouchers() {
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button onClick={() => viewVoucher(record._id)}>View details</Button>
                     <Popconfirm
                         title={
-                            record.status
+                            record.status === 'Active'
                                 ? 'Are you sure you want to deactivate this voucher?'
                                 : 'Are you sure you want to activate this voucher?'
                         }
                         onConfirm={() => switchStatus(record._id)}
-                        okText={record.status ? 'Deactivate' : 'Activate'}
+                        okText='Yes'
                         cancelText="No"
                         okButtonProps={{
                             size: 'large',
@@ -192,11 +180,13 @@ export default function Vouchers() {
                         cancelButtonProps={{
                             size: 'large',
                         }}
+                        overlayStyle={{ zIndex: 4000 }}
                     >
                         <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
-                            {record.status ? 'Deactivate' : 'Activate'}
+                            {record.status === 'Active' ? 'Deactivate' : 'Activate'}
                         </Button>
                     </Popconfirm>
+                    <Button onClick={() => viewVoucher(record._id)}>View details</Button>
                 </Space>
             ),
         });
@@ -304,38 +294,6 @@ export default function Vouchers() {
                     </Flex>
                 )}
             />
-
-            {/* Pagination controls */}
-            <Flex justify="flex-end" alignItems="center" gap={2}>
-                <IconButton
-                    icon={<ChevronLeftIcon />}
-                    onClick={handlePreviousPage}
-                    isDisabled={currentPage === 1}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-                <Box
-                    borderWidth="1px"
-                    borderRadius="md"
-                    backgroundColor={"cyan.400"}
-                    borderColor={"cyan.400"}
-                    color="gray.800"
-                    p={2}
-                    fontSize="xl"
-                    fontWeight="semibold"
-                >
-                    {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                </Box>
-                <IconButton
-                    icon={<ChevronRightIcon />}
-                    onClick={handleNextPage}
-                    isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-            </Flex>
         </Flex>
     );
 }

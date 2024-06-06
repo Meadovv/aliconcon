@@ -8,12 +8,10 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 
 export default function ShopOwnerDashboard() {
-    
-    const user = useSelector((state) => state.auth.user);
-    const shop = useSelector((state) => state.auth.shop);
 
-    const shopName = shop.name;
-    const adminName = user.name;
+
+    const shopName = 'shop.name';
+    const adminName = 'user.name';
 
     // Sample data for the chart
     const data = {

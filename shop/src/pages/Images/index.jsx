@@ -164,6 +164,7 @@ export default function Images() {
                         cancelText="No"
                         okButtonProps={{size: 'large',}}
                         cancelButtonProps={{size: 'large',}}
+                        overlayStyle={{ zIndex: 2000 }}
                     >
                         <Button colorScheme={'red'}>
                             {'Delete image'}
@@ -192,6 +193,7 @@ export default function Images() {
                     onConfirm={handleUpload}
                     okText="Upload"
                     cancelText="Cancel"
+                    overlayStyle={{ zIndex: 2000 }}
                 >
                     <Button
                         bg={'blue.400'}

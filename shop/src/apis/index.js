@@ -1,4 +1,4 @@
-const host = 'http://localhost:3055/api/v1/'
+const host = 'http://localhost:3055/v1/'
 const api = {
     LOGIN: host + 'shop/login',
     REGISTER: host + 'shop/register',
@@ -43,6 +43,8 @@ const api = {
     UPDATE_VOUCHER: host + 'shop/update-voucher',
     GET_VOUCHERS: host + 'shop/get-vouchers',
     GET_VOUCHER: host + 'shop/get-voucher',
+    ADD_TO_VOUCHER: host + 'shop/add-to-voucher',
+    REMOVE_FROM_VOUCHER: host + 'shop/remove-from-voucher',
 
     GET_IMAGES: host + 'image/get',
     UPLOAD_IMAGE: host + 'image/upload',

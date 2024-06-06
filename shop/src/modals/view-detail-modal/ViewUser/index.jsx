@@ -104,6 +104,7 @@ export default function ViewUser({ id, setId, setUsers }) {
                             onConfirm={() => setTargetUser({...targetUser, role: selectedRole})}
                             okText="Yes"
                             cancelText="No"
+                            overlayStyle={{ zIndex: 2000 }}
                         >
                             <Select 
                                 value={selectedRole} 

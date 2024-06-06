@@ -183,6 +183,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
                         cancelButtonProps={{
                             size: 'large',
                         }}
+                        overlayStyle={{ zIndex: 2000 }}
                     >
                         <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}

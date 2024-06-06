@@ -7,12 +7,12 @@ import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector, } from 'react-redux';
 
-import { Table, Space, Select, message, Input } from 'antd';
+import { Table, Space, Select, message, Input, Popconfirm } from 'antd';
 
 import axios from 'axios';
 import api from '../../../apis';
 
-export default function ViewItemByVouModal({voucherId, data, setData}) {
+export default function ViewItemByVouModal({resetVoucher, voucherId, data, setData}) {
     
     const user = useSelector((state) => state.auth.user);
 
@@ -34,7 +34,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
     const [loading, setLoading] = React.useState(false);
 
     const [filter, setFilter] = React.useState({
-        email: null,
+        addBy: null,
         name: null,
     });
 
@@ -42,17 +42,17 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
     const [searchResults, setSearchResults] = React.useState([]);
 
     {/* Data functions*/}
-    const createDataList = (activeTab) => {
+    const createDataList = () => {
         let tempList = [];
 
         {/* Product list filter */}
-        setProductIdList(data.filter(item => item.kind === 'aliconcon_products'));
+        setProductIdList(data.filter(item => item.kind === 'aliconcon_products').map(item => item.item));
         products
         .filter(
             (product) => (productIdList.includes(product._id))
         )       
         .filter((product) =>
-            (filter.email ? product.addBy.email.includes(filter.email) : true) &&
+            (filter.addBy ? product.addBy.name.includes(filter.addBy) : true) &&
             (filter.name ? product.name.includes(filter.name) : true),
         )
         .forEach((product, index) => {
@@ -60,9 +60,8 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                 key: index,
                 _id: product._id,
                 name: product.name,
-                createdAt: product.createdAt,
-                addBy: product.addBy.email,
-                kind: 'aliconcon_products',
+                addBy: product.addBy.name,
+                kind: 'product',
             });
         });
         setProductList(tempList);
@@ -70,13 +69,13 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
         tempList = [];
 
         {/* Group list filter */}
-        setGroupIdList(data.filter(item => item.kind === 'aliconcon_groups'));
+        setGroupIdList(data.filter(item => item.kind === 'aliconcon_groups').map(item => item.item));
         groups
         .filter(
             (group) => (groupIdList.includes(group._id))
         )  
         .filter((group) =>
-            (filter.email ? group.addBy.email.includes(filter.email) : true) &&
+            (filter.addBy ? group.addBy.name.includes(filter.addBy) : true) &&
             (filter.name ? group.name.includes(filter.name) : true),
         )
         .forEach((group, index) => {
@@ -84,9 +83,8 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                 key: index,
                 _id: group._id,
                 name: group.name,
-                createdAt: group.createdAt,
-                addBy: group.addBy.email,
-                kind: 'aliconcon_groups',
+                addBy: group.addBy.name,
+                kind: 'group',
             });
         });
         setGroupList(tempList);            
@@ -157,8 +155,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
         )
         .then((res) => {
             message.success(res.data.message);
-            getProducts();
-            getGroups();
+            resetVoucher();
         })
         .catch((err) => {
             console.log(err);
@@ -196,7 +193,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
         setLoading(false);
     };
 
-    const handleSearchResultClick = async (type, id) => {
+    const handleSearchResultClick = async ({type, id}) => {
         setLoading(true);
         await axios.post(
             api.ADD_TO_VOUCHER,
@@ -214,8 +211,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
         )
         .then((res) => {
             message.success(res.data.message);
-            getProducts();
-            getGroups();
+            resetVoucher();
         })
         .catch((err) => {
             console.log(err);
@@ -230,16 +226,6 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-        },
-        {
-            title: 'Created At',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
-            render: (createdAt) => {
-                const date = new Date(createdAt);
-                return date.toLocaleDateString();
-            },
         },
         {
             title: 'Added By',
@@ -265,6 +251,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                         cancelText="No"
                         okButtonProps={{size: 'large',}}
                         cancelButtonProps={{size: 'large',}}
+                        overlayStyle={{ zIndex: 2000 }}
                     >
                         <Button colorScheme={'red'}>
                             {'Remove from the voucher'}
@@ -282,6 +269,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
 
     React.useEffect(() => {
         if(data.length === 0) return;
+        console.log(data);
         onOpen();
         getProducts();
         getGroups();
@@ -293,7 +281,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
 
     return (
 
-        <Modal isOpen={isOpen} onClose={onCloseModal}>
+        <Modal isOpen={isOpen} onClose={onCloseModal} size={''}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>Items of this Voucher: </ModalHeader>
@@ -330,7 +318,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                                                         borderBottom="1px solid"
                                                         borderColor="gray.200"
                                                         cursor="pointer"
-                                                        onClick={() => handleSearchResultClick({type: 'aliconcon_products', id: product._id})}
+                                                        onClick={() => handleSearchResultClick({type: 'product', id: product._id})}
                                                     >
                                                         {product.name}
                                                     </Box>
@@ -369,9 +357,9 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                                                     value={filter.name}
                                                 />
                                                 <Input
-                                                    placeholder="Email"
-                                                    onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                                                    value={filter.email}
+                                                    placeholder="Added by"
+                                                    onChange={(e) => setFilter({ ...filter, addBy: e.target.value })}
+                                                    value={filter.addBy}
                                                 />
                                             </HStack>
                                         </Flex>
@@ -403,7 +391,7 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                                                         borderBottom="1px solid"
                                                         borderColor="gray.200"
                                                         cursor="pointer"
-                                                        onClick={() => handleSearchResultClick({type: 'aliconcon_groups', id: product._id})}
+                                                        onClick={() => handleSearchResultClick({type: 'group', id: product._id})}
                                                     >
                                                         {product.name}
                                                     </Box>
@@ -442,9 +430,9 @@ export default function ViewItemByVouModal({voucherId, data, setData}) {
                                                         value={filter.name}
                                                     />
                                                     <Input
-                                                        placeholder="Email"
-                                                        onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                                                        value={filter.email}
+                                                        placeholder="Added by"
+                                                        onChange={(e) => setFilter({ ...filter, addBy: e.target.value })}
+                                                        value={filter.addBy}
                                                     />
                                                 </HStack>
                                             </Flex>

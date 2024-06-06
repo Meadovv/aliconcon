@@ -4,7 +4,7 @@ import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { Table, Space, Select, message, Input, Tag, Popconfirm } from 'antd';
+import { Table, Space, Select, message, Input,  } from 'antd';
 
 import axios from 'axios';
 import api from '../../apis';

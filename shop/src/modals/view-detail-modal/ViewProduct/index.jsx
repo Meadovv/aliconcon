@@ -1,28 +1,19 @@
 import {
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalCloseButton,
-    Button,
-    Spinner,
-    Input, Box, IconButton, 
-    Stack, FormControl, FormLabel
+    useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter,
+    ModalCloseButton, Button, Spinner, Select, Input, Box, IconButton, Stack, FormControl, FormLabel
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import React from 'react';
 import axios from 'axios';
 
 import api from '../../../apis';
-import { message, Select } from 'antd';
+import { message } from 'antd';
 
 export default function ViewProduct({ id, setId, setProducts }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
     const [product, setProduct] = React.useState(null);
+    const [thumbnails, setThumbnails] = React.useState([]);
     const [categories, setCategories] = React.useState([]);
 
     const handleAddVariation = () => {
@@ -66,14 +57,17 @@ export default function ViewProduct({ id, setId, setProducts }) {
     const getProduct = async () => {
         onOpen();
         setLoading(true);
-        await axios.post( api.GET_PRODUCT
-        , { productId: id }
-        , {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token')
+        await axios.post( 
+            api.GET_PRODUCT
+            , { productId: id }
+            , {
+                headers: {
+                    'x-client-id': localStorage.getItem('client'),
+                    'x-token-id': localStorage.getItem('token')
+                }
             }
-        }).then(res => {
+        ).then(res => {
+            message.success(res.data.message)
             setProduct(res.data.metadata);
         }).catch(err => {
             console.log(err)
@@ -98,6 +92,30 @@ export default function ViewProduct({ id, setId, setProducts }) {
             .then((res) => {
                 message.success(res.data.message);
                 setCategories(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    const getThumbnails = async () => {
+        setLoading(true);
+        await axios
+            .post(
+                api.GET_IMAGES,
+                {},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setThumbnails(res.data.metadata);
             })
             .catch((err) => {
                 console.log(err);
@@ -159,6 +177,8 @@ export default function ViewProduct({ id, setId, setProducts }) {
     React.useEffect(() => {
         if (!id) return;
         getProduct();
+        getCategories();
+        getThumbnails();
     }, [id]);
 
     return (
@@ -192,11 +212,10 @@ export default function ViewProduct({ id, setId, setProducts }) {
                         <FormControl>
                             <FormLabel>Category</FormLabel>
                             <Select 
-                                value={product.category} isDisabled={product && product.status === 'published'}
-                                onChange={(e) => setProduct({ ...product, category: e.target.value })}
-                            >
+                                value={product.category._id}
+                                onChange={(e) => setProduct({ ...product, category: e.target.value })}>
                                 {categories.map(category => (
-                                    <option key={category._id} value={category._id}> {category.name} </option>
+                                    <option key={category._id} value={category._id}>{category.name}</option>
                                 ))}
                             </Select>
                         </FormControl>
@@ -208,10 +227,26 @@ export default function ViewProduct({ id, setId, setProducts }) {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel>Thumbnail</FormLabel>
-                            <Input 
-                                type="text" value={product.thumbnail} isDisabled={product && product.status === 'published'}
-                                onChange={(e) => setProduct({ ...product, thumbnail: e.target.value })} />
+                            <FormLabel>Thumbnail name</FormLabel>
+                            <Select 
+                                value={product.thumbnail._id}
+                                onChange={(e) => setProduct({ ...product, thumbnail: e.target.value })}>
+                                {thumbnails.map(thumbnail => (
+                                    <option key={thumbnail._id} value={thumbnail._id}>{thumbnail.name}</option>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Likes number</FormLabel>
+                            <Input type="number" value={product.likes.length} isDisabled={true}/>
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Sell count</FormLabel>
+                            <Input type="number" value={product.sell_count} isDisabled={true}/>
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Ratingt</FormLabel>
+                            <Input type="number" value={product.rating} isDisabled={true}/>
                         </FormControl>
                         {/* Variations form */}
                         <FormControl>
@@ -222,6 +257,12 @@ export default function ViewProduct({ id, setId, setProducts }) {
                                     <Input 
                                         type="text" value={variation.name} 
                                         onChange={(e) => handleVariationChange(varIndex, 'name', e.target.value)} 
+                                        isDisabled={product && product.status === 'published'}
+                                    />
+                                    <FormLabel>Quantity</FormLabel>
+                                    <Input 
+                                        type="number" value={variation.quantity} 
+                                        onChange={(e) => handleVariationChange(varIndex, 'quantity', e.target.value)} 
                                         isDisabled={product && product.status === 'published'}
                                     />
                                     <FormLabel>Options</FormLabel>
