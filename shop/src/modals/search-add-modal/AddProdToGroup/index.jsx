@@ -9,7 +9,7 @@ import Spinner from '../../../components/Spinner';
 import api from '../../../apis';
 import { message } from 'antd';
 
-export default function AddProductToGroupModal({ groupId }) {
+export default function AddProductToGroupModal({ groupId, resetProdByGroup }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -70,6 +70,7 @@ export default function AddProductToGroupModal({ groupId }) {
         .then((res) => {
             message.success(res.data.message);
             setProducts(res.data.metadata);
+            resetProdByGroup();
         })
         .catch((err) => {
             console.log(err);

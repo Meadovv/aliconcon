@@ -1,10 +1,13 @@
-import { HStack, Button, Flex, Box, Image, useDisclosure, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, ModalHeader, ModalFooter } from '@chakra-ui/react';
-import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { 
+    HStack, Button, Flex, Box, Image, useDisclosure, Modal, ModalBody, ModalCloseButton, ModalContent,
+    ModalOverlay, ModalHeader, ModalFooter, 
+} from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector,  } from 'react-redux';
 
-import { Table, Space, Select, message, Input } from 'antd';
+import { Table, Space, Select, message, Input, Popconfirm, Tag  } from 'antd';
 
 import axios from 'axios';
 import api from '../../../apis';
@@ -74,7 +77,8 @@ export default function ViewProdByCateModal({category, setCategory}) {
                 message.success(res.data.message);
                 setProducts(
                     (res.data.metadata).filter(
-                        (product) => (product.category.includes(category.name)))
+                        (product) => (product.category.name.includes(category.name))
+                    )
                 );
             })
             .catch((err) => {
@@ -113,18 +117,6 @@ export default function ViewProdByCateModal({category, setCategory}) {
     {/* View Product detail */}
     const viewProduct = (id) => {
         setViewProductId(id);
-    };
-
-    {/* Pagination control functions */}
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
     };
 
     {/* Columns structure */}
@@ -220,7 +212,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
     }, [products, filter]);
 
     return (
-        <Modal isOpen={isOpen} onClose={onCloseModal}>
+        <Modal isOpen={isOpen} onClose={onCloseModal} size={''}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>Products of Category: {category.name}</ModalHeader>
@@ -275,37 +267,6 @@ export default function ViewProdByCateModal({category, setCategory}) {
                                 </Flex>
                             )}
                         />
-                        {/* Pagination controls */}
-                        <Flex justify="flex-end" alignItems="center" gap={2}>
-                            <IconButton
-                                icon={<ChevronLeftIcon />}
-                                onClick={handlePreviousPage}
-                                isDisabled={currentPage === 1}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                            <Box
-                                borderWidth="1px"
-                                borderRadius="md"
-                                backgroundColor={"cyan.400"}
-                                borderColor={"cyan.400"}
-                                color="gray.800"
-                                p={2}
-                                fontSize="xl"
-                                fontWeight="semibold"
-                            >
-                                {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                            </Box>
-                            <IconButton
-                                icon={<ChevronRightIcon />}
-                                onClick={handleNextPage}
-                                isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                        </Flex>
                     </Flex>
                 </ModalBody>
                 <ModalFooter>

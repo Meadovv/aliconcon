@@ -18,14 +18,20 @@ export default function Groups() {
     const user = useSelector((state) => state.auth.user);
 
     {/* View modals functions*/}
-    const [viewGroupId, setViewGroupId] = React.useState(null);
+    const [viewGroup, setViewGroup] = React.useState({
+        name : null,
+        id : null,
+    });
     const [viewProdByGroup, setViewProdByGroup] = React.useState({
         name : null,
         id : null,
     });
 
-    const viewGroup = (id) => {
-        setViewGroupId(id);
+    const viewgroup = (id, name) => {
+        setViewGroup({
+            name: name,
+            id: id,
+        });
     };
     
     const viewProductOfGroup = (id, name) => {
@@ -93,18 +99,6 @@ export default function Groups() {
         setLoading(false);
     };
 
-    {/* Pagination control functions */}
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
     {/* Columns structure */}
     const columns = [
         {
@@ -131,8 +125,7 @@ export default function Groups() {
         {
             title: 'Show products',
             key: 'status',
-            render: (_, record) => {
-                {/* View products of this group */}
+            render: (_, record) => (
                 <Space size="middle">
                     <Button 
                         onClick={() => viewProductOfGroup(record._id, record.name)}
@@ -140,7 +133,7 @@ export default function Groups() {
                         View products
                     </Button>
                 </Space>
-            },
+            ),
         },
     ];
 
@@ -153,7 +146,7 @@ export default function Groups() {
                 <Space size="middle">
                     {/* View detail button */}
                     <Button 
-                        onClick={() => viewGroup(record._id)}
+                        onClick={() => viewgroup(record._id, record.name)}
                     >
                         View details
                     </Button>
@@ -174,8 +167,8 @@ export default function Groups() {
         <Flex direction="column" gap={35}>
 
             {/* View detail modal */}
-            <ViewGroup id={viewGroupId} setId={setViewGroupId} setGroups={setGroups} />
-            <ViewProdByGroupModal group={{viewProdByGroup}} setGroup={setViewProdByGroup} />
+            <ViewGroup group={viewGroup} setGroup={setViewGroup} setGroups={setGroups} />
+            <ViewProdByGroupModal group={viewProdByGroup} setGroup={setViewProdByGroup} />
 
             {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
@@ -240,34 +233,6 @@ export default function Groups() {
                     </Flex>                 
                 )}
             />
-            {/* Pagination controls */}
-            <Flex justify="center" alignItems="center" gap={2}>
-                <IconButton
-                    icon={<ChevronLeftIcon />}
-                    onClick={handlePreviousPage}
-                    isDisabled={currentPage === 1}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-                <Box
-                    borderWidth="8px"
-                    borderRadius="md"
-                    backgroundColor={"cyan.400"}
-                    borderColor={"cyan.400"} 
-                    color="gray.800"
-                >
-                    {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                </Box>
-                <IconButton
-                    icon={<ChevronRightIcon />}
-                    onClick={handleNextPage}
-                    isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-            </Flex>
         </Flex>
     );
 }

@@ -9,19 +9,21 @@ import {
     ModalCloseButton,
     Button,
     Spinner,
-    Input,
-    Stack
+    Input, Box, IconButton, 
+    Stack, FormControl, FormLabel
 } from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
 import React from 'react';
 import axios from 'axios';
 
 import api from '../../../apis';
-import { message } from 'antd';
+import { message, Select } from 'antd';
 
 export default function ViewProduct({ id, setId, setProducts }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
     const [product, setProduct] = React.useState(null);
+    const [categories, setCategories] = React.useState([]);
 
     const handleAddVariation = () => {
         setProduct(prevForm => ({
@@ -80,16 +82,42 @@ export default function ViewProduct({ id, setId, setProducts }) {
         setLoading(false);
     };
 
+    const getCategories = async () => {
+        setLoading(true);
+        await axios
+            .post(
+                api.GET_CATEGORIES,
+                {},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setCategories(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
     const onSave = async () => {
         setLoading(true);
-        await axios.post( api.UPDATE_PRODUCT
-        , { product: product }
-        , {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token')
+        await axios.post( 
+            api.UPDATE_PRODUCT
+            , { product: product }
+            , {
+                headers: {
+                    'x-client-id': localStorage.getItem('client'),
+                    'x-token-id': localStorage.getItem('token')
+                }
             }
-        }).then(res => {
+        ).then(res => {
             message.success(res.data.message);
             setProducts(res.data.metadata);
             onCloseModal();
@@ -102,14 +130,16 @@ export default function ViewProduct({ id, setId, setProducts }) {
 
     const onDelete = async () => {
         setLoading(true);
-        await axios.post( api.DELETE_PRODUCT
-        , { productId: id }
-        , {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token')
+        await axios.post( 
+            api.DELETE_PRODUCT
+            , { productId: id }
+            , {
+                headers: {
+                    'x-client-id': localStorage.getItem('client'),
+                    'x-token-id': localStorage.getItem('token')
+                }
             }
-        }).then(res => {
+        ).then(res => {
             message.success(res.data.message);
             setProducts(res.data.metadata);
         }).catch(err => {

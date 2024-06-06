@@ -21,7 +21,7 @@ import axios from 'axios';
 import api from '../../../apis';
 import { message } from 'antd';
 
-export default function AddProductModal({ setProducts }) {
+export default function AddProductModal({ resetProducts }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [form, setForm] = React.useState({
         name: '',
@@ -110,7 +110,7 @@ export default function AddProductModal({ setProducts }) {
             }
         ).then(res => {
             message.success(res.data.message);
-            setProducts(res.data.metadata);
+            resetProducts();
             onClose();
         }).catch(err => {
             console.log(err)

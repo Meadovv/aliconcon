@@ -80,14 +80,13 @@ export default function Categories() {
         {
             title: 'Show products',
             key: 'status',
-            render: (_, record) => {
-                {/* View products of this category */}
+            render: (_, record) => (
                 <Space size="middle">
                     <Button onClick={() => viewProductOfCategory(record._id, record.name)}>
                         View products
                     </Button>
                 </Space>
-            },
+            ),
         },
     ];
 
@@ -198,18 +197,6 @@ export default function Categories() {
         setLoading(false);
     };
 
-    {/* Pagination control functions */}
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
     React.useEffect(() => {
         getCategories();
     }, []);
@@ -297,34 +284,6 @@ export default function Categories() {
                     </Flex>                 
                 )}
             />
-            {/* Pagination controls */}
-            <Flex justify="center" alignItems="center" gap={2}>
-                <IconButton
-                    icon={<ChevronLeftIcon />}
-                    onClick={handlePreviousPage}
-                    isDisabled={currentPage === 1}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-                <Box
-                    borderWidth="8px"
-                    borderRadius="md"
-                    backgroundColor={"cyan.400"}
-                    borderColor={"cyan.400"} 
-                    color="gray.800"
-                >
-                    {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                </Box>
-                <IconButton
-                    icon={<ChevronRightIcon />}
-                    onClick={handleNextPage}
-                    isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-            </Flex>
         </Flex>
     );
 }

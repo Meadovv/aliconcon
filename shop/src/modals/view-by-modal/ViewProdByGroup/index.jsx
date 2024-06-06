@@ -1,10 +1,13 @@
-import { HStack, Button, Flex, Box, Image, useDisclosure, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, ModalHeader, ModalFooter } from '@chakra-ui/react';
+import { 
+    HStack, Button, Flex, Box, Image, useDisclosure, Modal, ModalBody, ModalCloseButton
+    , ModalContent, ModalOverlay, ModalHeader, ModalFooter 
+} from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector,  } from 'react-redux';
 
-import { Table, Space, Select, message, Input } from 'antd';
+import { Table, Space, Select, message, Input, Tag, Popconfirm } from 'antd';
 
 import axios from 'axios';
 import api from '../../../apis';
@@ -31,7 +34,6 @@ export default function ViewProdByGroupModal({group, setGroup}) {
     const [filter, setFilter] = React.useState({
         mode: 'all',
         name: null,
-        email: null,
     });
     
     {/* Data functions*/}
@@ -41,7 +43,6 @@ export default function ViewProdByGroupModal({group, setGroup}) {
             .filter(
                 (product) =>
                     (filter.mode === 'all' ? true : product.status === filter.mode) &&
-                    (filter.email ? product.addBy.email.includes(filter.email) : true) &&
                     (filter.name ? product.name.includes(filter.name) : true),
             )
             .forEach((product, index) => {
@@ -51,15 +52,12 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                     thumbnail: product.thumbnail,
                     name: product.name,
                     status: product.status,
-                    createdAt: product.createdAt,
-                    addBy: product.addBy.email,
                 });
             });
         setDataList(dataList);
     };
 
     const getProducts = async () => {
-        onOpen();
         setLoading(true);
         await axios
             .post(
@@ -134,18 +132,6 @@ export default function ViewProdByGroupModal({group, setGroup}) {
         setLoading(false);
     };
 
-    {/* Pagination control functions */}
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
     {/* View Product detail */}
     const viewProduct = (id) => {
         setViewProductId(id);
@@ -169,22 +155,6 @@ export default function ViewProdByGroupModal({group, setGroup}) {
             dataIndex: 'status',
             key: 'status',
             render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
-        },
-        {
-            title: 'Created At',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
-            render: (createdAt) => {
-                const date = new Date(createdAt);
-                return date.toLocaleDateString();
-            },
-        },
-        {
-            title: 'Added By',
-            dataIndex: 'addBy',
-            key: 'addedBy',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
         },
     ];
 
@@ -211,6 +181,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                         cancelText="No"
                         okButtonProps={{size: 'large',}}
                         cancelButtonProps={{size: 'large',}}
+                        overlayStyle={{ zIndex: 2000 }}
                     >
                         <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}
@@ -225,6 +196,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                         cancelText="No"
                         okButtonProps={{size: 'large',}}
                         cancelButtonProps={{size: 'large',}}
+                        overlayStyle={{ zIndex: 2000 }}
                     >
                         <Button colorScheme={'red'}>
                             {'Remove from the group'}
@@ -245,6 +217,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
 
     React.useEffect(() => {
         if(!group.id) return;
+        onOpen();
         getProducts();
     }, [group]);
 
@@ -253,7 +226,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
     }, [products, filter]);
 
     return (
-        <Modal isOpen={isOpen} onClose={onCloseModal}>
+        <Modal isOpen={isOpen} onClose={onCloseModal} size={''}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>Products of Group: {group.name}</ModalHeader>
@@ -266,7 +239,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
 
                         {/* Add product to this group buttons */}
                         <HStack justify="flex-end" display={user && user.role < 4 ? 'flex' : 'none'}>
-                            <AddProductToGroupModal groupId={group.id} />
+                            <AddProductToGroupModal groupId={group.id} resetProdByGroup={getProducts} />
                         </HStack>
 
                         <Table
@@ -305,46 +278,10 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                                             onChange={(e) => setFilter({ ...filter, name: e.target.value })}
                                             value={filter.name}
                                         />
-                                        <Input
-                                            placeholder="Email"
-                                            onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                                            value={filter.email}
-                                        />
                                     </HStack>
                                 </Flex>
                             )}
                         />
-                        {/* Pagination controls */}
-                        <Flex justify="flex-end" alignItems="center" gap={2}>
-                            <IconButton
-                                icon={<ChevronLeftIcon />}
-                                onClick={handlePreviousPage}
-                                isDisabled={currentPage === 1}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                            <Box
-                                borderWidth="1px"
-                                borderRadius="md"
-                                backgroundColor={"cyan.400"}
-                                borderColor={"cyan.400"}
-                                color="gray.800"
-                                p={2}
-                                fontSize="xl"
-                                fontWeight="semibold"
-                            >
-                                {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                            </Box>
-                            <IconButton
-                                icon={<ChevronRightIcon />}
-                                onClick={handleNextPage}
-                                isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                                color={"gray.800"}
-                                backgroundColor={"cyan.400"}
-                                _hover={{ backgroundColor: "cyan.600" }}
-                            />
-                        </Flex>
                     </Flex>
                 </ModalBody>
                 <ModalFooter>

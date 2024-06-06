@@ -16,7 +16,6 @@ export default function AddVoucherModal({ setVouchers }) {
         name: '',
         description: '',
         discount: 0,
-        price: 0,
         startDate: '',
         endDate: '',
         amount: 0,
@@ -76,10 +75,6 @@ export default function AddVoucherModal({ setVouchers }) {
                                 <Input type="text" placeholder="Description" onChange={(e) => setForm({ ...form, description: e.target.value })} />
                             </FormControl>
                             <FormControl>
-                                <FormLabel>Price</FormLabel>
-                                <Input type="number" placeholder="Voucher Price" onChange={(e) => setForm({ ...form, price: e.target.value })} />
-                            </FormControl>
-                            <FormControl>
                                 <FormLabel>Discount</FormLabel>
                                 <Input type="number" placeholder="Voucher Discount" onChange={(e) => setForm({ ...form, discount: e.target.value })} />
                             </FormControl>
@@ -105,7 +100,6 @@ export default function AddVoucherModal({ setVouchers }) {
                                     name: null,
                                     description: null,
                                     discount: null,
-                                    price: null,
                                     startDate: null,
                                     endDate: null,
                                     amount: null,
