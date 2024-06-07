@@ -62,20 +62,28 @@ class AccessService {
         if (!tokenData) {
             throw new BAD_REQUEST_ERROR('Token is invalid!');
         }
-        return true;
+        if(tokenData.userId !== foundUser._id.toString()) {
+            throw new BAD_REQUEST_ERROR('Token is invalid!');
+        }
+        await KeyTokenService.deleteByUserId(foundUser._id);
+        const newToken = Utils.AuthUtils.createToken({
+            payload: { userId: foundUser._id },
+            key: process.env.RESET_PASSWORD_SECRET_KEY,
+            expiredIn: '300s'
+        });
+        return newToken;
     }
 
-    static passwordReset = async ({ email, token, password }) => {
-        const foundUser = await userModel.findOne({ email: email }).lean();
-        if (!foundUser) {
-            throw new BAD_REQUEST_ERROR('User not found!');
-        }
-        const foundKeyToken = await KeyTokenService.findByUserId(foundUser._id);
-        if (!foundKeyToken) {
-            throw new BAD_REQUEST_ERROR('Token not found!');
-        }
+    static passwordReset = async ({ token, password }) => {
         try {
-            Utils.AuthUtils.verifyToken(token, foundKeyToken.key);
+            const tokenData = Utils.AuthUtils.verifyToken(token, process.env.RESET_PASSWORD_SECRET_KEY);
+            const foundUser = await userModel.findById(tokenData.userId).lean();
+            if (!foundUser) {
+                throw new BAD_REQUEST_ERROR('User not found!');
+            }
+            const hashedPassword = await Utils.AuthUtils.createHashPassword(password);
+            await userModel.findByIdAndUpdate(foundUser._id, { password: hashedPassword });
+            return true;
         } catch (err) {
             if (err.name === 'TokenExpiredError') {
                 throw new TOKEN_EXPIRED_ERROR('Token has expired');
@@ -85,9 +93,6 @@ class AccessService {
                 throw new BAD_REQUEST_ERROR(err.message);
             }
         }
-        const hashedPassword = await Utils.AuthUtils.createHashPassword(password);
-        await userModel.findByIdAndUpdate(foundUser._id, { password: hashedPassword });
-        return true;
     }
 
     static logout = async ({ userId }) => {

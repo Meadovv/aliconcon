@@ -200,7 +200,7 @@ class OtherUtils {
                                                                                         class="ctaButton"
                                                                                     >
                                                                                         <a
-                                                                                            href="https://api.aliconcon.xyz/v1/access/password-reset?key=${key}&email=${email}"
+                                                                                            href="https://aliconcon.xyz/password-reset?key=${key}&email=${email}"
                                                                                             style="
                                                                                                 color: #fff;
                                                                                                 font-family: Poppins,

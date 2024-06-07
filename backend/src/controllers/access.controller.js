@@ -82,7 +82,7 @@ class AccessController {
             message: 'Reset password successfully!',
             metadata: await AccessService.passwordReset({
                 ...getFields({
-                    fields: ['email', 'token', 'password'],
+                    fields: ['token', 'password'],
                     object: req.body
                 })
             })
