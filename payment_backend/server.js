@@ -78,9 +78,9 @@ app.post('/api/v1/verify', async (req, res) => {
     if (foundOrder.paid) {
         return res.status(400).send('Order already paid');
     }
-    // await orderModel.findByIdAndUpdate(invoiceId, {
-    //     paid: 1,
-    // });
+    await orderModel.findByIdAndUpdate(invoiceId, {
+        paid: 1,
+    });
     const clients = invoiceMap.get(invoiceId);
     clients?.forEach(client => {
         const clientSocket = io.sockets.sockets.get(client);

@@ -113,18 +113,18 @@ export default function Pay() {
                                     </div>
                                 </div>
                                 <div className="payment-summary">
-                                    <div className="payment-summary-item">
-                                        <div className="payment-summary-name">Additional fee</div>
-                                        <div className="payment-summary-price">$10</div>
-                                    </div>
-                                    <div className="payment-summary-item">
-                                        <div className="payment-summary-name">Discount 20%</div>
-                                        <div className="payment-summary-price">-$10</div>
-                                    </div>
-                                    <div className="payment-summary-item">
-                                        <div className="payment-summary-name">Discount 20%</div>
-                                        <div className="payment-summary-price">-$10</div>
-                                    </div>
+                                    {invoice?.items.map((item, index) => {
+
+                                        const product = item.product;
+                                        const variation = item.variation;
+
+                                        return (
+                                            <div className="payment-summary-item">
+                                                <div className="payment-summary-name">{product?.name} - {variation?.name}</div>
+                                                <div className="payment-summary-price">{formatPrice(variation?.price)} x {item?.quantity}</div>
+                                            </div>
+                                        )
+                                    })}
                                     <div className="payment-summary-divider"></div>
                                     <div className="payment-summary-item">
                                         <div className="payment-summary-name">Shipping Fee</div>
@@ -194,6 +194,7 @@ export default function Pay() {
                                     }}
                                 />
                             </div>
+                            <button type="button" class="payment-form-submit-button" onClick={() => window.location.href = 'https://aliconcon.xyz'}>Back</button>
                         </form>
                     </div>
                 </div>
