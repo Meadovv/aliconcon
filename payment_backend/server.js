@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 const invoiceMap = new Map();
 const nameMap = new Map();
 
-app.post('/get', async (req, res) => {
+app.post('/api/v1/get', async (req, res) => {
     const { invoiceId } = req.body;
     if (!mongoose.Types.ObjectId.isValid(invoiceId)) {
         return res.status(400).send('Invalid order ID');
@@ -62,7 +62,7 @@ app.post('/get', async (req, res) => {
     });
 })
 
-app.post('/verify', async (req, res) => {
+app.post('/api/v1/verify', async (req, res) => {
     const { name } = req.body;
     const invoiceId = nameMap.get(name);
     if(!invoiceId) {
@@ -78,9 +78,9 @@ app.post('/verify', async (req, res) => {
     if (foundOrder.paid) {
         return res.status(400).send('Order already paid');
     }
-    await orderModel.findByIdAndUpdate(invoiceId, {
-        paid: 1,
-    });
+    // await orderModel.findByIdAndUpdate(invoiceId, {
+    //     paid: 1,
+    // });
     const clients = invoiceMap.get(invoiceId);
     clients?.forEach(client => {
         const clientSocket = io.sockets.sockets.get(client);
