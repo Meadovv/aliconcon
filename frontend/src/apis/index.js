@@ -1,4 +1,4 @@
-const image_host = 'http://localhost:9000/'
+const image_host = 'https://image.aliconcon.xyz/'
 
 export const IMAGE_HOST = {
     THUMBNAIL: (name) => {
@@ -9,9 +9,9 @@ export const IMAGE_HOST = {
     }
 }
 
-export const BACKEND_API = 'http://localhost:3055/v1/';
+export const BACKEND_API = 'https://api.aliconcon.xyz/v1/';
 
-export const PAYMENT_GATE = 'http://localhost:3055/pay';
+export const PAYMENT_GATE = 'http://20.2.158.32/pay/';
 
 const api = {
     GET_PRODUCTS: ({ shop, category, low_price, high_price }) => {
@@ -30,7 +30,7 @@ const api = {
         return BACKEND_API + 'user/get-order?orderId=' + id;
     },
     PAYMENT_GATE: ({ id }) => {
-        return PAYMENT_GATE + '/' + id;
+        return PAYMENT_GATE + id;
     },
     REGISTER: BACKEND_API + 'user/register',
     CHECKOUT: BACKEND_API + 'user/checkout',

@@ -8,7 +8,7 @@ import { formatPrice } from '../../utils/helpers';
 
 import { useToast } from '@chakra-ui/react';
 
-const socket = io('http://localhost:3056');
+const socket = io('http://20.2.158.32:8080');
 
 export default function Pay() {
     const params = useParams();
@@ -21,7 +21,7 @@ export default function Pay() {
 
     const getInvoice = async () => {
         await axios
-            .post('http://localhost:3056/get', {
+            .post('http://20.2.158.32:8080/api/v1/get', {
                 invoiceId: params.invoiceId,
             })
             .then((res) => {
@@ -34,29 +34,62 @@ export default function Pay() {
     };
 
     React.useEffect(() => {
-        socket.on('connected', async (data) => {
-            console.log(data);
-            socket.emit('invoice', params.invoiceId);
-            await getInvoice();
-        });
-
-        socket.on('verified', (data) => {
-            console.log(data);
-            toast({
-                title: 'Payment successful',
-                description: 'Your payment has been successfully processed.',
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-            });
-        });
-
-        socket.on('disconnect', () => {
-            console.log('Disconnected from the server');
-        });
-
-        return () => socket.disconnect();
+        let isMounted = true; // Dùng để đảm bảo rằng component vẫn đang mounted
+    
+        const fetchData = async () => {
+            try {
+                const res = await axios.post('http://20.2.158.32:8080/api/v1/get', {
+                    invoiceId: params.invoiceId,
+                });
+                if (isMounted) {
+                    setInvoice(res.data);
+                }
+            } catch (err) {
+                console.log(err);
+                if (isMounted) {
+                    setError(err.response.data.message);
+                }
+            }
+        };
+    
+        fetchData();
+    
+        return () => {
+            isMounted = false; // Đánh dấu rằng component đã unmounted
+            socket.disconnect();
+        };
     }, []);
+    
+    React.useEffect(() => {
+        if (invoice) {
+            socket.connect();
+            socket.emit('invoice', params.invoiceId);
+    
+            socket.on('connected', (data) => {
+                console.log(data);
+            });
+    
+            socket.on('verified', (data) => {
+                const updatedInvoice = {
+                    ...invoice,
+                    paid: 1
+                };
+                setInvoice(updatedInvoice);
+                toast({
+                    title: 'Payment successful',
+                    description: 'Your payment has been successfully processed.',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                });
+            });
+    
+            socket.on('disconnect', () => {
+                console.log('Disconnected from the server');
+            });
+        }
+    }, [invoice]);
+    
 
     return (
         <section className="payment-section">
@@ -80,18 +113,18 @@ export default function Pay() {
                                     </div>
                                 </div>
                                 <div className="payment-summary">
-                                    <div className="payment-summary-item">
-                                        <div className="payment-summary-name">Additional fee</div>
-                                        <div className="payment-summary-price">$10</div>
-                                    </div>
-                                    <div className="payment-summary-item">
-                                        <div className="payment-summary-name">Discount 20%</div>
-                                        <div className="payment-summary-price">-$10</div>
-                                    </div>
-                                    <div className="payment-summary-item">
-                                        <div className="payment-summary-name">Discount 20%</div>
-                                        <div className="payment-summary-price">-$10</div>
-                                    </div>
+                                    {invoice?.items.map((item, index) => {
+
+                                        const product = item.product;
+                                        const variation = item.variation;
+
+                                        return (
+                                            <div className="payment-summary-item">
+                                                <div className="payment-summary-name">{product?.name} - {variation?.name}</div>
+                                                <div className="payment-summary-price">{formatPrice(variation?.price)} x {item?.quantity}</div>
+                                            </div>
+                                        )
+                                    })}
                                     <div className="payment-summary-divider"></div>
                                     <div className="payment-summary-item">
                                         <div className="payment-summary-name">Shipping Fee</div>
@@ -161,6 +194,7 @@ export default function Pay() {
                                     }}
                                 />
                             </div>
+                            <button type="button" class="payment-form-submit-button" onClick={() => window.location.href = 'https://aliconcon.xyz'}>Back</button>
                         </form>
                     </div>
                 </div>

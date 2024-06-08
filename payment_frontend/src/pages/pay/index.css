@@ -267,6 +267,29 @@ input:checked + .payment-method-item::before {
     pointer-events: none;
     transition: all .1s ease-in-out;
 }
+
+.payment-form-submit-button {
+    background-color: var(--indigo-500);
+    border-radius: 8px;
+    outline: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    color: var(--white);
+    font-weight: 600;
+    padding: 16px;
+    transition: all .15s ease-in-out;
+}
+.payment-form-submit-button:hover {
+    background-color: var(--indigo-600);
+}
+.payment-form-submit-button > i {
+    margin-right: 8px;
+}
+
 /* end: Payment */
 
 
