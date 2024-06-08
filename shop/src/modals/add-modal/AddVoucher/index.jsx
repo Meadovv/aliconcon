@@ -5,13 +5,16 @@ import {
 
 import { AddIcon } from '@chakra-ui/icons';
 import React from 'react';
-
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import api from '../../../apis';
 import { message } from 'antd';
 
 export default function AddVoucherModal({ setVouchers }) {
+
+    const user = useSelector((state) => state.auth.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
+
     const [form, setForm] = React.useState({
         name: '',
         description: '',
@@ -47,6 +50,7 @@ export default function AddVoucherModal({ setVouchers }) {
         <>
             {/*The add button*/}
             <Button
+                isDisabled={user && user.role > 4}
                 bg={'green.400'}
                 color={'white'}
                 _hover={{

@@ -1,28 +1,19 @@
 import {
-    Button,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalCloseButton,
-    FormControl,
-    FormLabel,
-    Input,
-    Box,
-    IconButton, Stack, Select
+    Button, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
+    ModalFooter, ModalCloseButton, FormControl, FormLabel, Input,  Box, IconButton, Stack, Select
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import React from 'react';
-
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import api from '../../../apis';
 import { message } from 'antd';
 
 export default function AddProductModal({ resetProducts }) {
+
+    const user = useSelector((state) => state.auth.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
+
     const [form, setForm] = React.useState({
         name: '',
         thumbnail: '',
@@ -34,6 +25,7 @@ export default function AddProductModal({ resetProducts }) {
     });
     const [loading, setLoading] = React.useState(false);
     const [categories, setCategories] = React.useState([])
+    const [thumbnails, setThumbnails] = React.useState([]);
 
     {/*Get categories*/}
     const getCategories = async () => {
@@ -59,6 +51,31 @@ export default function AddProductModal({ resetProducts }) {
             });
         setLoading(false);
     };
+
+    {/*Get thumbnails*/}
+    const getThumbnails = async () => {
+        setLoading(true);
+        await axios
+            .post(
+                api.GET_IMAGES,
+                {},
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                setThumbnails(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };    
 
     const handleAddVariation = () => {
         setForm(prevForm => ({
@@ -121,12 +138,14 @@ export default function AddProductModal({ resetProducts }) {
 
     React.useEffect(() => {
         getCategories();
+        getThumbnails();
     }, []);
 
     return (
         <>
             {/*The add button*/}
             <Button
+                isDisabled={user && user.role > 4}
                 bg={'green.400'}
                 color={'white'}
                 _hover={{
@@ -171,8 +190,14 @@ export default function AddProductModal({ resetProducts }) {
                                 <Input type="number" placeholder="Product Price" onChange={(e) => setForm({ ...form, price: e.target.value })} />
                             </FormControl>
                             <FormControl>
-                                <FormLabel>Thumbnail</FormLabel>
-                                <Input type="text" placeholder="Product Thumbnail (link to image)" onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} />
+                                <FormLabel>Thumbnail name</FormLabel>
+                                <Select 
+                                    placeholder='Thumbnail name'
+                                    onChange={(e) => setForm({ ...form, thumbnail: e.target.value })}>
+                                        {thumbnails.map(thumbnail => (
+                                            <option key={thumbnail._id} value={thumbnail._id}>{thumbnail.name}</option>
+                                        ))}
+                                </Select>
                             </FormControl>
                             {/* Variations form */}
                             <FormControl>

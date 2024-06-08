@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { HStack, Button, Flex, Box, IconButton, Input as ChakraInput } from '@chakra-ui/react';
+import { HStack, Button, Flex, Box, IconButton, Input as ChakraInput, Image, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure } from '@chakra-ui/react';
 import { ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Table, Space, Popconfirm, message, Select, } from 'antd';
+import { Table, Space, Popconfirm, message, Select } from 'antd';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import api from '../../apis'
+import api, { IMAGE_HOST } from '../../apis';
 
 export default function Images() {
     const user = useSelector((state) => state.auth.user);
@@ -19,6 +19,9 @@ export default function Images() {
         email: '',
     });
     const [file, setFile] = useState(null);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [selectedImage, setSelectedImage] = useState('');
+    const [fileName, setFileName] = useState('Choose a file for uploading');
 
     const createDataList = () => {
         const dataList = [];
@@ -64,7 +67,9 @@ export default function Images() {
     };
 
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+        const file = e.target.files[0];
+        setFile(file);
+        setFileName(file ? file.name : 'Choose a file for uploading');
     };
 
     const handleUpload = async () => {
@@ -73,13 +78,17 @@ export default function Images() {
             return;
         }
         setLoading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
         await axios.post(
             api.UPLOAD_IMAGE
-            , { file: file }
+            , formData
             , {
                 headers: {
                     'x-client-id': localStorage.getItem('client'),
                     'x-token-id': localStorage.getItem('token'),
+                    'Content-Type': 'multipart/form-data'
                 }
             }
         )
@@ -117,16 +126,10 @@ export default function Images() {
         setLoading(false);
     };
 
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(dataList.length / recordPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
+    const handleViewImage = (name) => {
+        const imageUrl = IMAGE_HOST.ORIGINAL(name);
+        setSelectedImage(imageUrl);
+        onOpen();
     };
 
     const columns = [
@@ -146,17 +149,14 @@ export default function Images() {
             key: 'addBy',
         },
     ];
-    {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
+
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
-
-                    {/* View detail button */}
-                    
-                    {/* Delete options */}
+                    {/* Detete image button */}
                     <Popconfirm
                         title={'Are you sure you want to delete this image ?'}
                         onConfirm={() => handleDelete(record._id)}
@@ -170,6 +170,11 @@ export default function Images() {
                             {'Delete image'}
                         </Button>
                     </Popconfirm>
+
+                    {/* View image button */}
+                    <Button colorScheme="blue" onClick={() => handleViewImage(record.name)}>
+                        View Image
+                    </Button>
                 </Space>
             ),
         });
@@ -186,24 +191,28 @@ export default function Images() {
     return (
         <Flex direction="column" gap={6}>
             <HStack justify="flex-end">
-                <Popconfirm
-                    title={
-                        <ChakraInput type="file" onChange={handleFileChange} />
-                    }
-                    onConfirm={handleUpload}
-                    okText="Upload"
-                    cancelText="Cancel"
-                    overlayStyle={{ zIndex: 2000 }}
+                <Box>
+                    <ChakraInput
+                        type="file"
+                        onChange={handleFileChange}
+                        display="none"
+                        id="file-upload"
+                    />
+                    <label htmlFor="file-upload">
+                        <Button as="span" cursor="pointer" colorScheme={'green'} color={'white'}>
+                            {fileName}
+                        </Button>
+                    </label>
+                </Box>
+                <Button
+                    bg={'blue.400'}
+                    color={'white'}
+                    _hover={{ bg: 'blue.500' }}
+                    leftIcon={<ArrowUpIcon />}
+                    onClick={handleUpload}
                 >
-                    <Button
-                        bg={'blue.400'}
-                        color={'white'}
-                        _hover={{ bg: 'blue.500' }}
-                        leftIcon={<ArrowUpIcon />}
-                    >
-                        Add Image
-                    </Button>
-                </Popconfirm>
+                    Add Image
+                </Button>
             </HStack>
             <Table
                 loading={loading}
@@ -240,36 +249,20 @@ export default function Images() {
                     </Flex>
                 )}
             />
-            <Flex justify="flex-end" alignItems="center" gap={2}>
-                <IconButton
-                    icon={<ChevronLeftIcon />}
-                    onClick={handlePreviousPage}
-                    isDisabled={currentPage === 1}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-                <Box
-                    borderWidth="1px"
-                    borderRadius="md"
-                    backgroundColor={"cyan.400"}
-                    borderColor={"cyan.400"}
-                    color="gray.800"
-                    p={2}
-                    fontSize="xl"
-                    fontWeight="semibold"
-                >
-                    {`Page ${currentPage} of ${Math.ceil(dataList.length / recordPerPage)}`}
-                </Box>
-                <IconButton
-                    icon={<ChevronRightIcon />}
-                    onClick={handleNextPage}
-                    isDisabled={currentPage === Math.ceil(dataList.length / recordPerPage)}
-                    color={"gray.800"}
-                    backgroundColor={"cyan.400"}
-                    _hover={{ backgroundColor: "cyan.600" }}
-                />
-            </Flex>
+
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Image Preview</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Image src={selectedImage} alt="Selected Image" />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button onClick={onClose}>Close</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Flex>
     );
 }

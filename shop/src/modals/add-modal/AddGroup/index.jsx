@@ -5,12 +5,14 @@ import {
 
 import { AddIcon } from '@chakra-ui/icons';
 import React from 'react';
-
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import api from '../../../apis';
 import { message } from 'antd';
 
 export default function AddGroupModal({ setGroups }) {
+
+    const user = useSelector((state) => state.auth.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [form, setForm] = React.useState({
@@ -40,6 +42,7 @@ export default function AddGroupModal({ setGroups }) {
         <>
             {/*Always on*/}
             <Button
+                isDisabled={user && user.role > 4}
                 bg={'green.400'}
                 color={'white'}
                 _hover={{

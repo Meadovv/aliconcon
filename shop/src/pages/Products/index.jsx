@@ -4,10 +4,10 @@ import { IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { Table, Space, Select, message, Input,  } from 'antd';
+import { Table, Space, Select, message, Input, Popconfirm, Tag } from 'antd';
 
 import axios from 'axios';
-import api from '../../apis';
+import api, { IMAGE_HOST } from '../../apis';
 
 import AddProductModal from '../../modals/add-modal/AddProduct';
 import ViewProductModal from '../../modals/view-detail-modal/ViewProduct';
@@ -29,7 +29,7 @@ export default function Products() {
     const [filter, setFilter] = React.useState({
         mode: 'all',
         name: null,
-        addBy: null,
+        email: null,
     });
     
     const viewProduct = (id) => {
@@ -40,15 +40,20 @@ export default function Products() {
     {/* Columns structure */}
     const columns = [
         {
-            title: 'Thumbnail',
+            title: 'Thumbnail ID',
             dataIndex: 'thumbnail',
             key: 'thumbnail',
-            render: (thumbnail) => <Image src={thumbnail} boxSize="50px" objectFit="cover" alt="thumbnail" />,
         },
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
         },
         {
             title: 'Added By',
@@ -59,12 +64,36 @@ export default function Products() {
     ];
 
     {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
+                    {/* Publishing options */}
+                    <Popconfirm
+                        title={
+                            record.status === 'draft'
+                                ? 'Are you sure you want to publish this product?'
+                                : 'Are you sure you want to unpublish this product?'
+                        }
+                        onConfirm={() => switchStatus(record._id)}
+                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        cancelText="No"
+                        okButtonProps={{
+                            size: 'large',
+                        }}
+                        cancelButtonProps={{
+                            size: 'large',
+                        }}
+                        overlayStyle={{ zIndex: 2000 }}
+                    >
+                        <Button 
+                            colorScheme={record.status === 'draft' ? 'blue' : 'red'}
+                        >
+                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
+                        </Button>
+                    </Popconfirm>
 
                     {/* View detail modal */}
                     <Button onClick={() => viewProduct(record._id)}>View details</Button>
@@ -79,6 +108,7 @@ export default function Products() {
         products
             .filter(
                 (product) =>
+                    (filter.mode === 'all' ? true : product.status === filter.mode) &&
                     (filter.addBy ? product.addBy.name.includes(filter.addBy) : true) &&
                     (filter.name ? product.name.includes(filter.name) : true),
             )
@@ -87,6 +117,7 @@ export default function Products() {
                     key: index,
                     _id: product._id,
                     thumbnail: product.thumbnail,
+                    status: product.status,
                     name: product.name,
                     addBy: product.addBy.name,
                 });
@@ -110,6 +141,32 @@ export default function Products() {
             .then((res) => {
                 message.success(res.data.message);
                 setProducts(res.data.metadata);
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message);
+            });
+        setLoading(false);
+    };
+
+    const switchStatus = async (id) => {
+        setLoading(true);
+        await axios
+            .post(
+                api.SWITCH_PRODUCT_STATUS,
+                {
+                    productId: id,
+                },
+                {
+                    headers: {
+                        'x-client-id': localStorage.getItem('client'),
+                        'x-token-id': localStorage.getItem('token'),
+                    },
+                },
+            )
+            .then((res) => {
+                message.success(res.data.message);
+                getProducts();
             })
             .catch((err) => {
                 console.log(err);
@@ -172,6 +229,15 @@ export default function Products() {
 
                         {/* Filter controls */}
                         <HStack justify="flex-start">
+                            <Select
+                                defaultValue={filter.mode}
+                                style={{ minWidth: 110 }}
+                                onChange={(value) => setFilter({ ...filter, mode: value })}
+                            >
+                                <Select.Option value="all">All</Select.Option>
+                                <Select.Option value="draft">Draft</Select.Option>
+                                <Select.Option value="published">Published</Select.Option>
+                            </Select>
                             <Select
                                 defaultValue={recordPerPage}
                                 style={{ width: 120 }}

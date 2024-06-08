@@ -175,7 +175,7 @@ export default function SearchProduct() {
         },
     ];
 
-    if (user && user.role < 4) {
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',

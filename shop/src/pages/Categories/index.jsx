@@ -79,7 +79,7 @@ export default function Categories() {
         },
         {
             title: 'Show products',
-            key: 'status',
+            key: 'showProduct',
             render: (_, record) => (
                 <Space size="middle">
                     <Button onClick={() => viewProductOfCategory(record._id, record.name)}>
@@ -91,14 +91,12 @@ export default function Categories() {
     ];
 
     {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
-                    {/* View detail button */}
-                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
 
                     {/* Publishing options */}
                     <Popconfirm
@@ -118,10 +116,15 @@ export default function Categories() {
                         }}
                         overlayStyle={{ zIndex: 2000 }}
                     >
-                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
+                        <Button 
+                            colorScheme={record.status === 'draft' ? 'blue' : 'red'}
+                        >
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}
                         </Button>
                     </Popconfirm>
+                    
+                    {/* View detail button */}
+                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
                 </Space>
             ),
         });

@@ -46,10 +46,11 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                     (filter.name ? product.name.includes(filter.name) : true),
             )
             .forEach((product, index) => {
+                console.log(product);
                 dataList.push({
                     key: index,
                     _id: product._id,
-                    thumbnail: product.thumbnail,
+                    addBy: product.addToGroupBy,
                     name: product.name,
                     status: product.status,
                 });
@@ -145,10 +146,9 @@ export default function ViewProdByGroupModal({group, setGroup}) {
             key: 'name',
         },
         {
-            title: 'Thumbnail',
-            dataIndex: 'thumbnail',
-            key: 'thumbnail',
-            render: (thumbnail) => <Image src={thumbnail} boxSize="50px" objectFit="cover" alt="thumbnail" />,
+            title: 'Added in group by',
+            dataIndex: 'addBy',
+            key: 'addBy',
         },
         {
             title: 'Status',
@@ -159,7 +159,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
     ];
 
     {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
@@ -238,7 +238,7 @@ export default function ViewProdByGroupModal({group, setGroup}) {
                         {/* The actual table */}
 
                         {/* Add product to this group buttons */}
-                        <HStack justify="flex-end" display={user && user.role < 4 ? 'flex' : 'none'}>
+                        <HStack justify="flex-end" display={user && user.role < 3 ? 'flex' : 'none'}>
                             <AddProductToGroupModal groupId={group.id} resetProdByGroup={getProducts} />
                         </HStack>
 

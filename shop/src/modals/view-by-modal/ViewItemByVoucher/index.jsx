@@ -235,7 +235,7 @@ export default function ViewItemByVouModal({resetVoucher, voucherId, data, setDa
         },
     ];
 
-    if (user && user.role < 4) {
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
@@ -299,7 +299,7 @@ export default function ViewItemByVouModal({resetVoucher, voucherId, data, setDa
                             <Flex direction="column" gap={35}>
 
                                 {/* Add product to this voucher */}
-                                <HStack justify="flex-end" display={user && user.role < 4 ? 'flex' : 'none'}>
+                                <HStack justify="flex-end" display={user && user.role < 3 ? 'flex' : 'none'}>
                                     <Flex direction="column" gap={4}>
                                         <Input
                                             placeholder="Search products to add in..."
@@ -372,34 +372,34 @@ export default function ViewItemByVouModal({resetVoucher, voucherId, data, setDa
                             <TabPanel>
                                 <Flex direction="column" gap={35}>
                                     {/* Add group to this voucher */}
-                                    <HStack justify="flex-end" display={user && user.role < 4 ? 'flex' : 'none'}>
-                                    <Flex direction="column" gap={4}>
-                                        <Input
-                                            placeholder="Search groups to add in..."
-                                            value={searchQuery}
-                                            onChange={handleSearchGroup}
-                                            isDisabled={loading}
-                                            isLoading={loading}
-                                        />
-                                        {loading && <Spinner />}
-                                        {searchResults.length > 0 && searchQuery && (
-                                            <Box bg="white" boxShadow="md" rounded="md" mt={2} p={2} maxHeight="200px" overflowY="auto">
-                                                {searchResults.map(product => (
-                                                    <Box
-                                                        key={product._id}
-                                                        p={2}
-                                                        borderBottom="1px solid"
-                                                        borderColor="gray.200"
-                                                        cursor="pointer"
-                                                        onClick={() => handleSearchResultClick({type: 'group', id: product._id})}
-                                                    >
-                                                        {product.name}
-                                                    </Box>
-                                                ))}
-                                            </Box>
-                                        )}
-                                    </Flex>
-                                </HStack>
+                                    <HStack justify="flex-end" display={user && user.role < 3 ? 'flex' : 'none'}>
+                                        <Flex direction="column" gap={4}>
+                                            <Input
+                                                placeholder="Search groups to add in..."
+                                                value={searchQuery}
+                                                onChange={handleSearchGroup}
+                                                isDisabled={loading}
+                                                isLoading={loading}
+                                            />
+                                            {loading && <Spinner />}
+                                            {searchResults.length > 0 && searchQuery && (
+                                                <Box bg="white" boxShadow="md" rounded="md" mt={2} p={2} maxHeight="200px" overflowY="auto">
+                                                    {searchResults.map(product => (
+                                                        <Box
+                                                            key={product._id}
+                                                            p={2}
+                                                            borderBottom="1px solid"
+                                                            borderColor="gray.200"
+                                                            cursor="pointer"
+                                                            onClick={() => handleSearchResultClick({type: 'group', id: product._id})}
+                                                        >
+                                                            {product.name}
+                                                        </Box>
+                                                    ))}
+                                                </Box>
+                                            )}
+                                        </Flex>
+                                    </HStack>
 
                                     {/* The actual table */}
                                     <Table

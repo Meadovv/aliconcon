@@ -1,17 +1,6 @@
 import {
-    Button,
-    useDisclosure,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalCloseButton,
-    FormControl,
-    FormLabel,
-    Input,
-    Select,
+    Button, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
+    ModalFooter, ModalCloseButton, FormControl, FormLabel, Input, Select,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import React from 'react';
@@ -58,6 +47,7 @@ export default function AddUserModal({ setUsers }) {
     return (
         <>
             <Button
+                isDisabled={user && user.role > 4}
                 bg={'green.400'}
                 color={'white'}
                 _hover={{
@@ -81,9 +71,9 @@ export default function AddUserModal({ setUsers }) {
                         <FormControl id="role" mt={4}>
                             <FormLabel>Role</FormLabel>
                             <Select placeholder="Select role" onChange={(e) => setForm({...form, role: e.target.value})}>
-                            {Array.from({length: 4 - user?.role}, (_, i) => user?.role + i + 1).map(role => 
-                                <Select.Option key={role} value={role}>{ROLES[role - 1]}</Select.Option>
-                            )}
+                                {Array.from({length: 4 - user?.role}, (_, i) => user?.role + i + 1).map(role => 
+                                    <option key={role} value={role}>{ROLES[role - 1]}</option>
+                                )}
                             </Select>
                         </FormControl>
                     </ModalBody>

@@ -8,14 +8,17 @@ import { AddIcon } from '@chakra-ui/icons';
 import Spinner from '../../../components/Spinner';
 import api from '../../../apis';
 import { message } from 'antd';
+import { useSelector } from 'react-redux';
 
 export default function AddProductToGroupModal({ groupId, resetProdByGroup }) {
+
+    const user = useSelector((state) => state.auth.user);
+
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([])
-
 
     {/* Data function */}
     const getProducts = async () => {
@@ -88,6 +91,7 @@ export default function AddProductToGroupModal({ groupId, resetProdByGroup }) {
     return (
         <>
             <Button
+                isDisabled={user && user.role > 3}
                 bg={'green.400'}
                 color={'white'}
                 _hover={{

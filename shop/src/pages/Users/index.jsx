@@ -16,14 +16,16 @@ const ROLE_COLORS = ['blue', 'green', 'orange', 'red'];
 
 export default function Users() {
 
-const [recordPerPage, setRecordPerPage] = React.useState(10);
-const [currentPage, setCurrentPage] = React.useState(1);
-const [users, setUsers] = React.useState([]);
-const [viewUserId, setViewUserId] = React.useState(null);
+    const user = useSelector((state) => state.auth.user);
 
-const [dataList, setDataList] = React.useState([]);
+    const [recordPerPage, setRecordPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [users, setUsers] = React.useState([]);
+    const [viewUserId, setViewUserId] = React.useState(null);
 
-const [loading, setLoading] = React.useState(false);
+    const [dataList, setDataList] = React.useState([]);
+
+    const [loading, setLoading] = React.useState(false);
 
     {/* Data functions */}
     const getUsers = async () => {
@@ -68,12 +70,16 @@ const [loading, setLoading] = React.useState(false);
     };
 
     const switchUserStatus = async (userId) => {
-        await axios.post(api.SWITCH_USER_STATUS, { targetId: userId}, {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token'),
-            },
-        }).then((res) => {
+        await axios.post(
+            api.SWITCH_USER_STATUS
+            , { targetId: userId}
+            , {
+                headers: {
+                    'x-client-id': localStorage.getItem('client'),
+                    'x-token-id': localStorage.getItem('token'),
+                },
+            }
+        ).then((res) => {
             message.success(res.data.message);
             setUsers(res.data.metadata);
         }).catch((err) => {
@@ -135,12 +141,14 @@ const [loading, setLoading] = React.useState(false);
             render: (text, record) => (
                 <Space size="middle">
                     <Button 
+                        isDisabled={user && user.role > 3}
                         onClick={() => setViewUserId(record.key)}
                     > 
                         View
                     </Button>
 
                     <Button 
+                        isDisabled={user && user.role > 3}
                         colorScheme={record.status === 'Active' ? 'red' : 'blue'} 
                         onClick={() => switchUserStatus(record.key)}
                     >
@@ -166,7 +174,7 @@ const [loading, setLoading] = React.useState(false);
             <ViewUserModal id={viewUserId} setId={setViewUserId} setUsers={setUsers}/>
 
             {/* Add user button */}
-            <HStack justify="flex-end">
+            <HStack justify="flex-end" >
                 <AddUserModal setUsers={setUsers} />
             </HStack>
             <Table

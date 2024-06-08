@@ -52,7 +52,7 @@ export default function Groups() {
 
     const [filter, setFilter] = React.useState({
         name: null,
-        email: null,
+        addBy: null,
     });
 
     const createDataList = () => {
@@ -60,7 +60,7 @@ export default function Groups() {
         groups
             .filter(
                 (group) =>
-                    (filter.email ? group.addBy.email.includes(filter.email) : true) &&
+                    (filter.addBy ? group.addBy.name.includes(filter.addBy) : true) &&
                     (filter.name ? group.name.includes(filter.name) : true),
             )
             .forEach((group, index) => {
@@ -69,7 +69,7 @@ export default function Groups() {
                     _id: group._id,
                     name: group.name,
                     createdAt: group.createdAt,
-                    addBy: group.addBy.email,
+                    addBy: group.addBy.name,
                 });
             });
         setDataList(dataList);
@@ -138,7 +138,7 @@ export default function Groups() {
     ];
 
     {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
@@ -225,9 +225,9 @@ export default function Groups() {
                                 value={filter.name}
                             />
                             <Input
-                                placeholder="Email"
-                                onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                                value={filter.email}
+                                placeholder="Added by"
+                                onChange={(e) => setFilter({ ...filter, addBy: e.target.value })}
+                                value={filter.addBy}
                             />
                         </HStack>
                     </Flex>                 

@@ -33,7 +33,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
     const [filter, setFilter] = React.useState({
         mode: 'all',
         name: null,
-        email: null,
+        addBy: null,
     });
 
     {/* Data functions*/}
@@ -43,7 +43,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
             .filter(
                 (product) =>
                     (filter.mode === 'all' ? true : product.status === filter.mode) &&
-                    (filter.email ? product.addBy.email.includes(filter.email) : true) &&
+                    (filter.addBy ? product.addBy.name.includes(filter.addBy) : true) &&
                     (filter.name ? product.name.includes(filter.name) : true),
             )
             .forEach((product, index) => {
@@ -53,8 +53,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
                     thumbnail: product.thumbnail,
                     name: product.name,
                     status: product.status,
-                    createdAt: product.createdAt,
-                    addBy: product.addBy.email,
+                    addBy: product.addBy.name,
                 });
             });
         setDataList(dataList);
@@ -127,26 +126,15 @@ export default function ViewProdByCateModal({category, setCategory}) {
             key: 'name',
         },
         {
-            title: 'Thumbnail',
+            title: 'Thumbnail ID',
             dataIndex: 'thumbnail',
             key: 'thumbnail',
-            render: (thumbnail) => <Image src={thumbnail} boxSize="50px" objectFit="cover" alt="thumbnail" />,
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
             render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
-        },
-        {
-            title: 'Created At',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
-            render: (createdAt) => {
-                const date = new Date(createdAt);
-                return date.toLocaleDateString();
-            },
         },
         {
             title: 'Added By',
@@ -157,7 +145,7 @@ export default function ViewProdByCateModal({category, setCategory}) {
     ];
 
     {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 4) {
+    if (user && user.role < 3) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
@@ -260,9 +248,9 @@ export default function ViewProdByCateModal({category, setCategory}) {
                                             value={filter.name}
                                         />
                                         <Input
-                                            placeholder="Email"
-                                            onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                                            value={filter.email}
+                                            placeholder="Added by"
+                                            onChange={(e) => setFilter({ ...filter, addBy: e.target.value })}
+                                            value={filter.addBy}
                                         />
                                     </HStack>
                                 </Flex>

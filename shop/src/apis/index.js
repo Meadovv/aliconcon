@@ -51,4 +51,15 @@ const api = {
     DELETE_IMAGE: host + 'image/delete',
 }
 
+const image_host = 'http://localhost:9000/'
+
+export const IMAGE_HOST = {
+    THUMBNAIL: (name) => {
+        return image_host + 'thumbnail?file=' + name + '&width=150&height=150&type=webp';
+    },
+    ORIGINAL: (name) => {
+        return image_host + 'crop?file=' + name + '&width=1920&height=1080&type=webp';
+    }
+}
+
 export default api;

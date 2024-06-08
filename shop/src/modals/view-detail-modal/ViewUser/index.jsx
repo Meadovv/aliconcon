@@ -1,14 +1,14 @@
 import {
     useDisclosure,
-    Modal,
-    ModalOverlay,
+    Modal, FormControl, Input,
+    ModalOverlay, FormLabel,
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
     ModalCloseButton,
-    Button,
-    Spinner,
+    Button, Box, 
+    Spinner, Select,
     Stack
 } from '@chakra-ui/react';
 import React from 'react';
@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 import api from '../../../apis';
-import { message, Select, Divider, Popconfirm } from 'antd';
+import { message, Divider, Popconfirm } from 'antd';
 
 const ROLES = [
     'Owner',
@@ -36,13 +36,19 @@ export default function ViewUser({ id, setId, setUsers }) {
 
     const getUser = async () => {
         onOpen();
-        await axios.post(api.GET_USER, { targetId: id }, {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token'),
+        await axios.post(
+            api.GET_USER
+            , { targetId: id }
+            , {
+                headers: {
+                    'x-client-id': localStorage.getItem('client'),
+                    'x-token-id': localStorage.getItem('token'),
+                }
             }
-        }).then(res => {
+        ).then(res => {
             setTargetUser(res.data.metadata);
+            message.success(res.data.message);
+            setSelectedRole(res.data.metadata.role)
         }).catch(err => {
             console.log(err);
             message.error(err.response.data.message);
@@ -78,7 +84,6 @@ export default function ViewUser({ id, setId, setUsers }) {
     React.useEffect(() => {
         if (!id) return;
         getUser();
-        setSelectedRole(targetUser.role);
     }, [id]);
 
     return (
@@ -91,31 +96,52 @@ export default function ViewUser({ id, setId, setUsers }) {
                     {targetUser ? 
                     <Stack>
                         <Divider orientation='left'>User Information</Divider>
-                        <div>Name: {targetUser._id.name}</div>
-                        <div>Email: {targetUser._id.email}</div>
+                            
+                            <Box border={'solid black'} borderRadius={10} padding={4}>
+                                <label>Name:</label>
+                                <Box color='green'>{targetUser._id.name}</Box>
+                            </Box>                        
+                            <Box border={'solid black'} borderRadius={10} padding={4} marginBottom={5}>
+                                <label>Email:</label>
+                                <Box color='green'>{targetUser._id.email}</Box>
+                            </Box>
+                            
                         <Divider orientation='left'>Add By Information</Divider>
-                        <div>Add By Name: {targetUser.addBy.name}</div>
-                        <div>Add By Email: {targetUser.addBy.email}</div>
+                            <Box border={'solid black'} borderRadius={10} padding={4}>
+                                <label>Add By Name:</label>
+                                <Box color='green'>{targetUser.addBy.name}</Box>
+                            </Box>
+                            <Box border={'solid black'} borderRadius={10} padding={4} marginBottom={5}>
+                                <label>Add By Email:</label>
+                                <Box color='green'>{targetUser.addBy.email}</Box>
+                            </Box>
+
                         <Divider orientation='left'>Other Information</Divider>
-                        <div>Account is add at: {new Date(targetUser.createdAt).toLocaleDateString()}</div>
+                            <Box border={'solid black'} borderRadius={10} padding={4} marginBottom={5}>
+                                <label>Account is add at:</label>
+                                <Box color='green'>{new Date(targetUser.createdAt).toLocaleDateString()}</Box>
+                            </Box>
+
                         <Divider orientation='left'>Change Role</Divider>
-                        <Popconfirm
-                            title="Are you sure you want to change the role?"
-                            onConfirm={() => setTargetUser({...targetUser, role: selectedRole})}
-                            okText="Yes"
-                            cancelText="No"
-                            overlayStyle={{ zIndex: 2000 }}
-                        >
-                            <Select 
-                                value={selectedRole} 
-                                onChange={(e) => setSelectedRole(e.target.value)}
+                            <Popconfirm
+                                title="Are you sure you want to change the role?"
+                                onConfirm={() => setTargetUser({...targetUser, role: selectedRole})}
+                                okText="Yes"
+                                cancelText="No"
+                                overlayStyle={{ zIndex: 3000 }}
                             >
-                                {Array
-                                    .from({length: 4 - user?.role}, (_, i) => user?.role + i + 1)
-                                    .map(role => 
-                                        <Select.Option key={role} value={role}>{ROLES[role - 1]}</Select.Option>
-                                )}
-                            </Select>
+                                
+                                <Select 
+                                   
+                                    value={selectedRole} 
+                                    onChange={(e) => setSelectedRole(e.target.value)}
+                                >
+                                    {Array
+                                        .from({length: 4 - user?.role}, (_, i) => user?.role + i + 1)
+                                        .map(role => 
+                                            <option key={role} value={role}>{ROLES[role - 1]}</option>
+                                    )}
+                                </Select>
                         </Popconfirm>
                     </Stack> : <Spinner />}
                 </ModalBody>

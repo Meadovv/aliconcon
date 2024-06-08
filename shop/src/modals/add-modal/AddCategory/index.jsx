@@ -2,7 +2,7 @@ import {
     Button, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader,
     ModalBody, ModalFooter, ModalCloseButton, FormControl, FormLabel, Input
 } from '@chakra-ui/react';
-
+import { useSelector } from 'react-redux';
 import { AddIcon } from '@chakra-ui/icons';
 import React from 'react';
 
@@ -11,6 +11,9 @@ import api from '../../../apis';
 import { message } from 'antd';
 
 export default function AddCategoryModal({ setCategories }) {
+
+    const user = useSelector((state) => state.auth.user);
+
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [form, setForm] = React.useState({
@@ -40,6 +43,7 @@ export default function AddCategoryModal({ setCategories }) {
         <>
             {/*Always on*/}
             <Button
+                isDisabled={user && user.role > 4}
                 bg={'green.400'}
                 color={'white'}
                 _hover={{
