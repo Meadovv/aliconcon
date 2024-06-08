@@ -1,7 +1,7 @@
 const categoryModel = require('../models/category.model');
 const productModel = require('../models/product.model');
 const shopModel = require('../models/shop.model');
-const groupModel = require('../models/group.model');
+const imageModel = require('../models/image.model');
 const voucherModel = require('../models/voucher.model');
 const ROLES = require('../constants/ROLES')
 
@@ -33,6 +33,9 @@ class ProductService {
         const foundCategory = await categoryModel.findById(category);
         if (!foundCategory) throw new BAD_REQUEST_ERROR('Category not found!');
         if (foundCategory.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Category not found in this shop!');
+        const foundThumbnail = await imageModel.findById(thumbnail);
+        if (!foundThumbnail) throw new BAD_REQUEST_ERROR('Thumbnail not found!');
+        if (foundThumbnail.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Thumbnail not found in this shop!');
         const newProduct = await productModel.create({
             shop: shopId,
             addBy: userId,
@@ -54,10 +57,7 @@ class ProductService {
 
     static getProduct = async ({ id, user }) => {
         const product = await productModel.findById(id)
-            .populate({
-                path: 'category',
-                select: '_id name'
-            })
+            .populate('category', '_id name')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
             .populate('groups.group', '_id name')
@@ -102,19 +102,37 @@ class ProductService {
                 .sort({ discount: -1 })
                 .limit(1)
                 .lean();
-
-            return voucher[0];
+            return voucher.length > 0 ? voucher[0] : null;
         }));
 
         const allVouchers = [...productVouchers, ...groupVouchers];
         if (allVouchers.length) {
-            product.sale = allVouchers.reduce((max, voucher) => voucher.discount > max.discount ? voucher : max, allVouchers[0]).discount;
+            let maxDiscount = 0;
+            allVouchers.forEach(voucher => {
+                if(!voucher) return;
+                maxDiscount = Math.max(maxDiscount, voucher.discount);
+            })
+            product.sale = maxDiscount;
         }
+
+        const relatedProducts = await productModel.find({
+            category: product.category,
+            _id: { $ne: id }
+        })
+            .select('_id name price thumbnail category shop short_description sell_count')
+            .sort({ sell_count: -1 })
+            .populate('category', '_id name')
+            .populate('thumbnail', '_id name')
+            .populate('shop', '_id name')
+            .limit(5)
+            .lean();
 
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
+        product.relatedProducts = relatedProducts;
+
         return utils.OtherUtils.getInfoData({
-            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations'],
+            fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count', 'relatedProducts'],
             object: product
         });
     }
@@ -170,7 +188,7 @@ class ProductService {
             query.price = { ...query?.price, $lte: Number(high_price) };
         }
         const products = await productModel.find(query)
-            .select('_id name price thumbnail category shop groups likes')
+            .select('_id name price thumbnail category shop groups likes short_description sell_count')
             .populate('category', '_id name')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
@@ -207,18 +225,17 @@ class ProductService {
                             item: groupId
                         }
                     },
-                    startDate: { $lt: new Date() },
-                    endDate: { $gt: new Date() }
+                    startDate: { $lte: new Date() },
+                    endDate: { $gte: new Date() }
                 })
                     .select('_id startDate endDate discount amount used')
                     .sort({ discount: -1 })
                     .limit(1)
                     .lean();
-    
-                return voucher[0];
+                if(voucher.length) return voucher[0];
+                else return null;
             }));
-    
-            const allVouchers = [...productVouchers, ...groupVouchers];
+            const allVouchers = [...productVouchers];
             if (allVouchers.length) {
                 product.sale = allVouchers.reduce((max, voucher) => voucher.discount > max.discount ? voucher : max, allVouchers[0]).discount;
             }

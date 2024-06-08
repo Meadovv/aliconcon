@@ -9,8 +9,19 @@ const CategoryService = require('../services/category.service');
 const VariationService = require('../services/variation.service');
 const GroupService = require('../services/group.service');
 const VoucherService = require('../services/voucher.service');
-
 class ShopController {
+
+    static getShop = async (req, res) => {
+        return new SUCCESS({
+            message: 'Shop successfully!',
+            metadata: await ShopService.getShop({
+                ...getFields({
+                    fields: ['shopId'],
+                    object: req.query
+                })
+            })
+        }).send(res);
+    }
 
     static metadata = async (req, res) => {
         return new SUCCESS({
@@ -405,7 +416,7 @@ class ShopController {
             message: 'Voucher created successfully',
             metadata: await VoucherService.createVoucher({
                 ...getFields({
-                    fields: ['name', 'description', 'startDate', 'endDate', 'amount', 'discount'],
+                    fields: ['name', 'description', 'startDate', 'endDate', 'discount'],
                     object: req.body
                 }),
                 ...req.jwt_decode
@@ -465,6 +476,19 @@ class ShopController {
         new SUCCESS({
             message: 'Add to voucher successfully',
             metadata: await VoucherService.addToVoucher({
+                ...getFields({
+                    fields: ['voucherId', 'itemId', 'itemType'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static removeFromVoucher = async (req, res) => {
+        new SUCCESS({
+            message: 'Remove from voucher successfully',
+            metadata: await VoucherService.removeFromVoucher({
                 ...getFields({
                     fields: ['voucherId', 'itemId', 'itemType'],
                     object: req.body

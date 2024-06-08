@@ -9,6 +9,7 @@ const router = express.Router();
 
 // Public
 
+router.get('/get-shop', ErrorMiddleware.asyncHandler(ShopController.getShop));
 router.post('/register', ErrorMiddleware.asyncHandler(ShopController.register));
 router.post('/login', ErrorMiddleware.asyncHandler(ShopController.login));
 router.get('/get-categories', ErrorMiddleware.asyncHandler(ShopController.getCategories));
@@ -55,5 +56,6 @@ router.post('/delete-voucher', ErrorMiddleware.asyncHandler(ShopController.delet
 router.post('/get-voucher', ErrorMiddleware.asyncHandler(ShopController.getVoucher));
 router.post('/get-vouchers', ErrorMiddleware.asyncHandler(ShopController.getVouchers));
 router.post('/add-to-voucher', ErrorMiddleware.asyncHandler(ShopController.addToVoucher));
+router.post('/remove-from-voucher', ErrorMiddleware.asyncHandler(ShopController.removeFromVoucher));
 
 module.exports = router;

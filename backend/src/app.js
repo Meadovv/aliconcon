@@ -5,10 +5,12 @@ const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
-const cors = require('cors')
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const app = express();
 
 // Middlewares
+app.use(cookieParser());
 app.use(morgan('dev')); // Logger
 app.use(helmet()); // Security
 app.use(compression()); // Compression

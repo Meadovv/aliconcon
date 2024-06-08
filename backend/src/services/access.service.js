@@ -20,7 +20,7 @@ class AccessService {
             throw new BAD_REQUEST_ERROR('Old password is incorrect!');
         }
         const hashedPassword = await Utils.AuthUtils.createHashPassword(newPassword);
-        userModel.findByIdAndUpdate(userId, { password: hashedPassword });
+        await userModel.findByIdAndUpdate(userId, { password: hashedPassword });
         return Utils.OtherUtils.getInfoData({
             fields: ['_id', 'name', 'email', 'role', 'phone', 'address'],
             object: foundUser

@@ -48,10 +48,6 @@ const schema = new Schema({
         type: Date,
         required: true
     },
-    amount: {
-        type: Number,
-        required: true
-    },
     used: {
         type: Number,
         default: 0
