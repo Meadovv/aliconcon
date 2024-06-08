@@ -10,7 +10,7 @@ const {
 const userModel = require('../models/user.model');
 
 class VoucherService {
-    static createVoucher = async ({ shopId, userId, name, description, discount, startDate, endDate, amount }) => {
+    static createVoucher = async ({ shopId, userId, name, description, discount, startDate, endDate }) => {
         const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
         const foundUser = await userModel.findById(userId).lean();
@@ -25,8 +25,7 @@ class VoucherService {
             description: description,
             discount: discount,
             startDate: new Date(startDate).toISOString(),
-            endDate: new Date(endDate).toISOString(),
-            amount: amount
+            endDate: new Date(endDate).toISOString()
         });
         const vouchers = await voucherModel
             .find({ shop: shopId })

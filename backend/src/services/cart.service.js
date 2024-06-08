@@ -181,7 +181,7 @@ class CartService {
         return await this.getCart({ userId });
     }
 
-    static checkout = async ({ information, carts, method }) => {
+    static checkout = async ({ information, carts }) => {
         let totalCash = 0;
         // kiểm tra các sản phẩm trong giỏ hàng
 
@@ -278,9 +278,7 @@ class CartService {
             user_phone: information.phone,
             user_address: information.address,
             items: cartItems,
-            total: totalCash,
-            method: method,
-            status: 0
+            total: totalCash
         });
 
         return order;

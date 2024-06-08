@@ -142,7 +142,7 @@ class UserController {
             message: 'Checkout successfully',
             metadata: await CartService.checkout({
                 ...getFields({
-                    fields: ['information', 'carts', 'method'],
+                    fields: ['information', 'carts'],
                     object: req.body
                 }),
             })

@@ -416,7 +416,7 @@ class ShopController {
             message: 'Voucher created successfully',
             metadata: await VoucherService.createVoucher({
                 ...getFields({
-                    fields: ['name', 'description', 'startDate', 'endDate', 'amount', 'discount'],
+                    fields: ['name', 'description', 'startDate', 'endDate', 'discount'],
                     object: req.body
                 }),
                 ...req.jwt_decode

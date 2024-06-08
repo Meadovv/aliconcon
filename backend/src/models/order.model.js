@@ -31,15 +31,10 @@ const schema = new Schema({
         type: Number,
         required: true
     },
-    method: {
-        type: Number,
-        enum: [0, 1],
-        required: true
-    },
     status: {
         type: Number,
         enum: [0, 1],
-        required: true
+        default: 0
     },
     paid: {
         type: Number,
