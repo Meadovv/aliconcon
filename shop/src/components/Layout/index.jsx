@@ -59,28 +59,25 @@ export default function SidebarWithHeader({ children, layout }) {
     );
 }
 
-import { FaCreditCard } from "react-icons/fa6";
-import { FaBoxOpen } from "react-icons/fa";
-import { MdOutlinePermMedia } from "react-icons/md";
-import { LuPackageCheck } from "react-icons/lu";
-import { FiHome, FiSettings, FiMenu, FiBell, FiChevronDown, FiUser } from 'react-icons/fi';
-import { BiCategory } from "react-icons/bi";
+import { FaCreditCard } from 'react-icons/fa6';
+import { FaBoxOpen } from 'react-icons/fa';
+import { MdOutlinePermMedia } from 'react-icons/md';
+import { LuPackageCheck } from 'react-icons/lu';
+import { FiMenu, FiBell, FiChevronDown, FiUser } from 'react-icons/fi';
+import { BiCategory } from 'react-icons/bi';
 
 const SidebarContent = ({ onClose, ...rest }) => {
+    const user = useSelector((state) => state.auth.user);
 
-    const user = useSelector(state => state.auth.user);
-    
     const LinkItems = [
-        { name: 'Home', icon: FiHome, link: '/', disabled: false },
         { name: 'Categories', icon: BiCategory, link: '/categories', disabled: false },
         { name: 'Products', icon: LuPackageCheck, link: '/products', disabled: false },
         { name: 'Vouchers', icon: FaCreditCard, link: '/vouchers', disabled: false },
         { name: 'Orders', icon: FaBoxOpen, link: '/orders', disabled: false },
         { name: 'Medias', icon: MdOutlinePermMedia, link: '/medias', disabled: false },
         { name: 'Users', icon: FiUser, link: '/users', disabled: user?.role > 2 },
-        { name: 'Settings', icon: FiSettings, link: '/settings', disabled: user?.role > 1 },
     ];
-    
+
     return (
         <Box
             transition="3s ease"
@@ -109,11 +106,15 @@ const SidebarContent = ({ onClose, ...rest }) => {
 };
 
 const NavItem = ({ icon, children, link, disabled, ...rest }) => {
-
     const navigate = useNavigate();
-    
+
     return (
-        <Link href={null} style={disabled ? { pointerEvents: 'none', opacity: '0.6' } : { textDecoration: 'none' }} _focus={{ boxShadow: 'none' }} onClick={() => navigate(link)}>
+        <Link
+            href={null}
+            style={disabled ? { pointerEvents: 'none', opacity: '0.6' } : { textDecoration: 'none' }}
+            _focus={{ boxShadow: 'none' }}
+            onClick={() => navigate(link)}
+        >
             <Flex
                 align="center"
                 p="4"
@@ -144,16 +145,15 @@ const NavItem = ({ icon, children, link, disabled, ...rest }) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }) => {
-
-    const { user } = useSelector(state => state.auth);
+    const { user } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
     const role = (idx) => {
-        if(idx === 1) return 'Owner';
-        if(idx === 2) return 'Admin';
-        if(idx === 3) return 'Moderator';
-        if(idx === 4) return 'Editor';
-    }
+        if (idx === 1) return 'Owner';
+        if (idx === 2) return 'Admin';
+        if (idx === 3) return 'Moderator';
+        if (idx === 4) return 'Editor';
+    };
 
     return (
         <Flex
@@ -185,10 +185,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
                     <Menu>
                         <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
                             <HStack>
-                                <Avatar
-                                    size={'sm'}
-                                    icon={<AiOutlineUser fontSize='1.5rem' />}
-                                />
+                                <Avatar size={'sm'} icon={<AiOutlineUser fontSize="1.5rem" />} />
                                 <VStack
                                     display={{ base: 'none', md: 'flex' }}
                                     alignItems="flex-start"

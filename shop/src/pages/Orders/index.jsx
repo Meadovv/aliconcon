@@ -8,36 +8,48 @@ import { Table, Space, Select, message, Tag } from 'antd';
 import axios from 'axios';
 import api from '../../apis';
 
+import ViewOrder from '../../components/Modal/ViewOrder';
+
 export default function Orders() {
     const user = useSelector((state) => state.auth.user);
 
-    const [viewVoucherId, setViewVoucherId] = React.useState(null);
+    const [viewOrderId, setViewOrderId] = React.useState(null);
 
-    const viewVoucher = (id) => {
-        setViewVoucherId(id);
+    const viewOrder = (id) => {
+        setViewOrderId(id);
     };
 
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'OrderID',
+            dataIndex: '_id',
+            key: '_id',
+            width: 250,
         },
         {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
             render: (createdAt) => {
                 const date = new Date(createdAt);
                 return date.toLocaleDateString();
             },
         },
         {
-            title: 'Added By',
-            dataIndex: 'addBy',
-            key: 'addedBy',
-            responsive: ['md'], // This column will be hidden on screens smaller than md
+            title: 'Paid',
+            dataIndex: 'paid',
+            key: 'paid',
+            render: (paid) => {
+                return paid ? <Tag color="green">Paid</Tag> : <Tag color="red">Unpaid</Tag>;
+            }
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => {
+                return status ? <Tag color="green">Completed</Tag> : <Tag color="red">Shipping</Tag>;
+            }
         },
     ];
 
@@ -47,7 +59,7 @@ export default function Orders() {
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button onClick={() => viewVoucher(record._id)}>View</Button>
+                    <Button onClick={() => viewOrder(record._id)}>View</Button>
                 </Space>
             ),
         });
@@ -56,24 +68,8 @@ export default function Orders() {
     const [recordPerPage, setRecordPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [dataList, setDataList] = React.useState([]);
-
     const [orders, serOrders] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
-
-    const createDataList = () => {
-        // Update this function to match your voucher data structure
-        const list = orders.map((voucher) => {
-            return {
-                _id: voucher._id,
-                key: voucher._id,
-                name: voucher.name,
-                status: voucher.status,
-                createdAt: voucher.createdAt,
-                addBy: voucher.addBy.name,
-            };
-        });
-        setDataList(list);
-    };
 
     const getOrders = async () => {
         // Update this function to use your get orders API
@@ -99,8 +95,16 @@ export default function Orders() {
         setLoading(false);
     };
 
+    const createDataList = () => {
+        const data = orders.map((order, index) => ({
+            ...order,
+            key: order._id,
+        }));
+        setDataList(data);
+    }
+
     React.useEffect(() => {
-        // getOrders();
+        getOrders();
     }, []);
 
     React.useEffect(() => {
@@ -109,6 +113,7 @@ export default function Orders() {
 
     return (
         <Flex direction="column" gap={5}>
+            <ViewOrder id={viewOrderId} setId={setViewOrderId} />
             <HStack justify="flex-end">
                 <Button
                     bg={'red.400'}

@@ -2,7 +2,6 @@ import Categories from '../../pages/Categories';
 import Home from '../../pages/Home';
 import Authentication from '../../pages/Authentication';
 import Products from '../../pages/Products';
-import Settings from '../../pages/Settings';
 import Vouchers from '../../pages/Vouchers';
 import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
@@ -61,12 +60,6 @@ const routers = [
     {
         path: '/users',
         children: <Users />,
-        layout: true,
-        middleware: 'private'
-    },
-    {
-        path: '/settings',
-        children: <Settings />,
         layout: true,
         middleware: 'private'
     },
