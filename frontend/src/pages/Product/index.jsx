@@ -18,6 +18,8 @@ import { useNavigate } from 'react-router-dom';
 
 import ProductList from '../../components/ProductList';
 
+import { openModal } from '../../reducer/actions/modal.slice';
+
 export default function Product() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -75,7 +77,34 @@ export default function Product() {
         }
     }, [product, variantTierIdx]);
 
-    const likeSwitch = async (productId) => {};
+    const likeSwitch = async (productId) => {
+        if (!user) {
+            dispatch(openModal({ modal: 'login' }));
+            return;
+        } else {
+            await axios
+                .post(
+                    api.SWITCH_PRODUCT_LIKE,
+                    {
+                        productId: productId,
+                    },
+                    {
+                        headers: {
+                            'x-token-id': localStorage.getItem('token'),
+                            'x-client-id': localStorage.getItem('client'),
+                        },
+                    },
+                )
+                .then((res) => {
+                    message.success(res.data.message);
+                    setProduct(res.data.metadata);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    message.error(err.response.data.message);
+                });
+        }
+    };
 
     const addToCartHandler = async () => {
         if (quantity > variation?.quantity) {

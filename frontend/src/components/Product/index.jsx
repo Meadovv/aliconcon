@@ -40,8 +40,8 @@ const Product = ({ product }) => {
                 </div>
             </div>
             <div className="product-item-sub">
-                <div>Sell: {formatNumber(product?.sell_count + 2345)}</div>
-                <div>Likes: {formatNumber(product?.likes + 3456)}</div>
+                <div>Sell: {formatNumber(product?.sell_count)}</div>
+                <div>Likes: {formatNumber(product?.likes)}</div>
             </div>
         </div>
     );

@@ -1,13 +1,12 @@
-import { Box, Flex, Text, VStack, Button } from '@chakra-ui/react';
+import { Box, Flex, VStack, Button } from '@chakra-ui/react';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-const menus = ['Profile', 'Orders', 'Alipay', 'Advantage'];
+const menus = ['Profile', 'Orders', 'Advantage'];
 
 import Profile from './Profile';
 import Orders from './Orders';
-import Alipay from './Alipay';
 import Advantage from './Advantage';
 
 export default function Setting() {
@@ -22,8 +21,6 @@ export default function Setting() {
             case 1:
                 return <Orders />;
             case 2:
-                return <Alipay />;
-            case 3:
                 return <Advantage />;
             default:
                 return <Profile />;
