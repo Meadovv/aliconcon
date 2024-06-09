@@ -1,4 +1,4 @@
-const host = 'https://api.aliconcon.xyz/v1/'
+const host = 'http://localhost:3055/v1/'
 const image_host = 'https://image.aliconcon.xyz/'
 const api = {
     LOGIN: host + 'shop/login',
@@ -16,7 +16,6 @@ const api = {
     DELETE_CATEGORY: host + 'shop/delete-category',
     GET_CATEGORY: host + 'shop/get-category',
     GET_CATEGORIES: host + 'shop/get-categories',
-    SWITCH_CATEGORY_STATUS: host + 'shop/switch-category-status',
     UPDATE_CATEGORY: host + 'shop/update-category',
     UPLOAD_IMAGE: host + 'image/upload',
     GET_IMAGE: host + 'image/get',
@@ -24,12 +23,10 @@ const api = {
     ADD_PRODUCT: host + 'shop/create-product',
     GET_PRODUCTS: host + 'shop/get-products',
     ADD_GROUP: host + 'shop/create-group',
-    SWITCH_PRODUCT_STATUS: host + 'shop/switch-product-status',
     GET_GROUPS: host + 'shop/get-groups',
     GET_PRODUCT: host + 'shop/get-product',
     DELETE_PRODUCT: host + 'shop/delete-product',
     GET_VOUCHERS: host + 'shop/get-vouchers',
-    SWITCH_VOUCHER_STATUS: host + 'shop/switch-voucher',
     CREATE_VOUCHER: host + 'shop/create-voucher',
     GET_VOUCHER: host + 'shop/get-voucher',
     DELETE_VOUCHER: host + 'shop/delete-voucher',

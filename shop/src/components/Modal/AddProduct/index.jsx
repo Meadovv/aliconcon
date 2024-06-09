@@ -71,6 +71,14 @@ export default function AddProductModal({ setProducts }) {
     }
 
     const onSave = async () => {
+        if(!product.variations.length) {
+            message.error('Please add at least one variation');
+            return;
+        }
+        if(!product.thumbnail) {
+            message.error('Please add a thumbnail');
+            return;
+        }
         await axios
             .post(
                 api.ADD_PRODUCT,
@@ -86,7 +94,7 @@ export default function AddProductModal({ setProducts }) {
                 },
             )
             .then((res) => {
-                setProducts(prev => [...prev, res.data.metadata]);
+                setProducts(res.data.metadata);
                 message.success('Product added successfully');
                 onClose();
             })

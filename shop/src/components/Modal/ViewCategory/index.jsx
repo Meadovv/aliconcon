@@ -120,7 +120,6 @@ export default function ViewCategory({ id, setId, setCategories }) {
                         mr={3}
                         onClick={onDelete}
                         isLoading={loading}
-                        isDisabled={category && category.status === 'published'}
                     >
                         Delete
                     </Button>
@@ -130,7 +129,6 @@ export default function ViewCategory({ id, setId, setCategories }) {
                         type="submit"
                         isLoading={loading}
                         loadingText="Saving..."
-                        isDisabled={category && category.status === 'published'}
                     >
                         Save
                     </Button>

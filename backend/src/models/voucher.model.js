@@ -50,10 +50,6 @@ const schema = new Schema({
     endDate: {
         type: Date,
         required: true
-    },
-    status: {
-        type: Boolean,
-        default: false
     }
 }, {
     timestamps: true,

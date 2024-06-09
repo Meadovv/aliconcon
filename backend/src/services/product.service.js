@@ -2,7 +2,7 @@ const categoryModel = require('../models/category.model');
 const productModel = require('../models/product.model');
 const shopModel = require('../models/shop.model');
 const imageModel = require('../models/image.model');
-const voucherModel = require('../models/voucher.model');
+const userModel = require('../models/user.model');
 const ROLES = require('../constants/ROLES')
 
 const utils = require('../utils');
@@ -26,15 +26,17 @@ class ProductService {
         variations,
     }) => {
         if (!shopId) throw new BAD_REQUEST_ERROR('Shop not found!')
-        const foundShop = await shopModel.findById(shopId);
+        const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
         if (!userId) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
-        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
+        const foundUser = await userModel.findById(userId).lean();
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
-        const foundCategory = await categoryModel.findById(category);
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        const foundCategory = await categoryModel.findById(category).lean();
         if (!foundCategory) throw new BAD_REQUEST_ERROR('Category not found!');
         if (foundCategory.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Category not found in this shop!');
-        const foundThumbnail = await imageModel.findById(thumbnail);
+        const foundThumbnail = await imageModel.findById(thumbnail).lean();
         if (!foundThumbnail) throw new BAD_REQUEST_ERROR('Thumbnail not found!');
         if (foundThumbnail.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Thumbnail not found in this shop!');
         const newProduct = await productModel.create({
@@ -49,7 +51,15 @@ class ProductService {
             variations: variations
         });
         await VariationService.createVariations(newProduct);
-        return newProduct;
+        const products = await productModel.find({ shop: shopId })
+        .select('_id name category price thumbnail addBy createdAt')
+        .populate({
+            path: 'category',
+            select: '_id name'
+        })
+        .populate('addBy', '_id name')
+        .lean();
+        return products;
     }
 
     static switchProductLike = async ({ shopId, userId, productId }) => {
@@ -92,10 +102,12 @@ class ProductService {
         const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
         if (!userId) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
-        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
+        const foundUser = await userModel.findById(userId).lean();
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
         const products = await productModel.find({ shop: shopId })
-            .select('_id name category price thumbnail addBy status createdAt')
+            .select('_id name category price thumbnail addBy createdAt')
             .populate({
                 path: 'category',
                 select: '_id name'
@@ -110,8 +122,10 @@ class ProductService {
         const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
         if (!userId) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
-        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
+        const foundUser = await userModel.findById(userId).lean();
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
         const variations = await variationModel.find({ product: productId }).lean();
         const product = await productModel.findById(productId)
             .populate('category', '_id name')
@@ -160,31 +174,12 @@ class ProductService {
     static deleteProduct = async ({ shopId, userId, productId }) => {
         const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
-        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
-        if (!foundUser) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
-        if (foundUser.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        if (userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
         await productModel.findByIdAndDelete(productId);
-        const products = await productModel.find({ shop: shopId })
-            .select('_id name category price thumbnail addBy status createdAt')
-            .populate({
-                path: 'category',
-                select: '_id name'
-            })
-            .populate('addBy', '_id name')
-            .lean();
-        return products;
-    }
-
-    static switchProductStatus = async ({ shopId, userId, productId }) => {
-        const foundShop = await shopModel.findById(shopId).lean();
-        if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
-        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
-        if (!foundUser) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
-        if (foundUser.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
-        const foundProduct = await productModel.findById(productId).lean();
-        if (!foundProduct) throw new BAD_REQUEST_ERROR('Product not found!');
-        const newStatus = foundProduct.status === 'draft' ? 'published' : 'draft';
-        await productModel.findByIdAndUpdate(productId, { status: newStatus });
         const products = await productModel.find({ shop: shopId })
             .select('_id name category price thumbnail addBy status createdAt')
             .populate({
@@ -199,13 +194,14 @@ class ProductService {
     static updateProduct = async ({ shopId, userId, product }) => {
         const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
-        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
-        if (!foundUser) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
-        if (foundUser.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
+        if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        if (userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
         const foundProduct = await productModel.findById(product._id).lean();
         if (!foundProduct) throw new BAD_REQUEST_ERROR('Product not found!');
         if (foundProduct.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Product not found in this shop!');
-        if (foundProduct.status === 'published') throw new BAD_REQUEST_ERROR('Cannot edit published product!');
         await productModel.findByIdAndUpdate(product._id, {
             name: product.name,
             short_description: product.short_description,
@@ -220,7 +216,7 @@ class ProductService {
             });
         }))
         const products = await productModel.find({ shop: shopId })
-            .select('_id name category price thumbnail addBy status createdAt')
+            .select('_id name category price thumbnail addBy createdAt')
             .populate({
                 path: 'category',
                 select: '_id name'

@@ -19,11 +19,6 @@ var categorySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'aliconcon_users',
         default: null
-    },
-    status: {
-        type: String,
-        enum: ['draft', 'published'],
-        default: 'draft'
     }
 }, {
     timestamps: true,

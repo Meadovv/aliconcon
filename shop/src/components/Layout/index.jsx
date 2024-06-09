@@ -22,7 +22,6 @@ import {
     Image,
 } from '@chakra-ui/react';
 import { AiOutlineUser } from 'react-icons/ai';
-import { FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, FiChevronDown, FiUser } from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -60,18 +59,25 @@ export default function SidebarWithHeader({ children, layout }) {
     );
 }
 
+import { FaCreditCard } from "react-icons/fa6";
+import { FaBoxOpen } from "react-icons/fa";
+import { MdOutlinePermMedia } from "react-icons/md";
+import { LuPackageCheck } from "react-icons/lu";
+import { FiHome, FiSettings, FiMenu, FiBell, FiChevronDown, FiUser } from 'react-icons/fi';
+import { BiCategory } from "react-icons/bi";
+
 const SidebarContent = ({ onClose, ...rest }) => {
 
     const user = useSelector(state => state.auth.user);
     
     const LinkItems = [
         { name: 'Home', icon: FiHome, link: '/', disabled: false },
-        { name: 'Categories', icon: FiTrendingUp, link: '/categories', disabled: false },
-        { name: 'Products', icon: FiCompass, link: '/products', disabled: false },
-        { name: 'Vouchers', icon: FiStar, link: '/vouchers', disabled: false },
-        { name: 'Orders', icon: FiStar, link: '/orders', disabled: false },
+        { name: 'Categories', icon: BiCategory, link: '/categories', disabled: false },
+        { name: 'Products', icon: LuPackageCheck, link: '/products', disabled: false },
+        { name: 'Vouchers', icon: FaCreditCard, link: '/vouchers', disabled: false },
+        { name: 'Orders', icon: FaBoxOpen, link: '/orders', disabled: false },
+        { name: 'Medias', icon: MdOutlinePermMedia, link: '/medias', disabled: false },
         { name: 'Users', icon: FiUser, link: '/users', disabled: user?.role > 2 },
-        { name: 'Medias', icon: FiStar, link: '/medias', disabled: false },
         { name: 'Settings', icon: FiSettings, link: '/settings', disabled: user?.role > 1 },
     ];
     

@@ -63,11 +63,6 @@ const productSchema = new Schema({
         }],
         default: []
     },
-    status: {
-        type: String,
-        enum: ['draft', 'published'],
-        default: 'draft'
-    },
     variations: {
         type: Array,
         default: []

@@ -3,7 +3,7 @@ import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
+import { Table, Space, Select, message } from 'antd';
 
 import AddVoucherModal from '../../components/Modal/AddVoucher';
 
@@ -26,12 +26,6 @@ export default function Vouchers() {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => <Tag color={status ? 'green' : 'red'}>{status ? 'Activate' : 'Deactivate'}</Tag>,
         },
         {
             title: 'Created At',
@@ -58,26 +52,6 @@ export default function Vouchers() {
             render: (_, record) => (
                 <Space size="middle">
                     <Button onClick={() => viewVoucher(record._id)}>View</Button>
-                    <Popconfirm
-                        title={
-                            record.status === 'draft'
-                                ? 'Are you sure you want to deactivate this voucher?'
-                                : 'Are you sure you want to activate this voucher?'
-                        }
-                        onConfirm={() => switchStatus(record._id)}
-                        okText={record.status === 'draft' ? 'Deactivate' : 'Activate'}
-                        cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
-                    >
-                        <Button colorScheme={record.status ? 'red' : 'blue'}>
-                            {record.status ? 'Deactivate' : 'Activate'}
-                        </Button>
-                    </Popconfirm>
                 </Space>
             ),
         });
@@ -127,23 +101,6 @@ export default function Vouchers() {
                 message.error(err.response.data.message);
             });
         setLoading(false);
-    };
-
-    const switchStatus = async (id) => {
-        await axios.post(api.SWITCH_VOUCHER_STATUS, { voucherId: id }, {
-            headers: {
-                'x-client-id': localStorage.getItem('client'),
-                'x-token-id': localStorage.getItem('token'),
-            }
-        })
-        .then(res => {
-            message.success(res.data.message);
-            setVouchers(res.data.metadata);
-        })
-        .catch(err => {
-            console.log(err);
-            message.error(err.response.data.message);
-        })
     };
 
     React.useEffect(() => {

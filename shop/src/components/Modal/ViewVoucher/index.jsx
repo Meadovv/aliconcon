@@ -192,7 +192,6 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
                         mr={3}
                         onClick={onDelete}
                         isLoading={loading}
-                        isDisabled={voucher && voucher.status}
                     >
                         Delete
                     </Button>
@@ -202,7 +201,6 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
                         type="submit"
                         isLoading={loading}
                         loadingText="Saving..."
-                        isDisabled={voucher && voucher.status}
                     >
                         Save
                     </Button>

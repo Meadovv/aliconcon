@@ -28,12 +28,6 @@ export default function Categories() {
             key: 'name',
         },
         {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
-        },
-        {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
@@ -58,26 +52,6 @@ export default function Categories() {
             render: (_, record) => (
                 <Space size="middle">
                     <Button onClick={() => viewCategory(record._id)}>View</Button>
-                    <Popconfirm
-                        title={
-                            record.status === 'draft'
-                                ? 'Are you sure you want to publish this category?'
-                                : 'Are you sure you want to unpublish this category?'
-                        }
-                        onConfirm={() => switchStatus(record._id)}
-                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
-                    >
-                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
-                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        </Button>
-                    </Popconfirm>
                 </Space>
             ),
         });
@@ -90,27 +64,14 @@ export default function Categories() {
     const [categories, setCategories] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
 
-    const [filter, setFilter] = React.useState({
-        mode: 'all',
-        name: null,
-        email: null,
-    });
-
     const createDataList = () => {
         const dataList = [];
         categories
-            .filter(
-                (category) =>
-                    (filter.mode === 'all' ? true : category.status === filter.mode) &&
-                    (filter.email ? category.addBy.email.includes(filter.email) : true) &&
-                    (filter.name ? category.name.includes(filter.name) : true),
-            )
             .forEach((category, index) => {
                 dataList.push({
                     key: index,
                     _id: category._id,
                     name: category.name,
-                    status: category.status,
                     createdAt: category.createdAt,
                     addBy: category.addBy.email,
                 });
@@ -140,40 +101,14 @@ export default function Categories() {
             });
         setLoading(false);
     };
-
-    const switchStatus = async (id) => {
-        setLoading(true);
-        await axios
-            .post(
-                api.SWITCH_CATEGORY_STATUS,
-                {
-                    categoryId: id,
-                },
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                setCategories(res.data.metadata);
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
+    
     React.useEffect(() => {
         getCategories();
     }, []);
 
     React.useEffect(() => {
         createDataList();
-    }, [categories, filter]);
+    }, [categories]);
 
     return (
         <Flex direction="column" gap={5}>
@@ -213,15 +148,6 @@ export default function Categories() {
                 footer={() => (
                     <HStack justify="flex-start">
                         <Select
-                            defaultValue={filter.mode}
-                            style={{ minWidth: 110 }}
-                            onChange={(value) => setFilter({ ...filter, mode: value })}
-                        >
-                            <Select.Option value="all">All</Select.Option>
-                            <Select.Option value="draft">Draft</Select.Option>
-                            <Select.Option value="published">Published</Select.Option>
-                        </Select>
-                        <Select
                             defaultValue={recordPerPage}
                             style={{ width: 120 }}
                             onChange={(value) => setRecordPerPage(value)}
@@ -230,16 +156,6 @@ export default function Categories() {
                             <Select.Option value={10}>10 / Page</Select.Option>
                             <Select.Option value={15}>15 / Page</Select.Option>
                         </Select>
-                        <Input
-                            placeholder="Name"
-                            onChange={(e) => setFilter({ ...filter, name: e.target.value })}
-                            value={filter.name}
-                        />
-                        <Input
-                            placeholder="Email"
-                            onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                            value={filter.email}
-                        />
                     </HStack>
                 )}
             />

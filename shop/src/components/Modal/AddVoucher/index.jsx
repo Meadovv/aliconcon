@@ -62,7 +62,7 @@ export default function AddVoucherModal({ setVouchers }) {
                 leftIcon={<AddIcon />}
                 onClick={onOpen}
             >
-                Add Voucher
+                Add
             </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />

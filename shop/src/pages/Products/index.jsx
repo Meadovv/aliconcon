@@ -2,7 +2,7 @@ import React from 'react';
 import { HStack, Button, Flex } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 
-import { Table, Space, Select, message, Tag, Popconfirm } from 'antd';
+import { Table, Space, Select, message } from 'antd';
 
 import { useSelector } from 'react-redux';
 
@@ -48,25 +48,6 @@ export default function Products() {
         setDataList(dataList);
     };
 
-    const switchStatus = async (id) => {
-        await axios.post(api.SWITCH_PRODUCT_STATUS, {
-            productId: id
-        }, {
-            headers: {
-                'x-token-id': localStorage.getItem('token'),
-                'x-client-id': localStorage.getItem('client')
-            }
-        })
-        .then(res => {
-            message.success(res.data.message);
-            setProducts(res.data.metadata);
-        })
-        .catch(err => {
-            console.log(err);
-            message.error(err.response.data.message);
-        })
-    };
-
     React.useEffect(() => {
         if (shop) getProducts();
     }, [shop]);
@@ -80,12 +61,6 @@ export default function Products() {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
         },
         {
             title: 'Created At',
@@ -109,28 +84,6 @@ export default function Products() {
             render: (_, record) => (
                 <Space size="middle">
                     <Button onClick={() => setViewProductId(record._id)}>View</Button>
-                    <Popconfirm
-                        title={
-                            record.status === 'draft'
-                                ? 'Are you sure you want to publish this product?'
-                                : 'Are you sure you want to unpublish this product?'
-                        }
-                        onConfirm={() => switchStatus(record._id)}
-                        okText={record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        cancelText="No"
-                        okButtonProps={{
-                            size: 'large',
-                        }}
-                        cancelButtonProps={{
-                            size: 'large',
-                        }}
-                    >
-                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'} style={{
-                            display: user?.role > 3 ? 'none' : 'block'
-                        }}>
-                            {record.status === 'draft' ? 'Publish' : 'Unpublish'}
-                        </Button>
-                    </Popconfirm>
                 </Space>
             ),
         },

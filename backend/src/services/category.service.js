@@ -25,8 +25,7 @@ class CategoryService {
         await categoryModel.create({
             shop: shopId,
             name: name,
-            addBy: userId,
-            status: 'draft'
+            addBy: userId
         })
 
         return await categoryModel
@@ -61,9 +60,6 @@ class CategoryService {
         if (!category) {
             throw new NOT_FOUND_ERROR('Category not found!')
         }
-        if (category.status === 'draft') {
-            throw new FORBIDDEN_ERROR('Category is not published!')
-        }
         return Utils.OtherUtils.getInfoData({
             fields: ['_id', 'name', 'shop'],
             object: category
@@ -87,38 +83,6 @@ class CategoryService {
             throw new NOT_FOUND_ERROR('Category not found!')
         }
         return category;
-    }
-
-    static switchCategoryStatus = async ({ categoryId, shopId, userId }) => {
-        const foundShop = await shopModel.findById(shopId);
-        if (!foundShop) {
-            throw new NOT_FOUND_ERROR('Shop not found!')
-        }
-
-        const userInShop = foundShop.users.find(user => user._id.toString() === userId);
-        if (!userInShop) {
-            throw new FORBIDDEN_ERROR('You are not authorized to switch category status!')
-        }
-
-        if (userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
-            throw new FORBIDDEN_ERROR('You are not authorized to switch category status!')
-        }
-
-        const category = await categoryModel.findById(categoryId);
-        if (!category) {
-            throw new NOT_FOUND_ERROR('Category not found!')
-        }
-
-        await categoryModel.findByIdAndUpdate({
-            _id: categoryId
-        }, {
-            status: category.status === 'published' ? 'draft' : 'published'
-        })
-
-        return await categoryModel
-            .find({ shop: shopId })
-            .populate('addBy', '_id name email')
-            .lean();
     }
 
     static getCategoriesByAdmin = async ({ shopId, userId }) => {
@@ -146,12 +110,6 @@ class CategoryService {
         if (userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) {
             throw new FORBIDDEN_ERROR('You are not authorized to delete category!')
         }
-
-        const foundCategory = await categoryModel.findById(categoryId).lean();
-        if (foundCategory.status === 'published') {
-            throw new FORBIDDEN_ERROR('You are not authorized to delete published category!')
-        }
-
         await categoryModel.findByIdAndDelete(categoryId);
         const categories = await categoryModel
             .find({ shop: shopId })

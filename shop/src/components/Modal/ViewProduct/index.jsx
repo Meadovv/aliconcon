@@ -154,10 +154,10 @@ export default function ViewProduct({ id, setId, setProducts }) {
                         <label>Voucher</label>
                         <Select
                                 placeholder="Select Voucher"
-                                value={product.sale}
+                                value={product?.sale ? product.sale : ''}
                                 onChange={(e) => {
                                     if (e.target.value === 'other') {
-                                        navigate('/categories');
+                                        navigate('/vouchers');
                                     } else {
                                         setProduct({ ...product, sale: e.target.value });
                                     }
@@ -245,7 +245,6 @@ export default function ViewProduct({ id, setId, setProducts }) {
                         mr={3}
                         onClick={onDelete}
                         isLoading={loading}
-                        isDisabled={product && product.status === 'published'}
                     >
                         Delete
                     </Button>
@@ -255,7 +254,6 @@ export default function ViewProduct({ id, setId, setProducts }) {
                         type="submit"
                         isLoading={loading}
                         loadingText="Saving..."
-                        isDisabled={product && product.status === 'published'}
                     >
                         Save
                     </Button>
