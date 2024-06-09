@@ -13,7 +13,7 @@ export default function ViewVoucher({ id, setId, setVouchers }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
     const [voucher, setVoucher] = React.useState(null);
-    const [items, setItems] = React.useState([]);
+    const [items, setItems] = React.useState(null);
 
     {/* View Items detail */}
     const viewItem = () => {

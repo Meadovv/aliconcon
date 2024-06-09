@@ -21,7 +21,6 @@ export default function AddVoucherModal({ setVouchers }) {
         discount: 0,
         startDate: '',
         endDate: '',
-        amount: 0,
     });
     const [loading, setLoading] = React.useState(false);
 
@@ -90,10 +89,6 @@ export default function AddVoucherModal({ setVouchers }) {
                                 <FormLabel>End date</FormLabel>
                                 <Input type="date" placeholder="Voucher End date" onChange={(e) => setForm({ ...form, endDate: new Date(e.target.value) })} />
                             </FormControl>
-                            <FormControl>
-                                <FormLabel>Amount</FormLabel>
-                                <Input type="number" placeholder="Voucher Amount" onChange={(e) => setForm({ ...form, amount: e.target.value })} />
-                            </FormControl>
                         </Stack>
                     </ModalBody>
                     <ModalFooter>
@@ -106,7 +101,6 @@ export default function AddVoucherModal({ setVouchers }) {
                                     discount: null,
                                     startDate: null,
                                     endDate: null,
-                                    amount: null,
                                 });
                                 onClose();
                             }} 

@@ -44,50 +44,53 @@ export default function ViewItemByVouModal({resetVoucher, voucherId, data, setDa
     {/* Data functions*/}
     const createDataList = () => {
         let tempList = [];
-
-        {/* Product list filter */}
-        setProductIdList(data.filter(item => item.kind === 'aliconcon_products').map(item => item.item));
-        products
-        .filter(
-            (product) => (productIdList.includes(product._id))
-        )       
-        .filter((product) =>
-            (filter.addBy ? product.addBy.name.includes(filter.addBy) : true) &&
-            (filter.name ? product.name.includes(filter.name) : true),
-        )
-        .forEach((product, index) => {
-            tempList.push({
-                key: index,
-                _id: product._id,
-                name: product.name,
-                addBy: product.addBy.name,
-                kind: 'product',
+            if(data){
+                
+            
+            {/* Product list filter */}
+            setProductIdList(data.filter(item => item.kind === 'aliconcon_products').map(item => item.item));
+            products
+            .filter(
+                (product) => (productIdList.includes(product._id))
+            )       
+            .filter((product) =>
+                (filter.addBy ? product.addBy.name.includes(filter.addBy) : true) &&
+                (filter.name ? product.name.includes(filter.name) : true),
+            )
+            .forEach((product, index) => {
+                tempList.push({
+                    key: index,
+                    _id: product._id,
+                    name: product.name,
+                    addBy: product.addBy.name,
+                    kind: 'product',
+                });
             });
-        });
-        setProductList(tempList);
+            setProductList(tempList);
 
-        tempList = [];
+            tempList = [];
 
-        {/* Group list filter */}
-        setGroupIdList(data.filter(item => item.kind === 'aliconcon_groups').map(item => item.item));
-        groups
-        .filter(
-            (group) => (groupIdList.includes(group._id))
-        )  
-        .filter((group) =>
-            (filter.addBy ? group.addBy.name.includes(filter.addBy) : true) &&
-            (filter.name ? group.name.includes(filter.name) : true),
-        )
-        .forEach((group, index) => {
-            tempList.push({
-                key: index,
-                _id: group._id,
-                name: group.name,
-                addBy: group.addBy.name,
-                kind: 'group',
+            {/* Group list filter */}
+            setGroupIdList(data.filter(item => item.kind === 'aliconcon_groups').map(item => item.item));
+            groups
+            .filter(
+                (group) => (groupIdList.includes(group._id))
+            )  
+            .filter((group) =>
+                (filter.addBy ? group.addBy.name.includes(filter.addBy) : true) &&
+                (filter.name ? group.name.includes(filter.name) : true),
+            )
+            .forEach((group, index) => {
+                tempList.push({
+                    key: index,
+                    _id: group._id,
+                    name: group.name,
+                    addBy: group.addBy.name,
+                    kind: 'group',
+                });
             });
-        });
-        setGroupList(tempList);            
+            setGroupList(tempList);    
+        }        
     };
 
     const getGroups = async () => {
@@ -263,12 +266,12 @@ export default function ViewItemByVouModal({resetVoucher, voucherId, data, setDa
     }
 
     const onCloseModal = async () => {
-        setData([]);
+        setData(null);
         onClose();
     }
 
     React.useEffect(() => {
-        if(data.length === 0) return;
+        if(!data) return;
         console.log(data);
         onOpen();
         getProducts();

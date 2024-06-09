@@ -6,8 +6,10 @@ import {
     Menu, MenuButton, MenuDivider, MenuItem, MenuList,
 } from '@chakra-ui/react';
 import { 
-    FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, 
-    FiChevronDown, FiUser, FiArchive, FiPackage, FiSearch, FiBook, FiImage 
+    FiHome, FiStar, FiSettings, FiMenu, FiBell, 
+    FiChevronDown, FiUser, FiArchive, FiPackage, FiSearch, FiBook, FiImage, 
+    FiDatabase,
+    FiFile
 } from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
@@ -55,11 +57,12 @@ const SidebarContent = ({ onClose, ...rest }) => {
         { name: 'SearchProduct', icon: FiSearch, link: '/search-product', disabled: false },
         { name: 'Categories', icon: FiArchive, link: '/categories', disabled: false },
         { name: 'Products', icon: FiPackage, link: '/products', disabled: false },
-        { name: 'Groups', icon: FiBook, link: '/groups', disabled: false },
+        { name: 'Groups', icon: FiDatabase, link: '/groups', disabled: false },
         { name: 'Images', icon: FiImage, link: '/images', disabled: false },
+        { name: 'Orders', icon: FiFile, link: '/orders', disabled: false },
         { name: 'Vouchers', icon: FiStar, link: '/vouchers', disabled: false },
         { name: 'Users', icon: FiUser, link: '/users', disabled: user?.role > 2 },
-        { name: 'Settings', icon: FiSettings, link: '/settings', disabled: user?.role > 1 },
+        { name: 'Profile', icon: FiSettings, link: '/profile', disabled: user?.role > 1 },
     ];
     
     return (
@@ -190,9 +193,9 @@ const MobileNav = ({ onOpen, ...rest }) => {
                             bg={useColorModeValue('white', 'gray.900')}
                             borderColor={useColorModeValue('gray.200', 'gray.700')}
                         >
-                            <MenuItem>Profile</MenuItem>
-                            <MenuItem>Settings</MenuItem>
-                            <MenuItem>Billing</MenuItem>
+                            <MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
+                            <MenuItem onClick={() => navigate('/products')}>Products</MenuItem>
+                            <MenuItem onClick={() => navigate('/orders')}>Orders</MenuItem>
                             <MenuDivider />
                             <MenuItem onClick={() => navigate('/logout')}>Sign out</MenuItem>
                         </MenuList>

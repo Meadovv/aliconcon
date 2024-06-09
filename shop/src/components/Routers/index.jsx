@@ -2,13 +2,14 @@ import Categories from '../../pages/Categories';
 import Home from '../../pages/Home';
 import Authentication from '../../pages/Authentication';
 import Products from '../../pages/Products';
-import Settings from '../../pages/Settings';
+import Profile from '../../pages/Profile';
 import Vouchers from '../../pages/Vouchers';
 import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
 import SearchProduct from '../../pages/SearchProduct';
 import Groups from '../../pages/Groups';
 import Images from '../../pages/Images';
+import Orders from '../../pages/Orders';
 
 const routers = [
     {
@@ -54,6 +55,12 @@ const routers = [
         middleware: 'private'
     },
     {
+        path: '/orders',
+        children: <Orders />,
+        layout: true,
+        middleware: 'private'
+    },
+    {
         path: '/images',
         children: <Images />,
         layout: true,
@@ -72,8 +79,8 @@ const routers = [
         middleware: 'private'
     },
     {
-        path: '/settings',
-        children: <Settings />,
+        path: '/profile',
+        children: <Profile />,
         layout: true,
         middleware: 'private'
     },

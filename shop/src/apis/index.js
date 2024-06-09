@@ -5,6 +5,7 @@ const api = {
     CHECK_MAIL: host + 'access/check-mail',
     METADATA: host + 'shop/metadata',
     LOGOUT: host + 'access/logout',
+    GET_SHOP: host + 'shop/get-shop',
     
     GET_USER_LIST: host + 'shop/get-user-list',
     GET_USER: host + 'shop/get-user',
@@ -49,6 +50,11 @@ const api = {
     GET_IMAGES: host + 'image/get',
     UPLOAD_IMAGE: host + 'image/upload',
     DELETE_IMAGE: host + 'image/delete',
+
+    GET_ORDERS: host + 'shop/get-orders',
+    GET_ORDER: host + 'shop/get-order',
+    DELETE_ORDER: host + '/shop/delete-product',
+    SWITCH_ORDER_STATUS: host + 'shop/switch-order-status'
 }
 
 const image_host = 'http://localhost:9000/'
