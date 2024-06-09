@@ -476,7 +476,7 @@ export default function Product() {
                             display: 'flex',
                         }}
                     >
-                        {product && <ProductList products={product.relatedProducts} />}
+                        {product && <ProductList products={product.relatedProducts} emptyBacground />}
                     </div>
                 </div>
             </div>

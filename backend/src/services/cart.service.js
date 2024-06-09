@@ -163,7 +163,7 @@ class CartService {
             if (item.quantity > foundVariation.quantity) {
                 throw new BAD_REQUEST_ERROR("Quantity is more than available quantity");
             }
-            totalCash += (foundVariation.price - (foundVariation.price * foundProduct?.sale.discount / 100)) * item.quantity;
+            totalCash += (foundVariation.price - (foundVariation.price * (foundProduct.sale ? foundProduct.sale.discount : 0) / 100)) * item.quantity;
             return item;
         }));
 

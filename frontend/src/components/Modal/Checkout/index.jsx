@@ -161,7 +161,7 @@ function PaymentModal() {
                 dispatch(closeModal({ modal: 'payment' }));
                 dispatch(clearCart());
                 onClose();
-                navigate('/cart');
+                window.location.href = api.PAYMENT_GATE({ id: res.data.metadata._id });
             })
             .catch((err) => {
                 console.log(err);

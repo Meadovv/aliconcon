@@ -8,7 +8,7 @@ import FilterModal from '../Modal/Filter';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../reducer/actions/modal.slice';
 
-const ProductList = ({ products, showFilter, categories }) => {
+const ProductList = ({ products, showFilter, categories, emptyBacground }) => {
     const dispatch = useDispatch();
     const [filteredProducts, setFilteredProducts] = React.useState(products);
     const [filter, setFilter] = React.useState({
@@ -54,7 +54,9 @@ const ProductList = ({ products, showFilter, categories }) => {
                     onClick={() => dispatch(openModal({ modal: 'filter' }))}
                 />
             </div>
-            <div className="product-lists grid bg-whitesmoke my-3">
+            <div className="product-lists grid bg-whitesmoke my-3" style={{
+                backgroundColor: emptyBacground ? 'white' : 'whitesmoke'
+            }}>
                 {filteredProducts.map((product, index) => (
                     <Product key={index} product={product} />
                 ))}

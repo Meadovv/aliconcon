@@ -78,18 +78,23 @@ class ProductService {
             category: product.category,
             _id: { $ne: id }
         })
-            .select('_id name price thumbnail category shop short_description sell_count')
+            .select('_id name price thumbnail category shop short_description sell_count sale')
             .sort({ sell_count: -1 })
+            .populate('sale', '_id name discount')
             .populate('category', '_id name')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
             .limit(5)
             .lean();
+        
+        relatedProducts.forEach(item => {
+            item.sale = item.sale ? item.sale.discount : 0;
+        });
 
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
         product.relatedProducts = relatedProducts;
-        product.sale = product?.sale?.discount;
+        product.sale = product.sale ? product.sale.discount : 0;
 
         return utils.OtherUtils.getInfoData({
             fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count', 'relatedProducts'],
@@ -164,7 +169,7 @@ class ProductService {
             .lean();
 
         products.forEach(product => {
-            product.sale = product?.sale?.discount;
+            product.sale = product.sale ? product.sale.discount : 0;
             product.likes = product.likes.length;
         })
 

@@ -194,7 +194,9 @@ export default function Pay() {
                                     }}
                                 />
                             </div>
-                            <button type="button" class="payment-form-submit-button" onClick={() => window.location.href = 'https://aliconcon.xyz'}>Back</button>
+                            <button type="button" class="payment-form-submit-button" onClick={() => {
+                                window.location.href = 'https://aliconcon.xyz/tracking?orderId=' + params.invoiceId
+                            }}>Back</button>
                         </form>
                     </div>
                 </div>

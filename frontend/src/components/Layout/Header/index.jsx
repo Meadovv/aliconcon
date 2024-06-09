@@ -26,7 +26,7 @@ const Header = () => {
                             <div className="header-cnt-top-l">
                                 <ul className="flex top-links align-center">
                                     <li>
-                                        <p className="link" onClick={() => navigate('/seller')}>
+                                        <p className="link" onClick={() => window.location.href = 'https://shop.aliconcon.xyz'}>
                                             Seller Center
                                         </p>
                                     </li>

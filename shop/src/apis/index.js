@@ -1,4 +1,4 @@
-const host = 'http://localhost:3055/v1/'
+const host = 'https://api.aliconcon.xyz/v1/'
 const image_host = 'https://image.aliconcon.xyz/'
 const api = {
     LOGIN: host + 'shop/login',
