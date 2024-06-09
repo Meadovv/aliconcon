@@ -9,11 +9,13 @@ const userSchema = new Schema({
     name:{
         type:String,
         trim: true,
-        maxLength: 150
+        maxLength: 150,
+        required: true
     },
     email:{
         type:String,
-        trim: true
+        trim: true,
+        required: true
     },
     password:{
         type:String,

@@ -7,7 +7,6 @@ const ShopService = require('../services/shop.service');
 const ProductService = require('../services/product.service');
 const CategoryService = require('../services/category.service');
 const VariationService = require('../services/variation.service');
-const GroupService = require('../services/group.service');
 const VoucherService = require('../services/voucher.service');
 class ShopController {
 
@@ -193,6 +192,18 @@ class ShopController {
         }).send(res);
     }
 
+    static updateProduct = async (req, res) => {
+        new SUCCESS({
+            message: 'Product updated successfully',
+            metadata: await ProductService.updateProduct({
+                ...getFields({
+                    fields: ['product'],
+                    object: req.body
+                }), ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static deleteProduct = async (req, res) => {
         new SUCCESS({
             message: 'Product deleted successfully',
@@ -227,6 +238,19 @@ class ShopController {
         new SUCCESS({
             message: 'Get product successfully',
             metadata: await ProductService.getProductByAdmin({
+                ...getFields({
+                    fields: ['productId'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static switchProductStatus = async (req, res) => {
+        new SUCCESS({
+            message: 'Switch product status successfully',
+            metadata: await ProductService.switchProductStatus({
                 ...getFields({
                     fields: ['productId'],
                     object: req.body
@@ -320,97 +344,6 @@ class ShopController {
         }).send(res);
     }
 
-    static createGroup = async (req, res) => {
-        new SUCCESS({
-            message: 'Group created successfully',
-            metadata: await GroupService.create({
-                ...getFields({
-                    fields: ['name'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static deleteGroup = async (req, res) => {
-        new SUCCESS({
-            message: 'Group deleted successfully',
-            metadata: await GroupService.delete({
-                ...getFields({
-                    fields: ['groupId'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static updateGroup = async (req, res) => {
-        new SUCCESS({
-            message: 'Group updated successfully',
-            metadata: await GroupService.update({
-                ...getFields({
-                    fields: ['groupId', 'name'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static addProductToGroup = async (req, res) => {
-        new SUCCESS({
-            message: 'Product added to group successfully',
-            metadata: await GroupService.addProductToGroup({
-                ...getFields({
-                    fields: ['groupId', 'productId'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static removeProductFromGroup = async (req, res) => {
-        new SUCCESS({
-            message: 'Product removed from group successfully',
-            metadata: await GroupService.removeProductFromGroup({
-                ...getFields({
-                    fields: ['groupId', 'productId'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static viewGroup = async (req, res) => {
-        new SUCCESS({
-            message: 'View group successfully',
-            metadata: await GroupService.viewGroup({
-                ...getFields({
-                    fields: ['groupId'],
-                    object: req.body
-                }),
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static getGroups = async (req, res) => {
-        new SUCCESS({
-            message: 'Get groups successfully',
-            metadata: await GroupService.getGroups({
-                ...req.jwt_decode
-            })
-        }).send(res);
-    }
-
-    static getGroup = async (req, res) => {
-
-    }
-
     static createVoucher = async (req, res) => {
         new CREATED({
             message: 'Voucher created successfully',
@@ -450,6 +383,19 @@ class ShopController {
         }).send(res);
     }
 
+    static updateVoucher = async (req, res) => {
+        new SUCCESS({
+            message: 'Voucher updated successfully',
+            metadata: await VoucherService.updateVoucher({
+                ...getFields({
+                    fields: ['voucher'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static getVoucher = async (req, res) => {
         new SUCCESS({
             message: 'Get voucher successfully',
@@ -477,7 +423,7 @@ class ShopController {
             message: 'Add to voucher successfully',
             metadata: await VoucherService.addToVoucher({
                 ...getFields({
-                    fields: ['voucherId', 'itemId', 'itemType'],
+                    fields: ['voucherId', 'productId'],
                     object: req.body
                 }),
                 ...req.jwt_decode
@@ -490,7 +436,7 @@ class ShopController {
             message: 'Remove from voucher successfully',
             metadata: await VoucherService.removeFromVoucher({
                 ...getFields({
-                    fields: ['voucherId', 'itemId', 'itemType'],
+                    fields: ['voucherId', 'productId'],
                     object: req.body
                 }),
                 ...req.jwt_decode

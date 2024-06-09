@@ -30,6 +30,8 @@ router.post('/create-product', ErrorMiddleware.asyncHandler(ShopController.creat
 router.post('/delete-product', ErrorMiddleware.asyncHandler(ShopController.deleteProduct));
 router.post('/get-product', ErrorMiddleware.asyncHandler(ShopController.getProductByAdmin));
 router.post('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProductsByAdmin));
+router.post('/switch-product-status', ErrorMiddleware.asyncHandler(ShopController.switchProductStatus));
+router.post('/update-product', ErrorMiddleware.asyncHandler(ShopController.updateProduct));
 
 router.post('/create-category', ErrorMiddleware.asyncHandler(ShopController.createCategory));
 router.post('/delete-category', ErrorMiddleware.asyncHandler(ShopController.deleteCategory));
@@ -42,14 +44,6 @@ router.post('/switch-user-status', ErrorMiddleware.asyncHandler(ShopController.s
 router.post('/get-user', ErrorMiddleware.asyncHandler(ShopController.getUser));
 router.post('/change-user-role', ErrorMiddleware.asyncHandler(ShopController.changeUserRole));
 
-router.post('/create-group', ErrorMiddleware.asyncHandler(ShopController.createGroup));
-router.post('/update-group', ErrorMiddleware.asyncHandler(ShopController.updateGroup));
-router.post('/delete-group', ErrorMiddleware.asyncHandler(ShopController.deleteGroup));
-router.post('/add-product-to-group', ErrorMiddleware.asyncHandler(ShopController.addProductToGroup));
-router.post('/remove-product-from-group', ErrorMiddleware.asyncHandler(ShopController.removeProductFromGroup));
-router.post('/view-group', ErrorMiddleware.asyncHandler(ShopController.viewGroup));
-router.post('/get-groups', ErrorMiddleware.asyncHandler(ShopController.getGroups));
-
 router.post('/create-voucher', ErrorMiddleware.asyncHandler(ShopController.createVoucher));
 router.post('/switch-voucher', ErrorMiddleware.asyncHandler(ShopController.switchVoucher));
 router.post('/delete-voucher', ErrorMiddleware.asyncHandler(ShopController.deleteVoucher));
@@ -57,5 +51,6 @@ router.post('/get-voucher', ErrorMiddleware.asyncHandler(ShopController.getVouch
 router.post('/get-vouchers', ErrorMiddleware.asyncHandler(ShopController.getVouchers));
 router.post('/add-to-voucher', ErrorMiddleware.asyncHandler(ShopController.addToVoucher));
 router.post('/remove-from-voucher', ErrorMiddleware.asyncHandler(ShopController.removeFromVoucher));
+router.post('/update-voucher', ErrorMiddleware.asyncHandler(ShopController.updateVoucher));
 
 module.exports = router;

@@ -27,59 +27,14 @@ class CartService {
             .lean();
 
         const cartItems = await Promise.all(carts.map(async (item) => {
-            // sale Price
-            let sale = 0;
-
-            // kiểm tra xem product có giảm giá không
-            const productVouchers = await voucherModel.find({
-                items: {
-                    $elemMatch: {
-                        kind: 'aliconcon_products',
-                        item: item.product._id
-                    }
-                },
-                startDate: { $lt: new Date() },
-                endDate: { $gt: new Date() }
-            })
-                .select('_id startDate endDate discount amount used')
-                .sort({ discount: -1 })
-                .limit(1)
+            const foundProduct = await productModel
+                .findById(item.product._id)
+                .populate('sale', '_id name discount')
                 .lean();
-
-            const groupVouchers = await Promise.all(item.product.groups.map(async group => {
-                const groupId = group.group._id.toString();
-
-                const voucher = await voucherModel.find({
-                    items: {
-                        $elemMatch: {
-                            kind: 'aliconcon_groups',
-                            item: groupId
-                        }
-                    },
-                    startDate: { $lt: new Date() },
-                    endDate: { $gt: new Date() }
-                })
-                    .select('_id startDate endDate discount amount used')
-                    .sort({ discount: -1 })
-                    .limit(1)
-                    .lean();
-                return voucher.length > 0 ? voucher[0] : null;
-            }));
-
-            const allVouchers = [...productVouchers, ...groupVouchers];
-            if (allVouchers.length) {
-                let maxDiscount = 0;
-                allVouchers.forEach(voucher => {
-                    if (!voucher) return;
-                    maxDiscount = Math.max(maxDiscount, voucher.discount);
-                })
-                sale = maxDiscount;
-            }
             return {
                 product: {
                     ...item.product,
-                    sale: sale,
-                    groups: undefined
+                    sale: foundProduct?.sale.discount
                 },
                 variation: item.variation,
                 quantity: item.quantity,
@@ -193,7 +148,10 @@ class CartService {
         }
 
         const cartItems = await Promise.all(carts.map(async (item) => {
-            const foundProduct = await productModel.findById(item.product._id).lean();
+            const foundProduct = await productModel
+                .findById(item.product._id)
+                .populate('sale', '_id name discount')
+                .lean();
             if (!foundProduct) {
                 throw new NOT_FOUND_ERROR("Product not found");
             }
@@ -208,56 +166,8 @@ class CartService {
                 throw new BAD_REQUEST_ERROR("Quantity is more than available quantity");
             }
 
-            // kiểm tra xem sản phẩm nào có sale
-            let sale = 0;
-
-            const productVouchers = await voucherModel.find({
-                items: {
-                    $elemMatch: {
-                        kind: 'aliconcon_products',
-                        item: foundProduct._id
-                    }
-                },
-                startDate: { $lt: new Date() },
-                endDate: { $gt: new Date() }
-            })
-                .select('_id startDate endDate discount amount used')
-                .sort({ discount: -1 })
-                .limit(1)
-                .lean();
-
-            const groupVouchers = await Promise.all(foundProduct.groups.map(async group => {
-                const groupId = group.group._id.toString();
-
-                const voucher = await voucherModel.find({
-                    items: {
-                        $elemMatch: {
-                            kind: 'aliconcon_groups',
-                            item: groupId
-                        }
-                    },
-                    startDate: { $lt: new Date() },
-                    endDate: { $gt: new Date() }
-                })
-                    .select('_id startDate endDate discount amount used')
-                    .sort({ discount: -1 })
-                    .limit(1)
-                    .lean();
-                return voucher.length > 0 ? voucher[0] : null;
-            }));
-
-            const allVouchers = [...productVouchers, ...groupVouchers];
-            if (allVouchers.length) {
-                let maxDiscount = 0;
-                allVouchers.forEach(voucher => {
-                    if (!voucher) return;
-                    maxDiscount = Math.max(maxDiscount, voucher.discount);
-                })
-                sale = maxDiscount;
-            }
-
             // tính tổng tiền
-            totalCash += (foundVariation.price - (foundVariation.price * sale / 100)) * item.quantity;
+            totalCash += (foundVariation.price - (foundVariation.price * foundProduct?.sale.discount / 100)) * item.quantity;
             return item;
         }));
 
@@ -268,7 +178,6 @@ class CartService {
             await variationModel.findByIdAndUpdate(foundVariation._id, { quantity: foundVariation.quantity - item.quantity });
 
             // xóa sản phẩm khỏi giỏ hàng
-            console.log(information.userId, foundProduct._id, foundVariation._id);
             if (information.userId) await cartModel.findOneAndDelete({ product: foundProduct._id, variation: foundVariation._id, user: information.userId });
         }));
 
