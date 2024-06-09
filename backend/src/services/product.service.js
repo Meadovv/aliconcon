@@ -12,6 +12,7 @@ const {
 } = require('../core/error.response');
 
 const VariationService = require('./variation.service');
+const variationModel = require('../models/variation.model');
 class ProductService {
     static createProduct = async ({
         shopId,
@@ -51,69 +52,17 @@ class ProductService {
         return newProduct;
     }
 
-    static switchProduct = async ({ shopId, userId, productId }) => {
+    static switchProductLike = async ({ shopId, userId, productId }) => {
 
     }
 
     static getProduct = async ({ id, user }) => {
         const product = await productModel.findById(id)
             .populate('category', '_id name')
+            .populate('sale', '_id name discount')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
-            .populate('groups.group', '_id name')
             .lean();
-
-        // sale Price
-        product.sale = 0;
-
-        // kiểm tra xem product có giảm giá không
-
-        const productVouchers = await voucherModel.find({
-            items: {
-                $elemMatch: {
-                    kind: 'aliconcon_products',
-                    item: id
-                }
-            },
-            startDate: { $lt: new Date() },
-            endDate: { $gt: new Date() }
-        })
-            .select('_id startDate endDate discount amount used')
-            .sort({ discount: -1 })
-            .limit(1)
-            .lean();
-
-
-
-        const groupVouchers = await Promise.all(product.groups.map(async group => {
-            const groupId = group.group._id.toString();
-
-            const voucher = await voucherModel.find({
-                items: {
-                    $elemMatch: {
-                        kind: 'aliconcon_groups',
-                        item: groupId
-                    }
-                },
-                startDate: { $lt: new Date() },
-                endDate: { $gt: new Date() }
-            })
-                .select('_id startDate endDate discount amount used')
-                .sort({ discount: -1 })
-                .limit(1)
-                .lean();
-            return voucher.length > 0 ? voucher[0] : null;
-        }));
-
-        const allVouchers = [...productVouchers, ...groupVouchers];
-        if (allVouchers.length) {
-            let maxDiscount = 0;
-            allVouchers.forEach(voucher => {
-                if(!voucher) return;
-                maxDiscount = Math.max(maxDiscount, voucher.discount);
-            })
-            product.sale = maxDiscount;
-        }
 
         const relatedProducts = await productModel.find({
             category: product.category,
@@ -130,6 +79,7 @@ class ProductService {
         product.isLike = product.likes.map(id => id.toString()).includes(user);
         product.likes = product.likes.length;
         product.relatedProducts = relatedProducts;
+        product.sale = product?.sale?.discount;
 
         return utils.OtherUtils.getInfoData({
             fields: ['_id', 'shop', 'name', 'description', 'short_description', 'price', 'sale', 'thumbnail', 'category', 'likes', 'isLike', 'variations', 'rating', 'sell_count', 'relatedProducts'],
@@ -145,7 +95,7 @@ class ProductService {
         const foundUser = foundShop.users.find(user => user._id.toString() === userId);
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
         const products = await productModel.find({ shop: shopId })
-            .select('_id name category price thumbnail addBy')
+            .select('_id name category price thumbnail addBy status createdAt')
             .populate({
                 path: 'category',
                 select: '_id name'
@@ -162,11 +112,13 @@ class ProductService {
         if (!userId) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
         const foundUser = foundShop.users.find(user => user._id.toString() === userId);
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
+        const variations = await variationModel.find({ product: productId }).lean();
         const product = await productModel.findById(productId)
             .populate('category', '_id name')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
             .lean();
+        product.variations = variations;
         return product;
     }
 
@@ -188,66 +140,94 @@ class ProductService {
             query.price = { ...query?.price, $lte: Number(high_price) };
         }
         const products = await productModel.find(query)
-            .select('_id name price thumbnail category shop groups likes short_description sell_count')
+            .select('_id name price thumbnail category shop likes short_description sell_count')
             .populate('category', '_id name')
+            .populate('sale', '_id name discount')
             .populate('thumbnail', '_id name')
             .populate('shop', '_id name')
             .skip((page - 1) * limit)
             .limit(limit)
-            .lean()
+            .lean();
 
-        const productsWithSale = await Promise.all(products.map(async product => {
-            product.sale = 0;
-            const productVouchers = await voucherModel.find({
-                items: {
-                    $elemMatch: {
-                        kind: 'aliconcon_products',
-                        item: product._id
-                    }
-                },
-                startDate: { $lt: new Date() },
-                endDate: { $gt: new Date() }
-            })
-                .select('_id startDate endDate discount amount used')
-                .sort({ discount: -1 })
-                .limit(1)
-                .lean();
-    
-    
-    
-            const groupVouchers = await Promise.all(product.groups.map(async group => {
-                const groupId = group.group._id.toString();
-    
-                const voucher = await voucherModel.find({
-                    items: {
-                        $elemMatch: {
-                            kind: 'aliconcon_groups',
-                            item: groupId
-                        }
-                    },
-                    startDate: { $lte: new Date() },
-                    endDate: { $gte: new Date() }
-                })
-                    .select('_id startDate endDate discount amount used')
-                    .sort({ discount: -1 })
-                    .limit(1)
-                    .lean();
-                if(voucher.length) return voucher[0];
-                else return null;
-            }));
-            const allVouchers = [...productVouchers];
-            if (allVouchers.length) {
-                product.sale = allVouchers.reduce((max, voucher) => voucher.discount > max.discount ? voucher : max, allVouchers[0]).discount;
-            }
+        products.forEach(product => {
+            product.sale = product?.sale?.discount;
             product.likes = product.likes.length;
-            product.groups = undefined
-            return product;
-        }));
-        return productsWithSale;
+        })
+
+        return products;
     }
 
-    static deleteProduct = async ({ productId }) => {
+    static deleteProduct = async ({ shopId, userId, productId }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
+        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
+        if (!foundUser) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        if (foundUser.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        await productModel.findByIdAndDelete(productId);
+        const products = await productModel.find({ shop: shopId })
+            .select('_id name category price thumbnail addBy status createdAt')
+            .populate({
+                path: 'category',
+                select: '_id name'
+            })
+            .populate('addBy', '_id name')
+            .lean();
+        return products;
+    }
 
+    static switchProductStatus = async ({ shopId, userId, productId }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
+        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
+        if (!foundUser) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        if (foundUser.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        const foundProduct = await productModel.findById(productId).lean();
+        if (!foundProduct) throw new BAD_REQUEST_ERROR('Product not found!');
+        const newStatus = foundProduct.status === 'draft' ? 'published' : 'draft';
+        await productModel.findByIdAndUpdate(productId, { status: newStatus });
+        const products = await productModel.find({ shop: shopId })
+            .select('_id name category price thumbnail addBy status createdAt')
+            .populate({
+                path: 'category',
+                select: '_id name'
+            })
+            .populate('addBy', '_id name')
+            .lean();
+        return products;
+    }
+
+    static updateProduct = async ({ shopId, userId, product }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) throw new BAD_REQUEST_ERROR('Shop not found!');
+        const foundUser = foundShop.users.find(user => user._id.toString() === userId);
+        if (!foundUser) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        if (foundUser.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
+        const foundProduct = await productModel.findById(product._id).lean();
+        if (!foundProduct) throw new BAD_REQUEST_ERROR('Product not found!');
+        if (foundProduct.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Product not found in this shop!');
+        if (foundProduct.status === 'published') throw new BAD_REQUEST_ERROR('Cannot edit published product!');
+        await productModel.findByIdAndUpdate(product._id, {
+            name: product.name,
+            short_description: product.short_description,
+            description: product.description,
+            price: product.price,
+            sale: product.sale,
+        });
+        await Promise.all(product.variations.map(async variation => {
+            await variationModel.findByIdAndUpdate(variation._id, {
+                price: variation.price,
+                quantity: variation.quantity
+            });
+        }))
+        const products = await productModel.find({ shop: shopId })
+            .select('_id name category price thumbnail addBy status createdAt')
+            .populate({
+                path: 'category',
+                select: '_id name'
+            })
+            .populate('addBy', '_id name')
+            .lean();
+        return products;
     }
 }
 

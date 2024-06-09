@@ -24,18 +24,21 @@ const schema = new Schema({
         type: String,
         required: true
     },
-    items: [{
-        item: {
-            type: Schema.Types.ObjectId,
-            required: true
-        },
-        kind: {
-            type: String,
-            enum: ['aliconcon_products', 'aliconcon_groups'],
-            required: true
-        },
-        _id: false
-    }],
+    items: {
+        type: [{
+            _id: {
+                type: Schema.Types.ObjectId,
+                ref: 'aliconcon_products',
+                required: true
+            },
+            addBy: {
+                type: Schema.Types.ObjectId,
+                ref: 'aliconcon_users',
+                required: true
+            }
+        }],
+        default: []
+    },
     discount: {
         type: Number,
         required: true
@@ -47,10 +50,6 @@ const schema = new Schema({
     endDate: {
         type: Date,
         required: true
-    },
-    used: {
-        type: Number,
-        default: 0
     },
     status: {
         type: Boolean,

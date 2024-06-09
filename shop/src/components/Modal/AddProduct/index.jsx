@@ -33,7 +33,7 @@ import { useNavigate } from 'react-router-dom';
 import MediaViewModal from '../MediaView';
 import AddVariantModal from '../AddVariant';
 
-export default function AddProductModal() {
+export default function AddProductModal({ setProducts }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false);
     const [categories, setCategories] = React.useState([]);
@@ -86,6 +86,7 @@ export default function AddProductModal() {
                 },
             )
             .then((res) => {
+                setProducts(prev => [...prev, res.data.metadata]);
                 message.success('Product added successfully');
                 onClose();
             })

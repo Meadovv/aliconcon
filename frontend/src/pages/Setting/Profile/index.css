@@ -1,0 +1,21 @@
+._profile-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+._profile-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+._profile-item .left-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+._profile-item .left-side .title {
+    font-weight: 700;
+}

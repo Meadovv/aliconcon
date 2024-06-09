@@ -128,7 +128,7 @@ class ShopService {
             email: shopEmail,
             address: shopAddress,
             phone,
-            users: [{ _id: newUser._id, role: ROLES.SHOP_OWNER }]
+            users: [{ _id: newUser._id, role: ROLES.SHOP_OWNER, email: Date.now() }]
         });
         const key = Utils.AuthUtils.createKey(64);
         await KeyTokenService.createKeyToken({

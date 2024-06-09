@@ -1,0 +1,16 @@
+._Tracking_header {
+    width: 100%;
+    border-bottom: 3px solid #dc3545;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 20px 0;
+}
+
+._Tracking_item-list {
+    display: flex;
+    justify-content: space-between;
+}
+
+._Tracking_item-label {
+    font-weight: 700;
+}

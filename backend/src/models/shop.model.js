@@ -8,7 +8,8 @@ const COLLECTION_NAME = 'shops';
 const userSchema = new Schema({
     _id: {
         type: Schema.Types.ObjectId,
-        ref: 'aliconcon_users'
+        ref: 'aliconcon_users',
+        required: true
     },
     active: {
         type: Boolean,
@@ -25,7 +26,7 @@ const userSchema = new Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now()
     }
 });
 

@@ -16,16 +16,6 @@ const productSchema = new Schema({
         ref: 'aliconcon_users',
         required: true
     },
-    editBy: {
-        type: [{
-            user: {
-                type: Schema.Types.ObjectId,
-                required: true
-            },
-            action: String
-        }],
-        default: []
-    },
     name: {
         type: String,
         trim: true,
@@ -35,7 +25,7 @@ const productSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        maxLength: 500
+        maxLength: 2000
     },
     short_description: {
         type: String,
@@ -51,6 +41,11 @@ const productSchema = new Schema({
     price: {
         type: Number,
         required: true,
+    },
+    sale: {
+        type: Schema.Types.ObjectId,
+        ref: 'aliconcon_vouchers',
+        default: null
     },
     thumbnail: {
         type: Schema.Types.ObjectId,
@@ -80,20 +75,6 @@ const productSchema = new Schema({
     sell_count: {
         type: Number,
         default: 0
-    },
-    groups: {
-        type: [{
-            group: {
-                type: Schema.Types.ObjectId,
-                ref: 'aliconcon_groups'
-            },
-            addBy: {
-                type: Schema.Types.ObjectId,
-                ref: 'aliconcon_users'
-            },
-            _id: false
-        }],
-        default: []
     }
 }, {
     timestamps: true,

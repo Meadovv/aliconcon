@@ -38,7 +38,7 @@ function AddVariantModal({ handleAddVariant }) {
             name: variantName,
             options: variantOptions,
         });
-        onClose();
+        onCloseModal();
     };
 
     const handleRemoveOption = (index) => {
