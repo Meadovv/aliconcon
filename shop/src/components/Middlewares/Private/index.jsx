@@ -40,12 +40,8 @@ const Private = () => {
     };
 
     React.useEffect(() => {
-        if ((!user) || (!shop)) getMetadata();
-    }, [user, shop, getMetadata]);
-
-    React.useEffect(() => {
-        if ((!user) || (!shop)) getMetadata();
-    }, []);
+        if (!user) getMetadata();
+    }, [user, getMetadata]);
 
     return localStorage.getItem('token') && localStorage.getItem('client') ? <Outlet /> : <Navigate to={'/authentication'} />;
 };

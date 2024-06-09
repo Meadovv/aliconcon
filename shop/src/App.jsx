@@ -9,9 +9,7 @@ import PublicMiddleware from './components/Middlewares/Public';
 import PrivateMiddleware from './components/Middlewares/Private';
 
 function App() {
-    
     const loader = useSelector((state) => state.loader);
-
     return loader ? (
         <Spinner />
     ) : (
@@ -20,14 +18,14 @@ function App() {
                 <Route element={<PublicMiddleware />}>
                     {routers.map((router, index) => {
                         if(router.middleware === 'public') {
-                            return <Route key={index} path={router.path} element={<Layout layout={router.layout}> {router.children} </Layout>}/>
+                            return <Route key={index} path={router.path} element={<Layout {...router}/>}/>
                         } else return null;
                     })}
                 </Route>
                 <Route element={<PrivateMiddleware />}>
                     {routers.map((router, index) => {
                         if(router.middleware === 'private') {
-                            return <Route key={index} path={router.path} element={<Layout layout={router.layout}> {router.children} </Layout>}/>
+                            return <Route key={index} path={router.path} element={<Layout {...router}/>}/>
                         } else return null;
                     })}
                 </Route>

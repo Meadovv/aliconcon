@@ -1,16 +1,28 @@
 import React from 'react';
 import {
-    IconButton, Avatar, Box, CloseButton, Image,
-    Flex, HStack, VStack,Icon, useColorModeValue,
-    Link, Drawer, DrawerContent, Text, useDisclosure,
-    Menu, MenuButton, MenuDivider, MenuItem, MenuList,
+    IconButton,
+    Avatar,
+    Box,
+    CloseButton,
+    Flex,
+    HStack,
+    VStack,
+    Icon,
+    useColorModeValue,
+    Link,
+    Drawer,
+    DrawerContent,
+    Text,
+    useDisclosure,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuItem,
+    MenuList,
+    Image,
 } from '@chakra-ui/react';
-import { 
-    FiHome, FiStar, FiSettings, FiMenu, FiBell, 
-    FiChevronDown, FiUser, FiArchive, FiPackage, FiSearch, FiBook, FiImage, 
-    FiDatabase,
-    FiFile
-} from 'react-icons/fi';
+import { AiOutlineUser } from 'react-icons/ai';
+import { FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, FiChevronDown, FiUser } from 'react-icons/fi';
 
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -54,15 +66,13 @@ const SidebarContent = ({ onClose, ...rest }) => {
     
     const LinkItems = [
         { name: 'Home', icon: FiHome, link: '/', disabled: false },
-        { name: 'SearchProduct', icon: FiSearch, link: '/search-product', disabled: false },
-        { name: 'Categories', icon: FiArchive, link: '/categories', disabled: false },
-        { name: 'Products', icon: FiPackage, link: '/products', disabled: false },
-        { name: 'Groups', icon: FiDatabase, link: '/groups', disabled: false },
-        { name: 'Images', icon: FiImage, link: '/images', disabled: false },
-        { name: 'Orders', icon: FiFile, link: '/orders', disabled: false },
+        { name: 'Categories', icon: FiTrendingUp, link: '/categories', disabled: false },
+        { name: 'Products', icon: FiCompass, link: '/products', disabled: false },
         { name: 'Vouchers', icon: FiStar, link: '/vouchers', disabled: false },
+        { name: 'Orders', icon: FiStar, link: '/orders', disabled: false },
         { name: 'Users', icon: FiUser, link: '/users', disabled: user?.role > 2 },
-        { name: 'Profile', icon: FiSettings, link: '/profile', disabled: user?.role > 1 },
+        { name: 'Medias', icon: FiStar, link: '/medias', disabled: false },
+        { name: 'Settings', icon: FiSettings, link: '/settings', disabled: user?.role > 1 },
     ];
     
     return (
@@ -171,7 +181,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
                             <HStack>
                                 <Avatar
                                     size={'sm'}
-                                    src={'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'}
+                                    icon={<AiOutlineUser fontSize='1.5rem' />}
                                 />
                                 <VStack
                                     display={{ base: 'none', md: 'flex' }}
@@ -193,9 +203,9 @@ const MobileNav = ({ onOpen, ...rest }) => {
                             bg={useColorModeValue('white', 'gray.900')}
                             borderColor={useColorModeValue('gray.200', 'gray.700')}
                         >
-                            <MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
-                            <MenuItem onClick={() => navigate('/products')}>Products</MenuItem>
-                            <MenuItem onClick={() => navigate('/orders')}>Orders</MenuItem>
+                            <MenuItem>Profile</MenuItem>
+                            <MenuItem>Settings</MenuItem>
+                            <MenuItem>Billing</MenuItem>
                             <MenuDivider />
                             <MenuItem onClick={() => navigate('/logout')}>Sign out</MenuItem>
                         </MenuList>

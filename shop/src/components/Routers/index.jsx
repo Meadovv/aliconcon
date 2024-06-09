@@ -2,14 +2,12 @@ import Categories from '../../pages/Categories';
 import Home from '../../pages/Home';
 import Authentication from '../../pages/Authentication';
 import Products from '../../pages/Products';
-import Profile from '../../pages/Profile';
+import Settings from '../../pages/Settings';
 import Vouchers from '../../pages/Vouchers';
 import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
-import SearchProduct from '../../pages/SearchProduct';
-import Groups from '../../pages/Groups';
-import Images from '../../pages/Images';
 import Orders from '../../pages/Orders';
+import Media from '../../pages/Media';
 
 const routers = [
     {
@@ -21,12 +19,6 @@ const routers = [
     {
         path: '/',
         children: <Home />,
-        layout: true,
-        middleware: 'private'
-    },
-    {
-        path: '/search-product',
-        children: <SearchProduct />,
         layout: true,
         middleware: 'private'
     },
@@ -49,8 +41,14 @@ const routers = [
         middleware: 'private'
     },
     {
-        path: '/groups',
-        children: <Groups />,
+        path: '/vouchers',
+        children: <Vouchers />,
+        layout: true,
+        middleware: 'private'
+    },
+    {
+        path: '/medias',
+        children: <Media />,
         layout: true,
         middleware: 'private'
     },
@@ -61,26 +59,14 @@ const routers = [
         middleware: 'private'
     },
     {
-        path: '/images',
-        children: <Images />,
-        layout: true,
-        middleware: 'private'
-    },
-    {
-        path: '/vouchers',
-        children: <Vouchers />,
-        layout: true,
-        middleware: 'private'
-    },
-    {
         path: '/users',
         children: <Users />,
         layout: true,
         middleware: 'private'
     },
     {
-        path: '/profile',
-        children: <Profile />,
+        path: '/settings',
+        children: <Settings />,
         layout: true,
         middleware: 'private'
     },

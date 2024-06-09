@@ -1,54 +1,26 @@
-import { HStack, Button, Flex, Box } from '@chakra-ui/react';
-import { AddIcon, ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { IconButton } from '@chakra-ui/react';
+import { HStack, Button, Flex } from '@chakra-ui/react';
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
+
 import { Table, Space, Select, message, Tag, Popconfirm, Input } from 'antd';
+
+import AddCategoryModal from '../../components/Modal/AddCategory';
 
 import axios from 'axios';
 import api from '../../apis';
-import ViewCategoryModal from '../../modals/view-detail-modal/ViewCategory'
-import ViewProdByCateModal from '../../modals/view-by-modal/ViewProdByCate';
-import AddCategoryModal from '../../modals/add-modal/AddCategory';
+
+import ViewCategoryModal from '../../components/Modal/ViewCategory';
 
 export default function Categories() {
-
     const user = useSelector((state) => state.auth.user);
 
-    {/* States */}
-    const [recordPerPage, setRecordPerPage] = React.useState(10);
-    const [currentPage, setCurrentPage] = React.useState(1);
-    const [dataList, setDataList] = React.useState([]);
-
-    const [categories, setCategories] = React.useState([]);
-    const [loading, setLoading] = React.useState(false);
-
-    const [filter, setFilter] = React.useState({
-        mode: 'all',
-        name: null,
-        email: null,
-    });
-
-    
     const [viewCategoryId, setViewCategoryId] = React.useState(null);
-    const [viewProdByCate, setViewProdByCate] = React.useState({
-        name : null,
-        id : null,
-    });
 
-    {/* View modal functions*/}
     const viewCategory = (id) => {
         setViewCategoryId(id);
     };
-    
-    const viewProductOfCategory = (id, name) => {
-        setViewProdByCate({
-            name: name,
-            id: id,
-        });
-    };
-    
-    {/* Columns structure */}
+
     const columns = [
         {
             title: 'Name',
@@ -77,28 +49,15 @@ export default function Categories() {
             key: 'addedBy',
             responsive: ['md'], // This column will be hidden on screens smaller than md
         },
-        {
-            title: 'Show products',
-            key: 'showProduct',
-            render: (_, record) => (
-                <Space size="middle">
-                    <Button onClick={() => viewProductOfCategory(record._id, record.name)}>
-                        View products
-                    </Button>
-                </Space>
-            ),
-        },
     ];
 
-    {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 3) {
+    if (user && user.role < 4) {
         columns.push({
             title: 'Quick Actions',
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
-
-                    {/* Publishing options */}
+                    <Button onClick={() => viewCategory(record._id)}>View</Button>
                     <Popconfirm
                         title={
                             record.status === 'draft'
@@ -114,21 +73,29 @@ export default function Categories() {
                         cancelButtonProps={{
                             size: 'large',
                         }}
-                        overlayStyle={{ zIndex: 2000 }}
                     >
-                        <Button 
-                            colorScheme={record.status === 'draft' ? 'blue' : 'red'}
-                        >
+                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}
                         </Button>
                     </Popconfirm>
-                    
-                    {/* View detail button */}
-                    <Button onClick={() => viewCategory(record._id)}>View details</Button>
                 </Space>
             ),
         });
     }
+
+    const [recordPerPage, setRecordPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [dataList, setDataList] = React.useState([]);
+
+    const [categories, setCategories] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    const [filter, setFilter] = React.useState({
+        mode: 'all',
+        name: null,
+        email: null,
+    });
+
     const createDataList = () => {
         const dataList = [];
         categories
@@ -165,7 +132,6 @@ export default function Categories() {
                 },
             )
             .then((res) => {
-                message.success(res.data.message);
                 setCategories(res.data.metadata);
             })
             .catch((err) => {
@@ -192,7 +158,7 @@ export default function Categories() {
             )
             .then((res) => {
                 message.success(res.data.message);
-                getCategories();
+                setCategories(res.data.metadata);
             })
             .catch((err) => {
                 console.log(err);
@@ -210,13 +176,8 @@ export default function Categories() {
     }, [categories, filter]);
 
     return (
-        <Flex direction="column" gap={35}>
-
-            {/* View detail modal */}
+        <Flex direction="column" gap={5}>
             <ViewCategoryModal id={viewCategoryId} setId={setViewCategoryId} setCategories={setCategories} />
-            <ViewProdByCateModal category={viewProdByCate} setCategory={setViewProdByCate} />
-
-            {/* Add, Import, Export buttons */}
             <HStack justify="flex-end">
                 <AddCategoryModal setCategories={setCategories} />
                 <Button
@@ -240,8 +201,6 @@ export default function Categories() {
                     Export
                 </Button>
             </HStack>
-
-            {/* The actual table */}
             <Table
                 loading={loading}
                 columns={columns}
@@ -252,40 +211,36 @@ export default function Categories() {
                     onChange: (page) => setCurrentPage(page),
                 }}
                 footer={() => (
-                    <Flex gap={250}>
-
-                        {/* Filter mode */}
-                        <HStack justify="flex-start">
-                            <Select
-                                defaultValue={filter.mode}
-                                style={{ minWidth: 110 }}
-                                onChange={(value) => setFilter({ ...filter, mode: value })}
-                            >
-                                <Select.Option value="all">All</Select.Option>
-                                <Select.Option value="draft">Draft</Select.Option>
-                                <Select.Option value="published">Published</Select.Option>
-                            </Select>
-                            <Select
-                                defaultValue={recordPerPage}
-                                style={{ width: 120 }}
-                                onChange={(value) => setRecordPerPage(value)}
-                            >
-                                <Select.Option value={5}>5 / Page</Select.Option>
-                                <Select.Option value={10}>10 / Page</Select.Option>
-                                <Select.Option value={15}>15 / Page</Select.Option>
-                            </Select>
-                            <Input
-                                placeholder="Name"
-                                onChange={(e) => setFilter({ ...filter, name: e.target.value })}
-                                value={filter.name}
-                            />
-                            <Input
-                                placeholder="Email"
-                                onChange={(e) => setFilter({ ...filter, email: e.target.value })}
-                                value={filter.email}
-                            />
-                        </HStack>
-                    </Flex>                 
+                    <HStack justify="flex-start">
+                        <Select
+                            defaultValue={filter.mode}
+                            style={{ minWidth: 110 }}
+                            onChange={(value) => setFilter({ ...filter, mode: value })}
+                        >
+                            <Select.Option value="all">All</Select.Option>
+                            <Select.Option value="draft">Draft</Select.Option>
+                            <Select.Option value="published">Published</Select.Option>
+                        </Select>
+                        <Select
+                            defaultValue={recordPerPage}
+                            style={{ width: 120 }}
+                            onChange={(value) => setRecordPerPage(value)}
+                        >
+                            <Select.Option value={5}>5 / Page</Select.Option>
+                            <Select.Option value={10}>10 / Page</Select.Option>
+                            <Select.Option value={15}>15 / Page</Select.Option>
+                        </Select>
+                        <Input
+                            placeholder="Name"
+                            onChange={(e) => setFilter({ ...filter, name: e.target.value })}
+                            value={filter.name}
+                        />
+                        <Input
+                            placeholder="Email"
+                            onChange={(e) => setFilter({ ...filter, email: e.target.value })}
+                            value={filter.email}
+                        />
+                    </HStack>
                 )}
             />
         </Flex>

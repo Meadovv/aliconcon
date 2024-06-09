@@ -1,49 +1,81 @@
-import { HStack, Button, Flex, Box, Image } from '@chakra-ui/react';
-import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { IconButton } from '@chakra-ui/react';
 import React from 'react';
+import { HStack, Button, Flex } from '@chakra-ui/react';
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
+
+import { Table, Space, Select, message, Tag, Popconfirm } from 'antd';
+
 import { useSelector } from 'react-redux';
 
-import { Table, Space, Select, message, Input, Popconfirm, Tag } from 'antd';
-
+import AddProductModal from '../../components/Modal/AddProduct';
+import ViewProduct from '../../components/Modal/ViewProduct';
 import axios from 'axios';
-import api, { IMAGE_HOST } from '../../apis';
-
-import AddProductModal from '../../modals/add-modal/AddProduct';
-import ViewProductModal from '../../modals/view-detail-modal/ViewProduct';
+import api from '../../apis';
 
 export default function Products() {
-    
-    const user = useSelector((state) => state.auth.user);
-
-    {/* States */}
-    const [viewProductId, setViewProductId] = React.useState(null);
-
-    const [recordPerPage, setRecordPerPage] = React.useState(10);
-    const [currentPage, setCurrentPage] = React.useState(1);
-    const [dataList, setDataList] = React.useState([]);
-
     const [products, setProducts] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
+    const [dataList, setDataList] = React.useState([]);
+    const [recordPerPage, setRecordPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [viewProductId, setViewProductId] = React.useState(null);
 
-    const [filter, setFilter] = React.useState({
-        mode: 'all',
-        name: null,
-        email: null,
-    });
-    
-    const viewProduct = (id) => {
-        setViewProductId(id);
+    const { user, shop } = useSelector((state) => state.auth);
+
+    const getProducts = async () => {
+        setLoading(true);
+        await axios.post(api.GET_PRODUCTS, {}, {
+            headers: {
+                'x-token-id': localStorage.getItem('token'),
+                'x-client-id': localStorage.getItem('client')
+            }
+        })
+        .then(res => {
+            setProducts(res.data.metadata);
+        })
+        .catch(err => {
+            console.log(err);
+            message.error(err.response.data.message);
+        })
+        setLoading(false);
     };
-    
 
-    {/* Columns structure */}
+    const createDataList = () => {
+        const dataList = products.map((product, index) => ({
+            ...product,
+            key: product._id,
+            addBy: product.addBy.name,
+        }));
+        setDataList(dataList);
+    };
+
+    const switchStatus = async (id) => {
+        await axios.post(api.SWITCH_PRODUCT_STATUS, {
+            productId: id
+        }, {
+            headers: {
+                'x-token-id': localStorage.getItem('token'),
+                'x-client-id': localStorage.getItem('client')
+            }
+        })
+        .then(res => {
+            message.success(res.data.message);
+            setProducts(res.data.metadata);
+        })
+        .catch(err => {
+            console.log(err);
+            message.error(err.response.data.message);
+        })
+    };
+
+    React.useEffect(() => {
+        if (shop) getProducts();
+    }, [shop]);
+
+    React.useEffect(() => {
+        createDataList();
+    }, [products]);
+
     const columns = [
-        {
-            title: 'Thumbnail ID',
-            dataIndex: 'thumbnail',
-            key: 'thumbnail',
-        },
         {
             title: 'Name',
             dataIndex: 'name',
@@ -56,21 +88,27 @@ export default function Products() {
             render: (status) => <Tag color={status === 'draft' ? 'red' : 'green'}>{status}</Tag>,
         },
         {
+            title: 'Created At',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            responsive: ['md'], // This column will be hidden on screens smaller than md
+            render: (createdAt) => {
+                const date = new Date(createdAt);
+                return date.toLocaleDateString();
+            },
+        },
+        {
             title: 'Added By',
             dataIndex: 'addBy',
             key: 'addedBy',
             responsive: ['md'], // This column will be hidden on screens smaller than md
         },
-    ];
-
-    {/* Quick actions columns with view detail and publish button */}
-    if (user && user.role < 3) {
-        columns.push({
+        {
             title: 'Quick Actions',
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">
-                    {/* Publishing options */}
+                    <Button onClick={() => setViewProductId(record._id)}>View</Button>
                     <Popconfirm
                         title={
                             record.status === 'draft'
@@ -86,112 +124,23 @@ export default function Products() {
                         cancelButtonProps={{
                             size: 'large',
                         }}
-                        overlayStyle={{ zIndex: 2000 }}
                     >
-                        <Button 
-                            colorScheme={record.status === 'draft' ? 'blue' : 'red'}
-                        >
+                        <Button colorScheme={record.status === 'draft' ? 'blue' : 'red'} style={{
+                            display: user?.role > 3 ? 'none' : 'block'
+                        }}>
                             {record.status === 'draft' ? 'Publish' : 'Unpublish'}
                         </Button>
                     </Popconfirm>
-
-                    {/* View detail modal */}
-                    <Button onClick={() => viewProduct(record._id)}>View details</Button>
-
                 </Space>
             ),
-        });
-    }
-
-    const createDataList = () => {
-        const dataList = [];
-        products
-            .filter(
-                (product) =>
-                    (filter.mode === 'all' ? true : product.status === filter.mode) &&
-                    (filter.addBy ? product.addBy.name.includes(filter.addBy) : true) &&
-                    (filter.name ? product.name.includes(filter.name) : true),
-            )
-            .forEach((product, index) => {
-                dataList.push({
-                    key: index,
-                    _id: product._id,
-                    thumbnail: product.thumbnail,
-                    status: product.status,
-                    name: product.name,
-                    addBy: product.addBy.name,
-                });
-            });
-        setDataList(dataList);
-    };
-
-    const getProducts = async () => {
-        setLoading(true);
-        await axios
-            .post(
-                api.GET_PRODUCTS,
-                {},
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                setProducts(res.data.metadata);
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
-    const switchStatus = async (id) => {
-        setLoading(true);
-        await axios
-            .post(
-                api.SWITCH_PRODUCT_STATUS,
-                {
-                    productId: id,
-                },
-                {
-                    headers: {
-                        'x-client-id': localStorage.getItem('client'),
-                        'x-token-id': localStorage.getItem('token'),
-                    },
-                },
-            )
-            .then((res) => {
-                message.success(res.data.message);
-                getProducts();
-            })
-            .catch((err) => {
-                console.log(err);
-                message.error(err.response.data.message);
-            });
-        setLoading(false);
-    };
-
-    React.useEffect(() => {
-        getProducts();
-    }, []);
-
-    React.useEffect(() => {
-        createDataList();
-    }, [products, filter]);
+        },
+    ];
 
     return (
-        <Flex direction="column" gap={35}>
-
-            {/* View detail modal */}
-            <ViewProductModal id={viewProductId} setId={setViewProductId} setProducts={setProducts} />
-
-            {/* Add, Import, Export buttons */}
+        <Flex direction={'column'} gap={5}>
             <HStack justify="flex-end">
-                <AddProductModal resetProducts={getProducts} />
+                <ViewProduct id={viewProductId} setId={setViewProductId} setProducts={setProducts}/>
+                <AddProductModal setProducts={setProducts}/>
                 <Button
                     bg={'blue.400'}
                     color={'white'}
@@ -213,8 +162,6 @@ export default function Products() {
                     Export
                 </Button>
             </HStack>
-
-            {/* The actual table */}
             <Table
                 loading={loading}
                 columns={columns}
@@ -225,40 +172,17 @@ export default function Products() {
                     onChange: (page) => setCurrentPage(page),
                 }}
                 footer={() => (
-                    <Flex direction="column" gap={3}>
-
-                        {/* Filter controls */}
-                        <HStack justify="flex-start">
-                            <Select
-                                defaultValue={filter.mode}
-                                style={{ minWidth: 110 }}
-                                onChange={(value) => setFilter({ ...filter, mode: value })}
-                            >
-                                <Select.Option value="all">All</Select.Option>
-                                <Select.Option value="draft">Draft</Select.Option>
-                                <Select.Option value="published">Published</Select.Option>
-                            </Select>
-                            <Select
-                                defaultValue={recordPerPage}
-                                style={{ width: 120 }}
-                                onChange={(value) => setRecordPerPage(value)}
-                            >
-                                <Select.Option value={5}>5 / Page</Select.Option>
-                                <Select.Option value={10}>10 / Page</Select.Option>
-                                <Select.Option value={15}>15 / Page</Select.Option>
-                            </Select>
-                            <Input
-                                placeholder="Name"
-                                onChange={(e) => setFilter({ ...filter, name: e.target.value })}
-                                value={filter.name}
-                            />
-                            <Input
-                                placeholder="Added By"
-                                onChange={(e) => setFilter({ ...filter, addBy: e.target.value })}
-                                value={filter.addBy}
-                            />
-                        </HStack>
-                    </Flex>
+                    <HStack justify="flex-start">
+                        <Select
+                            defaultValue={recordPerPage}
+                            style={{ width: 120 }}
+                            onChange={(value) => setRecordPerPage(value)}
+                        >
+                            <Select.Option value={5}>5 / Page</Select.Option>
+                            <Select.Option value={10}>10 / Page</Select.Option>
+                            <Select.Option value={15}>15 / Page</Select.Option>
+                        </Select>
+                    </HStack>
                 )}
             />
         </Flex>
