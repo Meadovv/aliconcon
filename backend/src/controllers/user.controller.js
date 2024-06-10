@@ -222,6 +222,15 @@ class UserController {
             })
         }).send(res);
     }
+
+    static getWishlist = async (req, res) => {
+        new SUCCESS({
+            message: 'Get wishlist successfully',
+            metadata: await UserService.getWishlist({
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
 }
 
 module.exports = UserController;

@@ -13,6 +13,19 @@ const Utils = require('../utils');
 const ROLES = require('../constants/ROLES');
 class UserService {
 
+    static getWishlist = async ({ userId }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        const wishlist = await productModel
+            .find({ likes: { $in: [userId] } })
+            .select('_id name thumbnail price')
+            .populate('thumbnail', '_id name')
+            .lean();
+        return wishlist;
+    }
+
     static removeAddress = async ({ userId, index }) => {
         const foundUser = await userModel.findById(userId).lean();
         if (!foundUser) {

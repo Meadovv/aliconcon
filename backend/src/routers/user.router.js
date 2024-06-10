@@ -32,5 +32,6 @@ router.post('/get-order', ErrorMiddleware.asyncHandler(UserController.getOrderBy
 router.post('/get-orders', ErrorMiddleware.asyncHandler(UserController.getOrdersByOwner));
 
 router.post('/switch-product-like', ErrorMiddleware.asyncHandler(UserController.switchProductLike));
+router.post('/get-wishlist', ErrorMiddleware.asyncHandler(UserController.getWishlist));
 
 module.exports = router;
