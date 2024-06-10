@@ -5,8 +5,8 @@ const JWT = require('jsonwebtoken');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 class AuthUtils {
-    static createToken = async ({ payload, key }) => {
-        const accessToken = JWT.sign(payload, key, { expiresIn: app_config.jwt.expired });
+    static createToken = ({ payload, key, expiredIn = app_config.jwt.expired }) => {
+        const accessToken = JWT.sign(payload, key, { expiresIn: expiredIn });
         return accessToken;
     }
 
@@ -23,7 +23,7 @@ class AuthUtils {
         return await bcrypt.compare(password, hash);
     }
 
-    static verifyToken = async (token, key) => {
+    static verifyToken = (token, key) => {
         return JWT.verify(token, key);
     }
 }

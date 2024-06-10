@@ -10,6 +10,7 @@ const {
 } = require('../core/error.response');
 const KeyTokenService = require('./keyToken.service');
 const Utils = require('../utils');
+const ROLES = require('../constants/ROLES');
 class UserService {
 
     static metadata = async ({ userId }) => {
@@ -48,7 +49,7 @@ class UserService {
             key: key
         });
 
-        const token = await Utils.AuthUtils.createToken({
+        const token = Utils.AuthUtils.createToken({
             payload: { userId: newUser._id, role: newUser.role },
             key: key
         });
@@ -82,7 +83,7 @@ class UserService {
             userId: foundUser._id,
             key: key
         });
-        const token = await Utils.AuthUtils.createToken({
+        const token = Utils.AuthUtils.createToken({
             payload: { userId: foundUser._id, role: foundUser.role },
             key: key
         });
@@ -121,6 +122,25 @@ class UserService {
         });
 
         return newComment;
+    }
+
+    static checkSellerStatus = async ({ userId }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        const foundShop = await shopModel.findOne({ 
+            users: {
+                $elemMatch: {
+                    _id: userId, 
+                    role: ROLES.SHOP_OWNER
+                }
+            }
+        }).lean();
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!');
+        }
+        return foundShop;
     }
 }
 

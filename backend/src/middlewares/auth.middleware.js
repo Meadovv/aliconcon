@@ -22,7 +22,7 @@ class AuthenticationMiddleware {
         if (!keyStore) throw new UNAUTHORIZED_ERROR('Unauthorized Error!');
 
         try {
-            const decodedUser = await Utils.AuthUtils.verifyToken(accessToken, keyStore.key);
+            const decodedUser = Utils.AuthUtils.verifyToken(accessToken, keyStore.key);
             req.jwt_decode = decodedUser;
             return next();
         } catch (error) {

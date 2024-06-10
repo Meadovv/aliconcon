@@ -85,7 +85,7 @@ class ShopService {
             userId: foundUser._id,
             key: key
         });
-        const token = await Utils.AuthUtils.createToken({
+        const token = Utils.AuthUtils.createToken({
             payload: { shopId: foundShop._id, userId: foundUser._id, role: userInShop.role },
             key: key
         });
@@ -135,7 +135,7 @@ class ShopService {
             userId: newUser._id,
             key
         });
-        const token = await Utils.AuthUtils.createToken({
+        const token = Utils.AuthUtils.createToken({
             payload: { shopId: newShop._id, userId: newUser._id, role: newUser.role },
             key
         });

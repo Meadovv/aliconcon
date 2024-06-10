@@ -32,6 +32,18 @@ class AccessController {
         }).send(res);
     }
 
+    static forgotPassword = async (req, res) => {
+        return new CREATED({
+            message: 'Send mail successfully!',
+            metadata: await AccessService.forgotPassword({
+                ...getFields({
+                    fields: ['email'],
+                    object: req.body
+                })
+            })
+        }).send(res);
+    }
+
     static logout = async (req, res) => {
         return new SUCCESS({
             message: 'Logout successfully',
@@ -48,6 +60,30 @@ class AccessController {
                 ...getFields({
                     fields: ['email'],
                     object: req.query
+                })
+            })
+        }).send(res);
+    }
+
+    static checkToken = async (req, res) => {
+        return new SUCCESS({
+            message: 'Check token successfully!',
+            metadata: await AccessService.checkToken({
+                ...getFields({
+                    fields: ['email', 'token'],
+                    object: req.body
+                })
+            })
+        }).send(res);
+    }
+
+    static passwordReset = async (req, res) => {
+        return new SUCCESS({
+            message: 'Reset password successfully!',
+            metadata: await AccessService.passwordReset({
+                ...getFields({
+                    fields: ['email', 'token', 'password'],
+                    object: req.body
                 })
             })
         }).send(res);
