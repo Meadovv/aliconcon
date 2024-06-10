@@ -9,7 +9,7 @@ export const IMAGE_HOST = {
     }
 }
 
-export const BACKEND_API = 'http://localhost:3055/v1/';
+export const BACKEND_API = 'https://api.aliconcon.xyz/v1/';
 
 export const PAYMENT_GATE = 'http://20.2.158.32/pay/';
 
@@ -49,6 +49,7 @@ const api = {
     LEAVE_COMMENT: BACKEND_API + 'user/leave-comment',
     FORGOT_PASSWORD: BACKEND_API + 'access/forgot-password',
     CHECK_TOKEN: BACKEND_API + 'access/check-token',
+    PASSWORD_RESET: BACKEND_API + 'access/password-reset'
 }
 
 export default api;

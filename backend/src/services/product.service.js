@@ -203,7 +203,6 @@ class ProductService {
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
         const userInShop = foundShop.users.find(user => user._id.toString() === userId);
         if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
-        if (userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
         await productModel.findByIdAndDelete(productId);
         const products = await productModel.find({ shop: shopId })
             .select('_id name category price thumbnail addBy status createdAt')
@@ -223,7 +222,6 @@ class ProductService {
         if (!foundUser) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
         const userInShop = foundShop.users.find(user => user._id.toString() === userId);
         if (!userInShop) throw new UNAUTHENTICATED_ERROR('You are not in this shop!');
-        if (userInShop.role > ROLES.SHOP_PRODUCT_MODERATOR) throw new UNAUTHENTICATED_ERROR('Unauthorized Error!');
         const foundProduct = await productModel.findById(product._id).lean();
         if (!foundProduct) throw new BAD_REQUEST_ERROR('Product not found!');
         if (foundProduct.shop.toString() !== shopId) throw new BAD_REQUEST_ERROR('Product not found in this shop!');

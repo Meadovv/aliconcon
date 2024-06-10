@@ -20,7 +20,9 @@ app.use(express.json({
 app.use(express.urlencoded({ 
     extended: true 
 })); // Body parser
-app.use(cors());
+app.use(cors({
+    origin: "*"
+}));
 
 // Databases
 require('./databases/mongodb.database');
