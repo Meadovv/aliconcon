@@ -25,6 +25,7 @@ router.post('/metadata', ErrorMiddleware.asyncHandler(ShopController.metadata));
 router.post('/add-user', ErrorMiddleware.asyncHandler(ShopController.addUser));
 router.post('/delete-user', ErrorMiddleware.asyncHandler(ShopController.deleteUser));
 router.post('/get-user-list', ErrorMiddleware.asyncHandler(ShopController.getUserList));
+router.post('/change-shop-name', ErrorMiddleware.asyncHandler(ShopController.changeShopName));
 
 router.post('/create-product', ErrorMiddleware.asyncHandler(ShopController.createProduct));
 router.post('/delete-product', ErrorMiddleware.asyncHandler(ShopController.deleteProduct));

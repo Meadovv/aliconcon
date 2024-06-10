@@ -7,6 +7,7 @@ import Logout from '../../pages/Logout';
 import Users from '../../pages/Users';
 import Orders from '../../pages/Orders';
 import Media from '../../pages/Media';
+import Profile from '../../pages/Profile';
 
 const routers = [
     {
@@ -60,6 +61,12 @@ const routers = [
     {
         path: '/users',
         children: <Users />,
+        layout: true,
+        middleware: 'private'
+    },
+    {
+        path: '/profile',
+        children: <Profile />,
         layout: true,
         middleware: 'private'
     },

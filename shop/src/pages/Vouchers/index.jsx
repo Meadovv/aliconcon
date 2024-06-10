@@ -116,26 +116,6 @@ export default function Vouchers() {
             <ViewVoucherModal id={viewVoucherId} setId={setViewVoucherId} setVouchers={setVouchers} />
             <HStack justify="flex-end">
                 <AddVoucherModal setVouchers={setVouchers} />
-                <Button
-                    bg={'blue.400'}
-                    color={'white'}
-                    _hover={{
-                        bg: 'blue.500',
-                    }}
-                    leftIcon={<ArrowUpIcon />}
-                >
-                    Import
-                </Button>
-                <Button
-                    bg={'red.400'}
-                    color={'white'}
-                    _hover={{
-                        bg: 'red.500',
-                    }}
-                    leftIcon={<ArrowDownIcon />}
-                >
-                    Export
-                </Button>
             </HStack>
             <Table
                 loading={loading}

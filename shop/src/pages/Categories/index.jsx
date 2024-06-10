@@ -115,26 +115,6 @@ export default function Categories() {
             <ViewCategoryModal id={viewCategoryId} setId={setViewCategoryId} setCategories={setCategories} />
             <HStack justify="flex-end">
                 <AddCategoryModal setCategories={setCategories} />
-                <Button
-                    bg={'blue.400'}
-                    color={'white'}
-                    _hover={{
-                        bg: 'blue.500',
-                    }}
-                    leftIcon={<ArrowUpIcon />}
-                >
-                    Import
-                </Button>
-                <Button
-                    bg={'red.400'}
-                    color={'white'}
-                    _hover={{
-                        bg: 'red.500',
-                    }}
-                    leftIcon={<ArrowDownIcon />}
-                >
-                    Export
-                </Button>
             </HStack>
             <Table
                 loading={loading}

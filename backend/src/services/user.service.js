@@ -13,6 +13,62 @@ const Utils = require('../utils');
 const ROLES = require('../constants/ROLES');
 class UserService {
 
+    static removeAddress = async ({ userId, index }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+
+        if(index < 0 || index >= foundUser.address.length) {
+            throw new BAD_REQUEST_ERROR('Invalid index!');
+        }
+
+        if(index === foundUser.default_address) {
+            throw new BAD_REQUEST_ERROR('Cannot remove default address!');
+        }
+        
+        foundUser.address.splice(index, 1);
+        
+        if (index < foundUser.default_address) {
+            foundUser.default_address--;
+        }
+        
+        await userModel.findByIdAndUpdate(userId, foundUser);
+        return {
+            address: foundUser.address,
+            default_address: foundUser.default_address
+        }
+    }
+
+    static setDefaultAddress = async ({ userId, index }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        foundUser.default_address = index;
+        await userModel.findByIdAndUpdate(userId, foundUser);
+        return {
+            address: foundUser.address,
+            default_address: foundUser.default_address
+        }   
+    }
+
+    static addAddress = async ({ userId, address, isDefault }) => {
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        foundUser.address.push(address);
+        if (isDefault) {
+            foundUser.default_address = foundUser.address.length - 1;
+        }
+        await userModel.findByIdAndUpdate(userId, foundUser);
+        return {
+            address: foundUser.address,
+            default_address: foundUser.default_address
+        }
+    }
+
     static metadata = async ({ userId }) => {
         const foundUser = await userModel.findById(userId).lean();
         if (!foundUser) {

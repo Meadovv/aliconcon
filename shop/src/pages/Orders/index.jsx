@@ -114,18 +114,6 @@ export default function Orders() {
     return (
         <Flex direction="column" gap={5}>
             <ViewOrder id={viewOrderId} setId={setViewOrderId} />
-            <HStack justify="flex-end">
-                <Button
-                    bg={'red.400'}
-                    color={'white'}
-                    _hover={{
-                        bg: 'red.500',
-                    }}
-                    leftIcon={<ArrowDownIcon />}
-                >
-                    Export
-                </Button>
-            </HStack>
             <Table
                 loading={loading}
                 columns={columns}

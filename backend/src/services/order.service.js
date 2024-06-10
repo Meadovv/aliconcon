@@ -14,14 +14,16 @@ class OrderService {
     }
 
     static getOrderByOwner = async ({ userId, orderId }) => {
-        const foundOrder = await orderModel.findOne({ user: userId, _id: orderId });
+        const foundOrder = await orderModel.findOne({ user: userId, _id: orderId }).lean();
         if (!foundOrder) throw NOT_FOUND_ERROR('Order not found');
         if (foundOrder.user.toString() !== userId) throw new BAD_REQUEST_ERROR('You are not allowed to access this order');
         return foundOrder;
     }
 
     static getOrdersByOwner = async ({ userId }) => {
-        return await orderModel.find({ user: userId }).lean();
+        const foundOrder = await orderModel.findOne({ user: userId, _id: orderId }).lean();
+        if (!foundOrder) throw NOT_FOUND_ERROR('Order not found');
+        return await orderModel.find({ user: foundOrder._id }).lean();
     }
 
     static getOrdersByShop = async ({ shopId }) => {

@@ -11,6 +11,19 @@ const VoucherService = require('../services/voucher.service');
 const OrderService = require('../services/order.service');
 class ShopController {
 
+    static changeShopName = async (req, res) => {
+        new SUCCESS({
+            message: 'Shop name changed successfully!',
+            metadata: await ShopService.changeShopName({
+                ...getFields({
+                    fields: ['name'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static getShop = async (req, res) => {
         return new SUCCESS({
             message: 'Shop successfully!',

@@ -11,6 +11,29 @@ const KeyTokenService = require('./keyToken.service');
 
 class ShopService {
 
+    static changeShopName = async ({ shopId, userId, name }) => {
+        const foundShop = await shopModel.findById(shopId).lean();
+        if (!foundShop) {
+            throw new NOT_FOUND_ERROR('Shop not found!');
+        }
+        const foundUser = await userModel.findById(userId).lean();
+        if (!foundUser) {
+            throw new NOT_FOUND_ERROR('User not found!');
+        }
+        const userInShop = foundShop.users.find(user => user._id.toString() === foundUser._id.toString());
+        if (!userInShop) {
+            throw new NOT_FOUND_ERROR('User not in shop!');
+        }
+        if (userInShop.role !== ROLES.SHOP_OWNER) {
+            throw new FORBIDDEN_ERROR('You are not authorized to do this action!');
+        }
+        foundShop.name = name;
+        await shopModel.findByIdAndUpdate({
+            _id: foundShop._id
+        }, foundShop)
+        return this.metadata({ shopId, userId });
+    }
+
     static getShop = async ({ shopId }) => {
         const foundShop = await shopModel.findById(shopId).lean();
         if (!foundShop) {

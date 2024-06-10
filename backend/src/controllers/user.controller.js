@@ -14,6 +14,45 @@ const ProductService = require("../services/product.service");
 
 class UserController {
 
+    static removeAddress = async (req, res) => {
+        new SUCCESS({
+            message: 'Address removed successfully',
+            metadata: await UserService.removeAddress({
+                ...getFields({
+                    fields: ['index'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static setDefaultAddress = async (req, res) => {
+        new SUCCESS({
+            message: 'Set default address successfully',
+            metadata: await UserService.setDefaultAddress({
+                ...getFields({
+                    fields: ['index'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
+    static addAddress = async (req, res) => {
+        return new SUCCESS({
+            message: 'Address added successfully!',
+            metadata: await UserService.addAddress({
+                ...getFields({
+                    fields: ['address', 'isDefault'],
+                    object: req.body
+                }),
+                ...req.jwt_decode
+            })
+        }).send(res);
+    }
+
     static metadata = async (req, res) => {
         return new SUCCESS({
             message: 'Metadata successfully!',
@@ -163,7 +202,12 @@ class UserController {
     }
 
     static getOrdersByOwner = async (req, res) => {
-
+        new SUCCESS({
+            message: 'Get orders by owner successfully',
+            metadata: await OrderService.getOrdersByOwner({
+                ...req.jwt_decode
+            })
+        }).send(res);
     }
 
     static switchProductLike = async (req, res) => {

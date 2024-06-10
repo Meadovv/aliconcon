@@ -17,6 +17,7 @@ import {
     Spinner,
     Text,
 } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 import { Pagination, message } from 'antd';
 import React, { useRef } from 'react';
 
@@ -118,7 +119,7 @@ export default function Media() {
                 <Heading as="h1" mb={4}>
                     Library
                 </Heading>
-                <Button colorScheme="green" onClick={() => fileInput.current.click()}>
+                <Button colorScheme="green" onClick={() => fileInput.current.click()} leftIcon={<AddIcon />}>
                     Add
                 </Button>
             </Flex>

@@ -14,6 +14,10 @@ router.get('/get-order', ErrorMiddleware.asyncHandler(UserController.getOrder));
 
 router.use(ErrorMiddleware.asyncHandler(AuthenticationMiddleware.authentication));
 
+router.post('/add-address', ErrorMiddleware.asyncHandler(UserController.addAddress));
+router.post('/remove-address', ErrorMiddleware.asyncHandler(UserController.removeAddress));
+router.post('/set-default-address', ErrorMiddleware.asyncHandler(UserController.setDefaultAddress));
+
 router.post('/metadata', ErrorMiddleware.asyncHandler(UserController.metadata));
 router.post('/leave-comment', ErrorMiddleware.asyncHandler(UserController.leaveComment));
 router.post('/information', ErrorMiddleware.asyncHandler(UserController.getInformation));

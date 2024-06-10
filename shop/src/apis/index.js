@@ -1,5 +1,8 @@
-const host = 'https://api.aliconcon.xyz/v1/'
-const image_host = 'https://image.aliconcon.xyz/'
+// const host = 'https://api.aliconcon.xyz/v1/'
+// const image_host = 'https://image.aliconcon.xyz/'
+
+const host = 'http://localhost:3055/v1/'
+const image_host = 'http://localhost:9000/'
 const api = {
     LOGIN: host + 'shop/login',
     REGISTER: host + 'shop/register',
@@ -35,6 +38,7 @@ const api = {
     UPDATE_PRODUCT: host + 'shop/update-product',
     GET_ORDERS: host + 'shop/get-orders',
     GET_ORDER: host + 'shop/get-order',
+    CHANGE_SHOP_NAME: host + 'shop/change-shop-name',
 }
 
 export const IMAGE_HOST = {
