@@ -1,8 +1,9 @@
-// const host = 'https://api.aliconcon.xyz/v1/'
-// const image_host = 'https://image.aliconcon.xyz/'
+const host = 'https://api.aliconcon.xyz/v1/'
+const image_host = 'https://image.aliconcon.xyz/'
 
-const host = 'http://localhost:3055/v1/'
-const image_host = 'http://localhost:9000/'
+// const host = 'http://localhost:3055/v1/'
+// const image_host = 'http://localhost:9000/'
+
 const api = {
     LOGIN: host + 'shop/login',
     REGISTER: host + 'shop/register',
