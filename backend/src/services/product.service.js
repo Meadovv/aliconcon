@@ -15,6 +15,25 @@ const {
 const VariationService = require('./variation.service');
 const variationModel = require('../models/variation.model');
 class ProductService {
+
+    static searchProduct = async ({ key }) => {
+        const products = await productModel.find({ name: { $regex: key, $options: 'i' } })
+            .select('_id name price thumbnail category shop likes short_description sell_count')
+            .sort({ sell_count: -1 })
+            .populate('category', '_id name')
+            .populate('sale', '_id name discount')
+            .populate('thumbnail', '_id name')
+            .populate('shop', '_id name')
+            .lean();
+
+        products.forEach(product => {
+            product.sale = product.sale ? product.sale.discount : 0;
+            product.likes = product.likes.length;
+        })
+
+        return products;
+    }
+
     static createProduct = async ({
         shopId,
         userId,

@@ -26,7 +26,7 @@ export default function Search() {
             }
         })
         .then(res => {
-            setProducts(res.data.data)
+            setProducts(res.data.metadata);
         })
         .catch(err => {
             console.error(err)
@@ -46,7 +46,7 @@ export default function Search() {
                     <div className="categories py-5">
                         <div className="categories-item">
                             <div className="title-md">
-                                <h4>See our products</h4>
+                                <h4>Result for {searchParams.get('key')}</h4>
                             </div>
                             {loading ? <Loader /> : <ProductList products={products} showFilter/>}
                         </div>

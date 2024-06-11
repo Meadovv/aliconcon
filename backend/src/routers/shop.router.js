@@ -17,6 +17,7 @@ router.get('/get-category', ErrorMiddleware.asyncHandler(ShopController.getCateg
 router.post('/get-variation', ErrorMiddleware.asyncHandler(ShopController.getVariation));
 router.get('/get-product', ErrorMiddleware.asyncHandler(ShopController.getProduct));
 router.get('/get-products', ErrorMiddleware.asyncHandler(ShopController.getProducts));
+router.post('/search-product', ErrorMiddleware.asyncHandler(ShopController.searchProduct));
 
 // Authentication
 router.use(ErrorMiddleware.asyncHandler(AuthenticationMiddleware.authentication));
